@@ -7,10 +7,10 @@ stake_pools = session[:stake_pools]
      <%= "Stake pools: #{stake_pools.size}" %> 
      <small><a href="/stake-pools">refresh</a></small>
   </div>
-  <% stake_pools.each do |s| %>
+  <% stake_pools.each_with_index do |s, i| %>
       <div class="list-group-item">
         <div class="d-flex w-100 justify-content-between">
-          <h5 class="mb-1"><%= s['id'] %></h5> 
+          <h5 class="mb-1"><%= "#{i + 1}: #{s['id']}" %></h5> 
         </div>
         <small><b>Apparent performance:</b> <%= s['apparent_performance'] %></small><br/>
         <small><b>Controlled stake:</b> <%= s['metrics']['controlled_stake']['quantity'] if s['metrics'] %></small><br/>
