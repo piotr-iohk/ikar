@@ -1,0 +1,26 @@
+<div class="list-group">
+  <div class="list-group-item">
+    <form action="/gen-mnemonics" method="POST">
+      <div class="form-row align-items-center">
+        <div class="col-auto my-1">
+          <select class="custom-select mr-sm-2" name="words_count">
+            <option value="15" <%= "selected" if session[:words_count] == '15' %>>15</option>
+            <option value="12" <%= "selected" if session[:words_count] == '12' %>>12</option>
+            <option value="18" <%= "selected" if session[:words_count] == '18' %>>18</option>
+            <option value="21" <%= "selected" if session[:words_count] == '21' %>>21</option>
+            <option value="24" <%= "selected" if session[:words_count] == '24' %>>24</option>
+          </select>
+        </div>
+        <div class="col-auto my-1">
+          <button type="submit" class="btn btn-success">Generate</button>
+        </div>
+        <!-- <div class="col-auto my-1">
+          <textarea class="form-control" rows="3"></textarea>
+        </div> -->
+        <textarea class="form-control" rows="2"><%= session[:mnemonics] if session[:mnemonics] %></textarea>
+        <textarea class="form-control" rows="2"><%= session[:mnemonics].gsub(/ /, ', ') if session[:mnemonics]%></textarea>
+        <textarea class="form-control" rows="2"><%= session[:mnemonics].split if session[:mnemonics]%></textarea>
+      </div>
+    </form>
+  </div>
+</div>

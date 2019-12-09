@@ -1,0 +1,14 @@
+<%
+  url_path = request.env['PATH_INFO'].to_s
+  byron_ep = "/byron-wallets-delete-all"
+  shelley_ep = "/wallets-delete-all"
+%>
+<div class="list-group">
+  <div class="list-group-item">
+    <form action="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>" method="POST">
+      <button type="submit" class="btn btn-danger">
+        Delete all <%= (url_path.include? "byron") ? "Byron" : "Shelley" %> wallets?
+      </button>
+    </form>
+  </div>
+</div>

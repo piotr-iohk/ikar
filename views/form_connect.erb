@@ -1,0 +1,34 @@
+<form action="/connect" method="POST">
+  <div class="form-row">
+    <div class="col-2">
+      <div class="input-group-prepend">
+        <div class="input-group-text">
+          <img src="https://img.icons8.com/small/16/000000/wallet.png" title="Wallet Backend port">
+          <img src="https://img.icons8.com/color/16/000000/<%= session[:w_connected] ? "usb-connected.png" : "usb-disconnected.png"%>">
+        </div>
+        <input title="Wallet Backend port" placeholder="Wallet port" size="5" type="text" value="<%=session[:wallet_port]%>" name="wallet_port" 
+              class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+      </div>
+    </div>
+    <div class="col-2">
+      <div class="input-group-prepend">
+        <div class="input-group-text">
+          <img src="https://img.icons8.com/ios-glyphs/16/000000/snake.png" title="Jörmungandr port">
+          <img src="https://img.icons8.com/color/16/000000/<%= session[:j_connected] ? "usb-connected.png" : "usb-disconnected.png"%>">  
+        </div>
+        <input title="Jörmungandr port" placeholder="Jörm port" size="5" type="text" value="<%=session[:jorm_port]%>" name="jorm_port" 
+              class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+      </div>
+    </div>
+    
+    <div class="col-1">
+      <button type="submit" class="btn btn-success">Connect</button>    
+    </div>        
+  </div>
+</form>
+    
+
+
+    
+    
+

@@ -1,0 +1,197 @@
+lsof -i -P -n | grep LISTEN
+cardano-wallet-http-bridge launch --state-dir /tmp/bridge-prepare5 --node-port 8088
+./script.rb test 7e10ad5b462e491b2c78c6a33556814b51ad56ce 2cWKMJemoBamE437cwGVrkgJz26NnhPamJLovwahorefvo3Gdue7ye9puSiPpJ7CHYjSA
+./script.rb test 617963656a409b8a6828dc3a09001de22af90400 2cWKMJemoBamE437cwGVrkgJz26NnhPamJLovwahorefvo3Gdue7ye9puSiPpJ7CHYjSA
+./script.rb test 617963656a409b8a6828dc3a09001de22af90400 7e10ad5b462e491b2c78c6a33556814b51ad56ce
+
+./script.rb test 2cWKMJemoBamE437cwGVrkgJz26NnhPamJLovwahorefvo3Gdue7ye9puSiPpJ7CHYjSA 2cWKMJemoBajYT7okmMupFJQbdqsSBJZxSeicsuBqujgqz3U7abHT9r87Ek6vDR8aVhD4
+./script.rb test 2cWKMJemoBamE437cwGVrkgJz26NnhPamJLovwahorefvo3Gdue7ye9puSiPpJ7CHYjSA 2cWKMJemoBajYAAycvq8yyBwTV53FJt8jgfHebF4aqrPaaBVFiR4XRDvTVjZWrwsy72TN
+./script.rb test 2cWKMJemoBajYT7okmMupFJQbdqsSBJZxSeicsuBqujgqz3U7abHT9r87Ek6vDR8aVhD4 2cWKMJemoBajYAAycvq8yyBwTV53FJt8jgfHebF4aqrPaaBVFiR4XRDvTVjZWrwsy72TN
+
+
+Wallets:
+
+new
+
+
+    
+curl  -vX POST http://localhost:8090/v2/wallets \
+  -H "Content-Type: application/json; charset=utf-8" \
+  -d '{
+"name": "FAUCET Wallet 💓",
+"mnemonic_sentence": [ "vintage", "poem", "topic", "machine", "hazard"
+    , "cement", "dune", "glimpse", "fix", "brief"
+    , "account", "badge", "mass", "silly", "business"
+    ],
+"passphrase": "Secure Passphrase",
+"address_pool_gap": 20
+}' --http1.1  |  jq
+
+curl  -vX POST http://localhost:8090/v2/wallets \
+  -H "Content-Type: application/json; charset=utf-8" \
+  -d '{
+"name": "Fresh-test pool gap",
+"mnemonic_sentence": ["cancel", "medal", "pioneer", "speak", "planet", "guitar", "crater", "elegant", "lens", "roof", "tiny", "leave", "gasp", "source", "sun"],
+"passphrase": "Secure Passphrase",
+"address_pool_gap": 20
+}' --http1.1  |  jq
+
+
+curl  -vX POST http://localhost:8090/v2/wallets \
+  -H "Content-Type: application/json; charset=utf-8" \
+  -d '{
+"name": "Wallet1",
+"mnemonic_sentence": ["identify", "screen", "lock", "bargain", "inch", "drop", "canyon", "flock", "dry", "zone", "wash", "argue", "system", "glory", "light"],
+"passphrase": "Secure Passphrase",
+"address_pool_gap": 20
+}' --http1.1  |  jq
+
+
+curl  -vX POST http://localhost:8090/v2/wallets \
+  -H "Content-Type: application/json; charset=utf-8" \
+  -d '{
+"name": "Wallet2",
+"mnemonic_sentence": ["flee", "actress", "math", "blind", "mix", "grape", "amateur", "night", "rare", "cereal", "turn", "slow", "wide", "level", "mail"],
+"passphrase": "Secure Passphrase",
+"address_pool_gap": 20
+}' --http1.1  |  jq
+
+curl  -vX POST http://localhost:8090/v2/wallets \
+  -H "Content-Type: application/json; charset=utf-8" \
+  -d '{
+"name": "Wallet3",
+"mnemonic_sentence": ["bless", "range", "clay", "where", "alert", "gas", "return", "phone", "bag", "ranch", "cabin", "list", "funny", "use", "doll"],
+"passphrase": "Secure Passphrase",
+"address_pool_gap": 20
+}' --http1.1  |  jq
+
+curl  -vX POST http://localhost:8090/v2/wallets \
+  -H "Content-Type: application/json; charset=utf-8" \
+  -d '{
+"name": "Wallet4",
+"mnemonic_sentence": ["spirit", "draw", "can", "budget", "inside", "addict", "clap", "theory", "online", "cricket", "patch", "flip", "boring", "minimum", "rescue"],
+"passphrase": "Secure Passphrase",
+"address_pool_gap": 20
+}' --http1.1  |  jq
+
+curl  -vX POST http://localhost:8090/v2/wallets \
+  -H "Content-Type: application/json; charset=utf-8" \
+  -d '{
+"name": "Wallet5",
+"mnemonic_sentence": ["worth", "rent", "atom", "mystery", "margin", "knock", "clown", "poverty", "vital", "limb", "afraid", "gorilla", "panic", "blame", "milk"],
+"passphrase": "Secure Passphrase",
+"address_pool_gap": 20
+}' --http1.1  |  jq
+
+curl  -vX POST http://localhost:8090/v2/wallets \
+  -H "Content-Type: application/json; charset=utf-8" \
+  -d '{
+"name": "Wallet6",
+"mnemonic_sentence": ["bread", "until", "spike", "list", "present", "zone", "fence", "remain", "caution", "mass", "subway", "eye", "fold", "size", "hammer"],
+"passphrase": "Secure Passphrase",
+"address_pool_gap": 20
+}' --http1.1  |  jq
+
+curl  -vX POST http://localhost:8090/v2/wallets \
+  -H "Content-Type: application/json; charset=utf-8" \
+  -d '{
+"name": "Wallet7",
+"mnemonic_sentence": ["either", "armor", "civil", "upon", "quality", "cute", "camera", "gate", "whale", "bomb", "season", "myth", "crouch", "crush", "produce"],
+"passphrase": "Secure Passphrase",
+"address_pool_gap": 20
+}' --http1.1  |  jq
+
+curl  -vX POST http://localhost:8090/v2/wallets \
+  -H "Content-Type: application/json; charset=utf-8" \
+  -d '{
+"name": "Wallet8",
+"mnemonic_sentence": ["exit", "blame", "bullet", "correct", "ginger", "double", "ripple", "shoe", "erupt", "city", "gift", "crowd", "author", "mango", "group"],
+"passphrase": "Secure Passphrase",
+"address_pool_gap": 20
+}' --http1.1  |  jq
+
+curl  -vX POST http://localhost:8090/v2/wallets \
+  -H "Content-Type: application/json; charset=utf-8" \
+  -d '{
+"name": "Wallet9",
+"mnemonic_sentence": ["hurdle", "mobile", "shadow", "wear", "spatial", "wise", "oak", "embark", "army", "cupboard", "gravity", "lava", "garment", "such", "twenty"],
+"passphrase": "Secure Passphrase",
+"address_pool_gap": 20
+}' --http1.1  |  jq
+
+curl  -vX POST http://localhost:8090/v2/wallets \
+  -H "Content-Type: application/json; charset=utf-8" \
+  -d '{
+"name": "Wallet10",
+"mnemonic_sentence": ["lend", "wonder", "brother", "hope", "soup", "jeans", "screen", "raw", "report", "cheese", "mule", "uncover", "toe", "stomach", "suggest"],
+"passphrase": "Secure Passphrase",
+"address_pool_gap": 20
+}' --http1.1  |  jq
+
+byron - restore
+
+curl  -vX POST http://localhost:8090/v2/byron-wallets \
+  -H "Content-Type: application/json; charset=utf-8" \
+  -d '{
+"name": "Byron1",
+"mnemonic_sentence": ["rotate", "machine", "travel", "safe", "expire", "leopard", "wink", "vault", "borrow", "digital", "wisdom", "harsh"],
+"passphrase": "Secure Passphrase"
+}' --http1.1  |  jq
+
+curl  -vX POST http://localhost:8090/v2/byron-wallets \
+  -H "Content-Type: application/json; charset=utf-8" \
+  -d '{
+"name": "Byron2",
+"mnemonic_sentence": ["amused", "auto", "all", "believe", "member", "matter", "expose", "song", "awake", "chief", "flight", "vanish"],
+"passphrase": "Secure Passphrase"
+}' --http1.1  |  jq
+
+curl  -vX POST http://localhost:8090/v2/byron-wallets \
+  -H "Content-Type: application/json; charset=utf-8" \
+  -d '{
+"name": "Byron Faucet",
+"mnemonic_sentence": ["suffer", "decorate", "head", "opera", "yellow", "debate", "visa", "fire", "salute", "hybrid", "stone", "smart"],
+"passphrase": "Secure Passphrase"
+}' --http1.1  |  jq
+
+old
+
+
+curl  -X POST https://localhost:44039/api/v1/wallets \
+  -H "Accept: application/json; charset=utf-8" \
+  -H "Content-Type: application/json; charset=utf-8" \
+  --cert ~/.local/share/Daedalus/testnet/tls/client/client.pem \
+  --cacert ~/.local/share/Daedalus/testnet/tls/client/ca.crt \
+  -d '{
+  "operation": "create",
+  "backupPhrase":["amused", "auto", "all", "believe", "member", "matter", "expose", "song", "awake", "chief", "flight", "vanish"],
+  "assuranceLevel": "normal",
+  "name": "Testnet random"
+}'  |  jq
+
+
+curl  -X POST https://localhost:44039/api/v1/wallets \
+  -H "Accept: application/json; charset=utf-8" \
+  -H "Content-Type: application/json; charset=utf-8" \
+  --cert ~/.local/share/Daedalus/testnet/tls/client/client.pem \
+  --cacert ~/.local/share/Daedalus/testnet/tls/client/ca.crt \
+  -d '{
+  "operation": "create",
+  "backupPhrase":["rotate", "machine", "travel", "safe", "expire", "leopard", "wink", "vault", "borrow", "digital", "wisdom", "harsh"],
+  "assuranceLevel": "normal",
+  "name": "Testnet random 2"
+}'  |  jq
+
+
+curl  -X POST https://localhost:44039/api/v1/wallets \
+  -H "Accept: application/json; charset=utf-8" \
+  -H "Content-Type: application/json; charset=utf-8" \
+  --cert ~/.local/share/Daedalus/testnet/tls/client/client.pem \
+  --cacert ~/.local/share/Daedalus/testnet/tls/client/ca.crt \
+  -d '{
+  "operation": "create",
+  "backupPhrase":["panther", "staff", "cruel", "enhance", "morning", "brand", "enact", "warm", "fix", "shove", "crisp", "kid"],
+  "assuranceLevel": "normal",
+  "name": "Testnet random 3"
+}'  |  jq
+

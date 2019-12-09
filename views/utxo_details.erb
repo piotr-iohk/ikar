@@ -1,0 +1,17 @@
+<%
+  utxo = session[:utxo] if session[:utxo]
+  wal = session[:wal] if session[:wal]
+%>
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="../../../chartkick.js" type="text/javascript"></script>
+
+<div class="list-group">
+    <div class="list-group-item">
+      <small><a href="/wallets/<%= wal['id']%>/utxo">refresh</a></small> | <small><a href="/wallets/<%= wal['id']%>">go back to wallet</a></small>
+      <div class="card">
+          <div class="card-body">
+              <%= column_chart utxo['distribution'].sort, title: "#{wal['name']} UTxO distribution" %>
+          </div>
+      </div>
+    </div>
+</div>

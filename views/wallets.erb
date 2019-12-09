@@ -1,0 +1,69 @@
+<% 
+wallets = session[:wallets] 
+exit unless wallets
+path_info = request.env['PATH_INFO'].to_s
+byron_ep = "/byron-wallets"
+shelley_ep = "/wallets"
+%>
+<div class="list-group">
+  <div class="list-group-item">
+     <%= "Shelley wallets: #{wallets.size} " unless path_info.include? "byron" %> 
+     <%= "Byron wallets: #{wallets.size} " if path_info.include? "byron" %> 
+     <small>
+       <a href="<%= (path_info.include? "byron") ? byron_ep : shelley_ep %>">refresh</a>
+     </small>
+       |
+     <small>
+       <a href="<%= (path_info.include? "byron") ? "#{byron_ep}-create" : "#{shelley_ep}-create" %>">create</a>
+     </small>
+       |
+     <small>
+       <a href="<%= (path_info.include? "byron") ? "#{byron_ep}-create-many" : "#{shelley_ep}-create-many" %>">create many</a>
+     </small>
+       |
+     <small>
+       <a href="<%= (path_info.include? "byron") ? "#{byron_ep}-delete-all" : "#{shelley_ep}-delete-all" %>">delete all</a>
+     </small>
+  </div>
+<%
+wallets.each do |wal|
+  id = wal['id']
+  name = wal['name']
+  status = wal['state']['status']
+  deleg_status = wal['delegation']['status'] if wal['delegation']
+%>
+
+  <div class="list-group-item">
+    <div class="d-flex w-100 justify-content-between">
+      <h5 class="mb-1">
+        <a href="/<%= deleg_status ? "wallets" : "byron-wallets" %>/<%= id %>"><%= name %></a>
+      </h5>
+    </div>
+    <b>Balance:</b> (Total: <%= wal['balance']['total']['quantity'] %>
+                           , Available: <%= wal['balance']['available']['quantity']%>
+                           <%= ", Rewards: #{wal['balance']['reward']['quantity']}" if wal['balance']['reward']%>)
+    <br/>
+    <small><b>ID:</b> <%= id %></small><br/>
+    <small>
+      <b>Status:</b> <%= status %>
+                     <%= status == "syncing" ? ", Progress: #{wal['state']['progress']['quantity']}%" : ""%>
+    </small><br/>
+    <small>
+      <b>Tip:</b> (Height: <%= wal['tip']['height']['quantity'] %>
+                  , Epoch: <%= wal['tip']['epoch_number'] %>
+                  , Slot: <%= wal['tip']['slot_number'] %>)
+    </small><br/>
+    <%# Display this only for Shelley wallets %>
+    <% if deleg_status %>
+      <small><b>Delegation:</b> <%= deleg_status %>
+        <%= deleg_status == "delegating" ? ", Target: #{wal['delegation']['target']}" : ""%>
+      </small><br/>
+
+    <% end %>
+    
+  </div>
+
+<% 
+  end
+%>
+</div>

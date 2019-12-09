@@ -1,0 +1,39 @@
+<%
+  url_path = request.env['PATH_INFO'].to_s
+  byron_ep = "/byron-wallets-create-many"
+  shelley_ep = "/wallets-create-many"
+%>
+<div class="list-group">
+  <div class="list-group-item">
+    <form action="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>" method="POST">
+      <div class="form-group">
+        <label for="pass">How many?</label>
+        <input type="text" class="form-control" name="how_many" id="how_many" placeholder="How many?" value="10">
+      </div>
+      <div class="form-group">
+        <label for="wal_name">Wallet name prefix</label>
+        <input type="text" class="form-control" name="wal_name" id="wal_name" placeholder="Wallet Name" value="My Test Wallet">
+      </div>
+      
+      <div class="form-group">
+        <label for="pass">Passphrase</label>
+        <input type="text" class="form-control" name="pass" id="pass" placeholder="Passphrase" value="Secure Passphrase">
+      </div>
+      
+      <%# Don't show address pool gap for Byron wallets %>
+      <% unless url_path.include? "byron" %>
+          <div class="form-group">
+            <label for="pool_gap">Address pool gap</label>
+            <select class="form-control" name="pool_gap" id="pool_gap">
+              <% 10.upto 100 do |i| %>
+              <option <%= i == 20 ? "selected" : "" %> <%= "value=\"#{i}\">#{i}" %></option>
+              
+              <% end %>
+            </select>
+          </div>
+      <% end %>
+      
+      <button type="submit" class="btn btn-success">Create</button>
+    </form>
+  </div>
+</div>
