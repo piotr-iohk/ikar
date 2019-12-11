@@ -19,7 +19,7 @@ stake_pools = session[:stake_pools]
         <% if s['metadata'] %>
           <small><b>Metadata:</b></small></br>
           <small>&nbsp;&nbsp;<b>Homepage:</b> 
-            <%= s['metadata']['homepage']%>
+          <a href="<%= s['metadata']['homepage']%>" target="_blank"><%= s['metadata']['homepage']%></a>
           </small></br>
           <small>&nbsp;&nbsp;<b>Name:</b> 
             <%= s['metadata']['name']%>

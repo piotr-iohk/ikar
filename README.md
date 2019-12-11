@@ -1,6 +1,6 @@
 # Icarus
 
-A helper web-app and cli to test wallet backend.
+A helper web-app and cli to test [cardano wallet backend](https://github.com/input-output-hk/cardano-wallet).
 
 ### To start using
 
