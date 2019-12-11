@@ -15,6 +15,30 @@ stake_pools = session[:stake_pools]
         <small><b>Apparent performance:</b> <%= s['apparent_performance'] %></small><br/>
         <small><b>Controlled stake:</b> <%= s['metrics']['controlled_stake']['quantity'] if s['metrics'] %></small><br/>
         <small><b>Produced blocks:</b> <%= s['metrics']['produced_blocks']['quantity'] if s['metrics'] %></small><br/>
+        
+        <% if s['metadata'] %>
+          <small><b>Metadata:</b></small></br>
+          <small>&nbsp;&nbsp;<b>Homepage:</b> 
+            <%= s['metadata']['homepage']%>
+          </small></br>
+          <small>&nbsp;&nbsp;<b>Name:</b> 
+            <%= s['metadata']['name']%>
+          </small></br>
+          <small>&nbsp;&nbsp;<b>Owner:</b> 
+            <%= s['metadata']['owner']%>
+          </small></br>
+          <small>&nbsp;&nbsp;<b>Pledge address:</b> 
+            <%= s['metadata']['pledge_address']%>
+          </small></br>
+          <small>&nbsp;&nbsp;<b>Ticker:</b> 
+            <%= s['metadata']['ticker']%>
+          </small></br>
+          <small>&nbsp;&nbsp;<b>Description:</b> 
+            <%= s['metadata']['description']%>
+          </small></br>
+        <% else %>
+          <small><b style="text-color:red">No metadata.</b></small></br>
+        <% end %>
         <small>
             <a href="/stake-pools-join?sid=<%= s['id']%>">join</a> 
           | <a href="/stake-pools-quit?sid=<%= s['id']%>">quit</a>
