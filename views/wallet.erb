@@ -1,6 +1,8 @@
 <% 
+  url_path = request.env['PATH_INFO'].to_s
   wal = session[:wal] if session[:wal]
   utxo = session[:utxo] if session[:utxo]
+  delegation_fee = session[:delegation_fee]
   
   exit unless wal
   
@@ -26,13 +28,27 @@
         </div>
     </div>
 </div>
+<% unless url_path.include? "byron" %>
+<div class="modal fade" id="delegation-fee" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                Delegation fee: <%= "<b>#{delegation_fee['amount'] ? delegation_fee['amount']['quantity'] : delegation_fee}</b>" %>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<% end %>
 
  <div class="list-group">
    <div class="list-group-item">
           
-     <% if deleg_status %>
+     <% unless url_path.include? "byron" %>
          <nav class="nav nav-tabs">
-           <a class="nav-link" href="/<%= deleg_status ? "wallets" : "byron-wallets" %>">List All Shelley</a>
+           <a class="nav-link" href="/wallets">List All Shelley</a>
            <div>
              <a class="nav-link dropdown-toggle" 
                data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Manage</a>
@@ -51,15 +67,23 @@
              </div>
            </div>
            <a class="nav-link disabled" href="/tx-fee">Estimate Tx</a>
-           <a class="nav-link" href="/stake-pools-join?wid=<%= wal['id']%>">Join SP</a>
-           <a class="nav-link" 
-              href="/stake-pools-quit<%="?wid=#{wal['id']}"%><%= "&sid=#{wal['delegation']['target']}" if wal['delegation']%>">Quit SP</a>       
+           <div>           
+             <a class="nav-link dropdown-toggle" 
+               data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Delegation</a>
+             <div class="dropdown-menu">
+               <a class="dropdown-item" href="/stake-pools-join?wid=<%= wal['id']%>">Join SP</a>
+               <a class="dropdown-item" 
+                  href="/stake-pools-quit<%="?wid=#{wal['id']}"%><%= "&sid=#{wal['delegation']['target']}" if wal['delegation']%>">Quit SP</a>       
+               <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delegation-fee">Delegation Fee</a>
+             </div>
+           </div>
+
            <a class="nav-link" href="/wallets/<%= wal['id']%>/utxo">UTxO</a>  
            <!-- <a class="nav-link" href="#" onClick="showIt('utxo_show')">UTxO</a>   -->
          </nav>
     <% else %>
         <nav class="nav nav-tabs">
-          <a class="nav-link" href="/<%= deleg_status ? "wallets" : "byron-wallets" %>">List All Byron</a>
+          <a class="nav-link" href="/byron-wallets">List All Byron</a>
           <a class="nav-link" href="#" data-toggle="modal" data-target="#confirm-delete">Delete</a>
           <a class="nav-link disabled"  href="/migrate">Migrate</a>
           <a class="nav-link disabled"  href="/migrate-fee">Migration Fee</a>
@@ -295,5 +319,3 @@
  
    </div>
  </div>
-
-

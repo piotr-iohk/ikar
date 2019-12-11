@@ -27,6 +27,10 @@ class NewWalletBackend
     self.class.get("#{@api}/wallets/#{wid}/statistics/utxos")
   end
   
+  def fee_stake_pools(wid)
+    self.class.get("#{@api}/wallets/#{wid}/delegations/fees")
+  end
+  
   def get_stake_pools
     self.class.get("#{@api}/stake-pools")
   end
