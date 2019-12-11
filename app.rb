@@ -65,6 +65,7 @@ get "/wallets/:wal_id" do
   session[:wal] = w.wallet params[:wal_id]
   session[:txs] = w.transactions params[:wal_id]
   session[:addrs] = w.addresses params[:wal_id]
+  session[:delegation_fee] = w.fee_stake_pools params[:wal_id]
   erb :wallet, { :locals => session }  
 end
 
@@ -254,6 +255,8 @@ end
 
 post "/gen-mnemonics" do
   case params[:words_count]
+    when '9'
+      bits = 96
     when '12'
       bits = 128
     when '15'
