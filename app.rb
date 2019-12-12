@@ -36,8 +36,8 @@ def handle_api_err(r, session)
 end
 
 get "/" do
-  session[:wallet_port] = "8090" unless session[:wallet_port]
-  session[:jorm_port] = "8080" unless session[:jorm_port]
+  session[:wallet_port] ||= "8090" 
+  session[:jorm_port] ||= "8080" 
   erb :index, { :locals => session }  
 end
 

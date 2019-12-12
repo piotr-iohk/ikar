@@ -82,19 +82,6 @@ def display_stats_wallet (wal_id, type = :shelley, moreStats = false)
     tx_pending = txs.select{ |t| t['status'] == "pending" }
     puts "   Pending: " + tx_pending.size.to_s
     puts "   Sum of pending amounts: #{tx_pending.map{|tx| tx['amount']['quantity'].to_i}.sum}"
-      # tx_pending.each do |tx|
-      #    puts "    ID: #{tx['id']}"
-      #    puts "      Direction: #{tx['direction']}"
-      #    puts "      Pending since: "
-      #    puts "         Epoch: #{tx['pending_since']['block']['epoch_number']} - Slot: #{tx['pending_since']['block']['slot_number']}"
-      #    puts "         Block: #{tx['pending_since']['block']['height']['quantity']}"
-      #    puts "      Amount: #{tx['amount']['quantity']}"
-      #    puts "      Inputs:"
-      #    puts "        Sum of inputs: #{tx['inputs'].map {|i| i['amount']['quantity'].to_i}.sum}"
-      #    tx['inputs'].each do |input|
-      #      puts "          - #{input['amount']['quantity']}"
-      #    end
-      # end
     puts "   InLedger: " + txs.select{ |t| t['status'] == "in_ledger" }.size.to_s
     puts "  Direction:"
     puts "   Incoming: " + txs.select{ |t| t['direction'] == "incoming" }.size.to_s
