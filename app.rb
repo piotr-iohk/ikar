@@ -89,7 +89,8 @@ post "/wallets-create" do
   pool_gap = params[:pool_gap].to_i
   
   wal = w.create_wallet(m, pass, name, pool_gap)
-  session[:wal] = w.wallet wal['id'] if wal['id']
+  handle_api_err wal, session
+  session[:wal] = wal
   handle_api_err wal, session
   
   redirect "/wallets/#{wal['id']}" 
@@ -208,6 +209,8 @@ end
 get "/byron-wallets/:wal_id" do
   w = NewWalletBackend.new session[:wallet_port], params[:wal_id]
   session[:wal] = w.byron_wallet params[:wal_id]
+  session[:txs] = w.byron_transactions params[:wal_id]
+  
   erb :wallet, { :locals => session }  
 end
 
@@ -265,6 +268,45 @@ post "/byron-wallets-delete-all" do
     handle_api_err r, session
   end
   redirect "/byron-wallets"   
+end
+
+get "/byron-wallets-migrate" do
+  w = NewWalletBackend.new session[:wallet_port]
+  session[:wallets] = w.wallets
+  session[:byron_wallets] = w.byron_wallets
+  erb :form_migrate_byron, { :locals => session }
+end
+
+post "/byron-wallets-migrate" do
+  wid_src = params[:wid_src]
+  wid_dst = params[:wid_dst]
+  pass = params[:pass]
+  
+  w = NewWalletBackend.new session[:wallet_port]
+  r = w.migrate_byron_wallet(wid_src, wid_dst, pass)  
+  handle_api_err(r, session) if r.to_s.include? "code"
+  
+  session[:txs] = r
+  session[:wid_src] = wid_src
+  session[:wid_dst] = wid_dst
+  erb :byron_migrated, { :locals => session }
+end
+
+get "/byron-wallets/:wal_id/txs/:tx_id" do
+  w = NewWalletBackend.new session[:wallet_port]
+  session[:wid] = params[:wal_id]
+  session[:tx] = w.byron_transactions(params[:wal_id]).select{ |tx| tx['id'] == params[:tx_id]}[0]
+  erb :tx_details, { :locals => session }
+end
+
+get "/byron-wallets/:wal_id/forget-tx/:tx_to_forget_id" do
+  w = NewWalletBackend.new session[:wallet_port]
+  id = params[:wal_id]
+  txid = params[:tx_to_forget_id]
+  r = w.byron_forget_transaction id, txid
+  handle_api_err r, session
+  session[:forgotten] = txid
+  redirect "/byron-wallets/#{id}"
 end
 
 # MNEMONICS

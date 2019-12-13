@@ -1,0 +1,33 @@
+<%
+wallets = session[:wallets] if session[:wallets]
+byron_wallets = session[:byron_wallets] if session[:byron_wallets]
+wid = params[:wid] if params[:wid]
+%>
+<div class="list-group">
+  <div class="list-group-item">
+    <form action="/byron-wallets-migrate" method="POST">
+      <div class="form-group">
+        <label for="wid_src">Source Byron Wallet</label>
+        <select class="form-control" name="wid_src" id="wid_src">
+          <% byron_wallets.each do |w| %>
+          <option <%= wid == w['id'] ? "selected" : "" %> value="<%= w['id'] %>"> 
+            <%= "#{w['name']} [id: #{w['id']}, balance available: #{w['balance']['available']['quantity']}]" %> 
+          </option>      
+          <% end %>
+        </select>   
+        <label for="pass">Passphrase</label>
+        <input type="text" class="form-control" name="pass" id="pass" placeholder="Passphrase" value="Secure Passphrase">   
+      </div>
+
+      <div class="form-group">
+        <label for="wid_dst">Destination Shelley Wallet</label>
+        <select class="form-control" name="wid_dst" id="wid_dst">
+          <% wallets.each do |w| %>
+            <option value="<%= w['id'] %>"> <%= "#{w['name']} [id: #{w['id']}, balance total: #{w['balance']['total']['quantity']}]" %> </option>      
+          <% end %>
+        </select> 
+      </div>
+      <button type="submit" class="btn btn-success">Migrate Funds</button>
+    </form>
+  </div>
+</div>

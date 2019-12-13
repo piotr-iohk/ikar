@@ -85,8 +85,8 @@
         <nav class="nav nav-tabs">
           <a class="nav-link" href="/byron-wallets">List All Byron</a>
           <a class="nav-link" href="#" data-toggle="modal" data-target="#confirm-delete">Delete</a>
-          <a class="nav-link disabled"  href="/migrate">Migrate</a>
-          <a class="nav-link disabled"  href="/migrate-fee">Migration Fee</a>
+          <a class="nav-link"  href="/byron-wallets-migrate<%="?wid=#{wal['id']}"%>">Migrate</a>
+          <a class="nav-link disabled"  href="/byron-wallets-fee">Migration Fee</a>
         </nav>
     <% end %>
 
@@ -177,7 +177,7 @@
            <div class="list-group-item">
              Txs total:<br/>
              <% txs.each do |tx| %>
-                <small><b>ID: </b><a href="<%= "/wallets/#{id}/txs/#{tx['id']}" %>"><%= tx['id']%></a></small><br/>
+                <small><b>ID: </b><a href="<%= (url_path.include? "byron") ? "/byron-wallets" : "/wallets" %><%= "/#{id}/txs/#{tx['id']}" %>"><%= tx['id']%></a></small><br/>
                 <% if tx['inserted_at']%>
                     <small><b>Inserted at: </b></small><br/>
                     <small>&nbsp;&nbsp;<b>Time: </b><%= tx['inserted_at']['time'] %></small><br/>
@@ -205,7 +205,7 @@
            <div class="list-group-item">
              Txs pending:<br/>
              <% txs_pending.each do |tx| %>
-                <small><b>ID: </b><a href="<%= "/wallets/#{id}/txs/#{tx['id']}" %>"><%= tx['id']%></a></small><br/>
+                <small><b>ID: </b><a href="<%= (url_path.include? "byron") ? "/byron-wallets" : "/wallets" %><%= "/#{id}/txs/#{tx['id']}" %>"><%= tx['id']%></a></small><br/>
                 <% if tx['inserted_at']%>
                     <small><b>Inserted at: </b></small><br/>
                     <small>&nbsp;&nbsp;<b>Time: </b><%= tx['inserted_at']['time'] %></small><br/>
@@ -233,7 +233,7 @@
            <div class="list-group-item">
              Txs in ledger:<br/>
              <% txs_inledger.each do |tx| %>
-                <small><b>ID: </b><a href="<%= "/wallets/#{id}/txs/#{tx['id']}" %>"><%= tx['id']%></a></small><br/>
+                <small><b>ID: </b><a href="<%= (url_path.include? "byron") ? "/byron-wallets" : "/wallets" %><%= "/#{id}/txs/#{tx['id']}" %>"><%= tx['id']%></a></small><br/>
                 <% if tx['inserted_at']%>
                     <small><b>Inserted at: </b></small><br/>
                     <small>&nbsp;&nbsp;<b>Time: </b><%= tx['inserted_at']['time'] %></small><br/>
@@ -261,7 +261,7 @@
            <div class="list-group-item">
              Txs incoming:<br/>
              <% txs_in.each do |tx| %>
-                <small><b>ID: </b><a href="<%= "/wallets/#{id}/txs/#{tx['id']}" %>"><%= tx['id']%></a></small><br/>
+                <small><b>ID: </b><a href="<%= (url_path.include? "byron") ? "/byron-wallets" : "/wallets" %><%= "/#{id}/txs/#{tx['id']}" %>"><%= tx['id']%></a></small><br/>
                 <% if tx['inserted_at']%>
                     <small><b>Inserted at: </b></small><br/>
                     <small>&nbsp;&nbsp;<b>Time: </b><%= tx['inserted_at']['time'] %></small><br/>
@@ -289,7 +289,7 @@
            <div class="list-group-item">
              Txs outgoing:<br/>
              <% txs_out.each do |tx| %>
-                <small><b>ID: </b><a href="<%= "/wallets/#{id}/txs/#{tx['id']}" %>"><%= tx['id']%></a></small><br/>
+                <small><b>ID: </b><a href="<%= (url_path.include? "byron") ? "/byron-wallets" : "/wallets" %><%= "/#{id}/txs/#{tx['id']}" %>"><%= tx['id']%></a></small><br/>
                 <% if tx['inserted_at']%>
                     <small><b>Inserted at: </b></small><br/>
                     <small>&nbsp;&nbsp;<b>Time: </b><%= tx['inserted_at']['time'] %></small><br/>

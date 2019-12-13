@@ -75,6 +75,20 @@ class NewWalletBackend
     :headers => { 'Content-Type' => 'application/json' } )
   end
   
+  def byron_forget_transaction(wid, txid)
+    self.class.delete("#{@api}/byron-wallets/#{wid}/transactions/#{txid}")
+  end
+  
+  def migrate_byron_wallet(srcWid, dstWid, passphrase)
+    self.class.post("#{@api}/byron-wallets/#{srcWid}/migrations/#{dstWid}", 
+      :body => { :passphrase => passphrase }.to_json,
+      :headers => { 'Content-Type' => 'application/json' } )
+  end
+  
+  def migration_cost_byron_wallet(srcWid)
+    self.class.get("#{@api}/byron-wallets/#{srcWid}/migrations" )
+  end
+  
   def create_byron_wallet(mnemonics, passphrase, name)
     self.class.post("#{@api}/byron-wallets", 
     :body => { :name => name,

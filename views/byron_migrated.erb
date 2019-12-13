@@ -1,0 +1,16 @@
+<% 
+txs = session[:txs]
+wid_src = session[:wid_src]
+wid_dst = session[:wid_dst]
+
+%>
+      <div class="alert alert-success" role="alert">
+        Funds migrated successfully using <%= txs.size %> tx.
+      </div>
+      
+      <div class="list-group">
+        <div class="list-group-item">
+           <small><a href="/byron-wallets/<%= wid_src %>">go to Byron Wallet (src)</a></small>
+           | <small><a href="/wallets/<%= wid_dst %>">go to Shelley Wallet (dest)</a></small>
+        </div>
+      </div>    
