@@ -29,7 +29,7 @@ shelley_ep = "/wallets"
 wallets.each do |wal|
   id = wal['id']
   name = wal['name']
-  status = wal['state']['status']
+  status = wal['state']['status'] if wal['state']
   deleg_status = wal['delegation']['status'] if wal['delegation']
 %>
 
@@ -39,9 +39,9 @@ wallets.each do |wal|
         <a href="/<%= deleg_status ? "wallets" : "byron-wallets" %>/<%= id %>"><%= name %></a>
       </h5>
     </div>
-    <b>Balance:</b> (Total: <%= wal['balance']['total']['quantity'] %>
-                           , Available: <%= wal['balance']['available']['quantity']%>
-                           <%= ", Rewards: #{wal['balance']['reward']['quantity']}" if wal['balance']['reward']%>)
+    <b>Balance:</b> (Total: <%= wal['balance']['total']['quantity'] if wal['balance'] %>
+                           , Available: <%= wal['balance']['available']['quantity'] if wal['balance'] %>
+                           <%= ", Rewards: #{wal['balance']['reward']['quantity']}" if wal['balance']['reward'] %>)
     <br/>
     <small><b>ID:</b> <%= id %></small><br/>
     <small>
@@ -49,9 +49,9 @@ wallets.each do |wal|
                      <%= status == "syncing" ? ", Progress: #{wal['state']['progress']['quantity']}%" : ""%>
     </small><br/>
     <small>
-      <b>Tip:</b> (Height: <%= wal['tip']['height']['quantity'] %>
-                  , Epoch: <%= wal['tip']['epoch_number'] %>
-                  , Slot: <%= wal['tip']['slot_number'] %>)
+      <b>Tip:</b> (Height: <%= wal['tip']['height']['quantity'] if wal['tip'] %>
+                  , Epoch: <%= wal['tip']['epoch_number'] if wal['tip'] %>
+                  , Slot: <%= wal['tip']['slot_number'] if wal['tip'] %>)
     </small><br/>
     <%# Display this only for Shelley wallets %>
     <% if deleg_status %>

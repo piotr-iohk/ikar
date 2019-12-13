@@ -1,6 +1,5 @@
 require 'sinatra'
 require 'bip_mnemonic'
-require 'json'
 require 'chartkick'
 
 require_relative './models/wallet_backend'
@@ -18,7 +17,9 @@ def show_session
 end
 
 def prepare_mnemonics(mn)
-  if mn.include? ","
+  if mn.include? "["
+    mn
+  elsif mn.include? ","
     mn.split(",").map {|w| w.strip} 
   else
     mn.split 
@@ -26,7 +27,7 @@ def prepare_mnemonics(mn)
 end
 
 def handle_api_err(r, session)
-  if r['code']
+  if r.to_s.include? "code"
     j = JSON.parse r.to_s
     session[:error] = "Something went wrong! 
                        Wallet backend responded with: 
@@ -56,7 +57,9 @@ end
 
 get "/wallets" do
   w = NewWalletBackend.new session[:wallet_port]
-  session[:wallets] = w.wallets
+  r = w.wallets
+  handle_api_err r, session
+  session[:wallets] = r
   erb :wallets, { :locals => session }  
 end
 
@@ -284,7 +287,7 @@ post "/byron-wallets-migrate" do
   
   w = NewWalletBackend.new session[:wallet_port]
   r = w.migrate_byron_wallet(wid_src, wid_dst, pass)  
-  handle_api_err(r, session) if r.to_s.include? "code"
+  handle_api_err(r, session) 
   
   session[:txs] = r
   session[:wid_src] = wid_src
