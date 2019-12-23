@@ -4,6 +4,8 @@ sort_by = params[:sort_by] if params[:sort_by]
 case sort_by
 when "blocks"
   sp = stake_pools.sort_by {|s| -s['metrics']['produced_blocks']['quantity']}
+when "stake"
+  sp = stake_pools.sort_by {|s| -s['metrics']['controlled_stake']['quantity']}
 when "cost"
   sp = stake_pools.sort_by {|s| -s['cost']['quantity']}
 when "margin"
@@ -18,6 +20,7 @@ end
      <%= "Stake pools: #{stake_pools.size}" %> 
      <small><a href="/stake-pools">by performance</a></small>
      | <small><a href="/stake-pools?sort_by=blocks">by produced blocks</a></small>
+     | <small><a href="/stake-pools?sort_by=stake">by controlled stake</a></small>
      | <small><a href="/stake-pools?sort_by=cost">by cost</a></small>
      | <small><a href="/stake-pools?sort_by=margin">by margin</a></small>
   </div>
