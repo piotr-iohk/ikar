@@ -36,6 +36,24 @@ def handle_api_err(r, session)
   end
 end
 
+def bits_from_word_count wc
+  case wc
+    when '9'
+      bits = 96
+    when '12'
+      bits = 128
+    when '15'
+      bits = 164
+    when '18'
+      bits = 196
+    when '21'
+      bits = 224
+    when '24'
+      bits = 256
+  end 
+  bits
+end
+
 get "/" do
   session[:wallet_port] ||= "8090" 
   session[:jorm_port] ||= "8080" 
@@ -109,9 +127,10 @@ post "/wallets-create-many" do
   name = params[:wal_name]
   pool_gap = params[:pool_gap].to_i
   how_many = params[:how_many].to_i 
+  bits = bits_from_word_count params[:words_count]
   
   1.upto how_many do |i|
-    mnemonics = BipMnemonic.to_mnemonic(bits: 164, language: 'english').split
+    mnemonics = BipMnemonic.to_mnemonic(bits: bits, language: 'english').split
     wal = w.create_wallet(mnemonics, pass, "#{name} #{i}", pool_gap)
     handle_api_err wal, session
   end
@@ -251,9 +270,10 @@ post "/byron-wallets-create-many" do
   pass = params[:pass]
   name = params[:wal_name]
   how_many = params[:how_many].to_i 
+  bits = bits_from_word_count params[:words_count]
   
   1.upto how_many do |i|
-    mnemonics = BipMnemonic.to_mnemonic(bits: 128, language: 'english').split
+    mnemonics = BipMnemonic.to_mnemonic(bits: bits, language: 'english').split
     wal = w.create_byron_wallet(mnemonics, pass, "#{name} #{i}")    
     handle_api_err wal, session
   end
@@ -319,20 +339,7 @@ get "/gen-mnemonics" do
 end
 
 post "/gen-mnemonics" do
-  case params[:words_count]
-    when '9'
-      bits = 96
-    when '12'
-      bits = 128
-    when '15'
-      bits = 164
-    when '18'
-      bits = 196
-    when '21'
-      bits = 224
-    when '24'
-      bits = 256
-  end 
+  bits = bits_from_word_count params[:words_count]
   session[:words_count] = params[:words_count]
   session[:mnemonics] = BipMnemonic.to_mnemonic(bits: bits, language: 'english') 
   erb :form_gen_mnemonics, { :locals => session }
@@ -342,7 +349,9 @@ end
 
 get "/stake-pools" do
   w = NewWalletBackend.new session[:wallet_port]
-  session[:stake_pools] = w.get_stake_pools
+  r = w.get_stake_pools
+  handle_api_err r, session
+  session[:stake_pools] = r
   erb :stake_pools, { :locals => session }
 end
 
