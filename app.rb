@@ -27,7 +27,7 @@ def prepare_mnemonics(mn)
 end
 
 def handle_api_err(r, session)
-  if r.to_s.include? "code"
+  unless [200, 201, 202, 204].include? r.code
     j = JSON.parse r.to_s
     session[:error] = "Something went wrong! 
                        Wallet backend responded with: 
