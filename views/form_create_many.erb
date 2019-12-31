@@ -16,6 +16,9 @@
           <% if (url_path.include? "byron") %>
             <option value="12" selected >12</option>
             <option value="15">15</option>
+            <option value="18">18</option>
+            <option value="21">21</option>
+            <option value="24">24</option>
           <% else %>
             <option value="15" selected>15</option>
             <option value="18">18</option>
@@ -24,11 +27,22 @@
           <% end %>
         </select>
       </div>
+      <% if url_path.include? "byron" %>      
+        <div class="form-group">
+          <label for="style">Style</label>
+          <select class="form-control" name="style" id="style">
+            <option value="random">random</option>  
+            <option value="icarus">icarus</option>  
+            <option value="trezor">trezor</option>  
+            <option value="ledger">ledger</option>  
+          </select>
+        </div>
+      <% end %>
       <div class="form-group">
         <label for="wal_name">Wallet name prefix</label>
         <input type="text" class="form-control" name="wal_name" id="wal_name" placeholder="Wallet Name" value="My Test Wallet">
       </div>
-      
+            
       <div class="form-group">
         <label for="pass">Passphrase</label>
         <input type="text" class="form-control" name="pass" id="pass" placeholder="Passphrase" value="Secure Passphrase">

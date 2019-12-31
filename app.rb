@@ -253,8 +253,9 @@ post "/byron-wallets-create" do
   m = prepare_mnemonics params[:mnemonics]
   pass = params[:pass]
   name = params[:wal_name]
+  style = params[:style]
   
-  wal = w.create_byron_wallet(m, pass, name)
+  wal = w.create_byron_wallet(style, m, pass, "#{name} (#{style})")
   session[:wal] = w.byron_wallet wal['id'] if wal['id']
   handle_api_err wal, session
 
@@ -270,11 +271,12 @@ post "/byron-wallets-create-many" do
   pass = params[:pass]
   name = params[:wal_name]
   how_many = params[:how_many].to_i 
+  style = params[:style]
   bits = bits_from_word_count params[:words_count]
   
   1.upto how_many do |i|
     mnemonics = BipMnemonic.to_mnemonic(bits: bits, language: 'english').split
-    wal = w.create_byron_wallet(mnemonics, pass, "#{name} #{i}")    
+    wal = w.create_byron_wallet(style, mnemonics, pass, "#{name} (#{style}) #{i}")    
     handle_api_err wal, session
   end
   redirect "/byron-wallets"   

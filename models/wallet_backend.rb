@@ -89,8 +89,12 @@ class NewWalletBackend
     self.class.get("#{@api}/byron-wallets/#{srcWid}/migrations" )
   end
   
-  def create_byron_wallet(mnemonics, passphrase, name)
-    self.class.post("#{@api}/byron-wallets", 
+  def create_byron_wallet(style, mnemonics, passphrase, name)
+    styles = ["random", "icarus", "trezor", "ledger"]
+    err = "Invalid wallet style: #{style}, valid styles are: #{styles}"
+    raise err unless styles.include? style
+    
+    self.class.post("#{@api}/byron-wallets/#{style}", 
     :body => { :name => name,
                :mnemonic_sentence => mnemonics,    
                :passphrase => passphrase

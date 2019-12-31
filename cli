@@ -181,7 +181,7 @@ begin
       mnemonics12 = BipMnemonic.to_mnemonic(bits: 128, language: 'english').split
       p mnemonics12
       puts "-------------------"
-      pp w.create_byron_wallet mnemonics12, CONFIG[:pass], args['<name>']    
+      pp w.create_byron_wallet "random", mnemonics12, CONFIG[:pass], args['<name>']    
     end 
   end
   
@@ -202,7 +202,7 @@ begin
         mnemonics12 = BipMnemonic.to_mnemonic(bits: 128, language: 'english').split
         p mnemonics12
         puts "-------------------"
-        pp w.create_byron_wallet mnemonics12, CONFIG[:pass], "Byron #{i}" 
+        pp w.create_byron_wallet "random", mnemonics12, CONFIG[:pass], "Byron #{i}" 
       end   
     end 
   end

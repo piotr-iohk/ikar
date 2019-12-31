@@ -6,6 +6,18 @@
 <div class="list-group">
   <div class="list-group-item">
     <form action="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>" method="POST">
+      <% if url_path.include? "byron" %>      
+        <div class="form-group">
+          <label for="style">Style</label>
+          <select class="form-control" name="style" id="style">
+            <option value="random">random</option>  
+            <option value="icarus">icarus</option>  
+            <option value="trezor">trezor</option>  
+            <option value="ledger">ledger</option>  
+          </select>
+        </div>
+      <% end %>
+      
       <div class="form-group">
         <label for="wal_name">Wallet name</label>
         <input type="text" class="form-control" name="wal_name" id="wal_name" placeholder="Wallet Name" value="My Test Wallet">
