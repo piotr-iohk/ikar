@@ -6,6 +6,7 @@ require_relative './models/wallet_backend'
 require_relative './models/jormungandr'
 
 set :port, 4444
+set :bind, '0.0.0.0'
 set :root, File.dirname(__FILE__)
 
 enable :sessions
@@ -31,7 +32,7 @@ def handle_api_err(r, session)
     j = JSON.parse r.to_s
     session[:error] = "Something went wrong! 
                        Wallet backend responded with: 
-                       #{j['code']}, #{j['message']}"
+                       #{j}"
     redirect "/"
   end
 end
@@ -408,7 +409,7 @@ get "/network-stats" do
   session[:jorm_stats] = j.get_node_stats if j.is_connected?
   session[:jorm_settings] = j.get_settings if j.is_connected?
   session[:network_info] = w.network_information if w.is_connected?
-
+  handle_api_err session[:network_info], session
   erb :network_stats, {:locals => session}
   
 end
