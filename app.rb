@@ -9,7 +9,8 @@ set :port, 4444
 set :bind, '0.0.0.0'
 set :root, File.dirname(__FILE__)
 
-enable :sessions
+# enable :sessions
+use Rack::Session::Pool
 
 def show_session
   session.each_with_key do |k,v|
