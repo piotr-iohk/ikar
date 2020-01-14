@@ -38,13 +38,19 @@
           <small><b>currSlotStartTime: </b>  <%= jorm_settings['currSlotStartTime'] %></small><br/>
           <% if jorm_settings['fees'] %>
           <small><b>fees: </b>  </small><br/>
-          <small>&nbsp;&nbsp;<b>certificate: </b>  <%= jorm_settings['fees']['certificate'] %></small><br/>
-          <small>&nbsp;&nbsp;<b>coefficient: </b>  <%= jorm_settings['fees']['coefficient'] %></small><br/>
-          <small>&nbsp;&nbsp;<b>constant: </b>  <%= jorm_settings['fees']['constant'] %></small><br/>
+          <small> <%= jorm_settings['fees'] %> </small><br />
           <% end %>
-          <small><b>maxTxsPerBlock: </b>  <%= jorm_settings['maxTxsPerBlock'] %></small><br/>
+          <% if jorm_settings['rewardParams'] %>
+          <small><b>rewardParams: </b></small><br/>
+          <small>  <%= jorm_settings['rewardParams'] %></small><br/>
+          <% end %>
+          
           <small><b>slotDuration: </b>  <%= jorm_settings['slotDuration'] %></small><br/>
           <small><b>slotsPerEpoch: </b>  <%= jorm_settings['slotsPerEpoch'] %></small><br/>
+          <% if jorm_settings['treasuryTax'] %>
+          <small><b>treasuryTax: </b></small><br/>
+          <small>  <%= jorm_settings['treasuryTax'] %></small><br/>
+          <% end %>
         </div>
       <% else %>
         <div class="alert alert-danger" role="alert">Cannot connect to Jörmungandr! Is port correct? [PORT = <%= session[:jorm_port] %>]</div>
