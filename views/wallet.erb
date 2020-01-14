@@ -113,25 +113,27 @@
                        , Slot: <%= wal['tip']['slot_number'] %>)
          </small><br/>
          <%# Display this only for Shelley wallets %>
-         <% if deleg_status %>
+         <% unless url_path.include? "byron" %>
            <small><b>Delegation:</b> <%= deleg_status %><br/>
              &nbsp;&nbsp;<%= deleg_status == "delegating" ? "Target: #{wal['delegation']['target']}" : ""%>
            </small><br/>
 
          <% end %>
          
-           <% 
+           <%
+           unless url_path.include? "byron" 
               if session[:addrs]
                 addresses = session[:addrs] 
                 used = addresses.select{ |a| a['state'] == "used" }
                 unused = addresses.select{ |a| a['state'] == "unused" }
             %>     
-           <small><b>Addresses:</b> <br/>
-                     &nbsp;&nbsp;<a href="#" onClick="showIt('addr')">Total:</a> <%= addresses.size %> <br/>
-                      &nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('addr_used')">Used:</a> <%= used.size %> <br/>
-                      &nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('addr_unused')">Unused:</a> <%= unused.size %> <br/>
-                    
-           </small>
+               <small><b>Addresses:</b> <br/>
+                         &nbsp;&nbsp;<a href="#" onClick="showIt('addr')">Total:</a> <%= addresses.size %> <br/>
+                          &nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('addr_used')">Used:</a> <%= used.size %> <br/>
+                          &nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('addr_unused')">Unused:</a> <%= unused.size %> <br/>
+                        
+               </small>
+            <% end %>
            <% end %>
            <% 
               if session[:txs]
