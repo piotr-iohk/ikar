@@ -92,6 +92,22 @@ get "/wallets/:wal_id" do
   erb :wallet, { :locals => session }  
 end
 
+get "/wallets-force-resync" do
+  w = NewWalletBackend.new session[:wallet_port]
+  ws = w.wallets
+  erb :form_force_resync, :locals => { :wallets => ws }   
+end
+
+post "/wallets-force-resync" do
+  w = NewWalletBackend.new session[:wallet_port]
+  wal_id = params[:wid]
+  slot_num = params[:slot_number]
+  epoch_num = params[:epoch_number]
+  ws = w.force_resync(wal_id, slot_num, epoch_num)
+  handle_api_err ws, session
+  redirect "/wallets/#{wal_id}"  
+end
+
 get "/wallets-delete/:wal_id" do
   w = NewWalletBackend.new session[:wallet_port]
   w.delete params[:wal_id]
@@ -120,7 +136,7 @@ post "/wallets-create" do
 end
 
 get "/wallets-create-many" do
-  erb :form_create_many, { :locals => session } 
+  erb :form_create_many 
 end
 
 post "/wallets-create-many" do
@@ -223,6 +239,22 @@ get "/wallets/:wal_id/txs/:tx_id" do
 end
 
 # BYRON WALLETS
+
+get "/byron-wallets-force-resync" do
+  w = NewWalletBackend.new session[:wallet_port]
+  ws = w.byron_wallets
+  erb :form_force_resync, :locals => { :wallets => ws }   
+end
+
+post "/byron-wallets-force-resync" do
+  w = NewWalletBackend.new session[:wallet_port]
+  wal_id = params[:wid]
+  slot_num = params[:slot_number]
+  epoch_num = params[:epoch_number]
+  ws = w.byron_force_resync(wal_id, slot_num, epoch_num)
+  handle_api_err ws, session
+  redirect "/byron-wallets/#{wal_id}"  
+end
 
 get "/byron-wallets" do
   w = NewWalletBackend.new session[:wallet_port]
