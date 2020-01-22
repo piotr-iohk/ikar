@@ -10,6 +10,10 @@ when "cost"
   sp = stake_pools.sort_by {|s| -s['cost']['quantity']}
 when "margin"
   sp = stake_pools.sort_by {|s| -s['margin']['quantity']}
+when "performance"
+  sp = stake_pools.sort_by {|s| -s['apparent_performance']}
+when "saturation"
+  sp = stake_pools.sort_by {|s| -s['saturation']}
 else
   sp = stake_pools
 end
@@ -18,7 +22,9 @@ end
 <div class="list-group">
   <div class="list-group-item">
      <%= "Stake pools: #{stake_pools.size}" %> 
-     <small><a href="/stake-pools">by performance</a></small>
+     <small><a href="/stake-pools">by desirability</a></small>
+     | <small><a href="/stake-pools?sort_by=performance">by performance</a></small>
+     | <small><a href="/stake-pools?sort_by=saturation">by saturation</a></small>
      | <small><a href="/stake-pools?sort_by=blocks">by produced blocks</a></small>
      | <small><a href="/stake-pools?sort_by=stake">by controlled stake</a></small>
      | <small><a href="/stake-pools?sort_by=cost">by cost</a></small>
@@ -29,7 +35,9 @@ end
         <div class="d-flex w-100 justify-content-between">
           <h5 class="mb-1"><%= "#{i + 1}: #{s['id']}" %></h5> 
         </div>
+        <small><b>Desirability:</b> <%= s['desirability'] %></small><br/>
         <small><b>Apparent performance:</b> <%= s['apparent_performance'] %></small><br/>
+        <small><b>Saturation:</b> <%= s['saturation'] %></small><br/>
         <small><b>Controlled stake:</b> <%= s['metrics']['controlled_stake']['quantity'] if s['metrics'] %> lovelace</small><br/>
         <small><b>Produced blocks:</b> <%= s['metrics']['produced_blocks']['quantity'] if s['metrics'] %></small><br/>
         <small><b>Margin:</b> <%= s['margin']['quantity'] %>%</small><br/>
