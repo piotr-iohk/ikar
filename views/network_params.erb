@@ -1,0 +1,29 @@
+<%
+ p = network_params
+%>
+<div class="list-group">
+  <div class="list-group-item">
+     Network parameters (from wallet backend)
+     <small><a href="/network-params">refresh</a></small>
+  </div>
+  <div class="list-group-item">
+    <small><b>Slot length: </b> 
+      <%= "#{p['slot_length']['quantity']} #{p['slot_length']['unit']}" %>
+    </small><br/>    
+    <small><b>Epoch stability: </b> 
+      <%= "#{p['epoch_stability']['quantity']} #{p['epoch_stability']['unit']}" %>
+    </small><br/> 
+    <small><b>Epoch length: </b> 
+      <%= "#{p['epoch_length']['quantity']} #{p['epoch_length']['unit']}" %>
+    </small><br/> 
+    <small><b>Active slot coefficient: </b> 
+      <%= "#{p['active_slot_coefficient']['quantity']} #{p['active_slot_coefficient']['unit']}" %>
+    </small><br/> 
+    <small><b>Genesis block hash: </b> 
+      <%= p['genesis_block_hash'] %>
+    </small><br/> 
+    <small><b>Blockchain start time: </b> 
+      <%= p['blockchain_start_time'] %>
+    </small><br/> 
+  </div>
+</div>

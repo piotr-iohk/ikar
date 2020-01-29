@@ -1,7 +1,8 @@
 <%
- n = session[:network_info] 
- jorm_stats = session[:jorm_stats]
- jorm_settings = session[:jorm_settings]
+ n = my[:network_info] 
+ p = my[:network_params]
+ jorm_stats = my[:jorm_stats]
+ jorm_settings = my[:jorm_settings]
 %>
 <div class="row" style="margin-top:20px; margin-left:10px;">
   <div class="col-4">
@@ -85,6 +86,35 @@
       <% else %>
         <div class="alert alert-danger" role="alert">Cannot connect to wallet backend! Is port correct? [PORT = <%= session[:wallet_port] %>]</div>
       <% end %>
+    </div>
+    
+    <!-- NETWORK PARAMETERS -->
+
+    <div class="list-group">
+      <div class="list-group-item">
+         Network parameters (from wallet backend)
+         <small>Epoch: "latest"</a></small>
+      </div>
+      <div class="list-group-item">
+        <small><b>Slot length: </b> 
+          <%= "#{p['slot_length']['quantity']} #{p['slot_length']['unit']}" %>
+        </small><br/>    
+        <small><b>Epoch stability: </b> 
+          <%= "#{p['epoch_stability']['quantity']} #{p['epoch_stability']['unit']}" %>
+        </small><br/> 
+        <small><b>Epoch length: </b> 
+          <%= "#{p['epoch_length']['quantity']} #{p['epoch_length']['unit']}" %>
+        </small><br/> 
+        <small><b>Active slot coefficient: </b> 
+          <%= "#{p['active_slot_coefficient']['quantity']} #{p['active_slot_coefficient']['unit']}" %>
+        </small><br/> 
+        <small><b>Genesis block hash: </b> 
+          <%= p['genesis_block_hash'] %>
+        </small><br/> 
+        <small><b>Blockchain start time: </b> 
+          <%= p['blockchain_start_time'] %>
+        </small><br/> 
+      </div>
     </div>
     
 

@@ -1,0 +1,14 @@
+<div class="list-group">
+  <div class="list-group-item">
+    <form action="/network-params" method="POST">
+      <div class="form-group">
+        <label for="epoch_number">Epoch Number</label>
+        <input type="text" class="form-control" name="epoch_number" id="epoch_number" 
+            placeholder="Epoch Number" value="0">
+            <small>'latest' or integer from 0 to 2147483647.</small>
+      </div>
+
+      <button type="submit" class="btn btn-success">Get Network Params</button>
+    </form>
+  </div>
+</div>

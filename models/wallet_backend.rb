@@ -23,6 +23,10 @@ class NewWalletBackend
     self.class.get("#{@api}/network/information")
   end
   
+  def network_parameters(epoch_num)
+    self.class.get("#{@api}/network/parameters/#{epoch_num}")
+  end
+  
   def get_utxo(wid)
     self.class.get("#{@api}/wallets/#{wid}/statistics/utxos")
   end

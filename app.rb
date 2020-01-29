@@ -427,6 +427,17 @@ end
 
 # MISC 
 
+get "/network-params" do
+  erb :form_network_params
+end
+
+post "/network-params" do
+  w = NewWalletBackend.new session[:wallet_port]
+  r = w.network_parameters params['epoch_number']
+  handle_api_err r, session
+  erb :network_params, :locals => { :network_params => r } 
+end
+
 get "/network-info" do
   w = NewWalletBackend.new session[:wallet_port]
   r = w.network_information
@@ -439,11 +450,13 @@ get "/network-stats" do
   j = Jormungandr.new session[:jorm_port]
   w = NewWalletBackend.new session[:wallet_port]
   
-  session[:jorm_stats] = j.get_node_stats if j.is_connected?
-  session[:jorm_settings] = j.get_settings if j.is_connected?
-  session[:network_info] = w.network_information if w.is_connected?
-  handle_api_err session[:network_info], session
-  erb :network_stats, {:locals => session}
+  my = Hash.new
+  my[:jorm_stats] = j.get_node_stats if j.is_connected?
+  my[:jorm_settings] = j.get_settings if j.is_connected?
+  my[:network_info] = w.network_information if w.is_connected?
+  my[:network_params] = w.network_parameters("latest") if w.is_connected?
+  handle_api_err my[:network_info], session
+  erb :network_stats, :locals => { :my => my }
   
 end
 
