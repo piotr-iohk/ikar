@@ -1,11 +1,5 @@
 <% 
   url_path = request.env['PATH_INFO'].to_s
-  wal = session[:wal] if session[:wal]
-  utxo = session[:utxo] if session[:utxo]
-  delegation_fee = session[:delegation_fee]
-  
-  exit unless wal
-  
   id = wal['id']
   name = wal['name']
   status = wal['state']['status'] if wal['state']
@@ -23,7 +17,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-danger btn-ok" href="<%= deleg_status ? "/wallets-delete" : "/byron-wallets-delete" %>/<%= id %>" >Delete</a>
+                <a class="btn btn-danger btn-ok" href="<%= (url_path.include? "byron") ? "/byron-wallets-delete" : "/wallets-delete" %>/<%= id %>" >Delete</a>
             </div>
         </div>
     </div>
@@ -97,7 +91,7 @@
        <div class="col-4">
          <div class="d-flex w-100 justify-content-between">
            <h5 class="mb-1">
-             <a href="/<%= deleg_status ? "wallets" : "byron-wallets" %>/<%= id %>"><%= name %></a>
+             <a href="/<%= (url_path.include? "byron") ? "byron-wallets" : "wallets" %>/<%= id %>"><%= name %></a>
            </h5>
          </div>
          <b>Balance:</b> (Total: <%= wal['balance']['total']['quantity'] %>
@@ -125,8 +119,8 @@
          
            <%
            unless url_path.include? "byron" 
-              if session[:addrs]
-                addresses = session[:addrs] 
+              if addrs
+                addresses = addrs
                 used = addresses.select{ |a| a['state'] == "used" }
                 unused = addresses.select{ |a| a['state'] == "unused" }
             %>     
@@ -139,8 +133,7 @@
             <% end %>
            <% end %>
            <% 
-              if session[:txs]
-                txs = session[:txs] 
+              if txs
                 txs_pending = txs.select{ |t| t['status'] == "pending" }
                 txs_inledger = txs.select{ |t| t['status'] == "in_ledger" }
                 txs_in = txs.select{ |t| t['direction'] == "incoming" }

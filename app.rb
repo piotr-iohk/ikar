@@ -85,11 +85,15 @@ end
 
 get "/wallets/:wal_id" do
   w = NewWalletBackend.new session[:wallet_port]
-  session[:wal] = w.wallet params[:wal_id]
-  session[:txs] = w.transactions params[:wal_id]
-  session[:addrs] = w.addresses params[:wal_id]
-  session[:delegation_fee] = w.fee_stake_pools params[:wal_id]
-  erb :wallet, { :locals => session }  
+  wal = w.wallet params[:wal_id]
+  handle_api_err wal, session
+  txs = w.transactions params[:wal_id]
+  handle_api_err txs, session
+  addrs = w.addresses params[:wal_id]
+  handle_api_err addrs, session
+  deleg_fee = w.fee_stake_pools params[:wal_id]
+  
+  erb :wallet, { :locals => { :wal => wal, :txs => txs, :addrs => addrs, :delegation_fee => deleg_fee} }  
 end
 
 get "/wallets-force-resync" do
@@ -264,10 +268,12 @@ end
 
 get "/byron-wallets/:wal_id" do
   w = NewWalletBackend.new session[:wallet_port], params[:wal_id]
-  session[:wal] = w.byron_wallet params[:wal_id]
-  session[:txs] = w.byron_transactions params[:wal_id]
-  
-  erb :wallet, { :locals => session }  
+  wallet = w.byron_wallet params[:wal_id]
+  txs = w.byron_transactions params[:wal_id]
+  handle_api_err wallet, session
+  handle_api_err txs, session
+
+  erb :wallet, { :locals => {:wal => wallet, :txs => txs} }  
 end
 
 get "/byron-wallets-delete/:wal_id" do
@@ -290,10 +296,9 @@ post "/byron-wallets-create" do
   style = params[:style]
   
   wal = w.create_byron_wallet(style, m, pass, "#{name} (#{style})")
-  session[:wal] = w.byron_wallet wal['id'] if wal['id']
   handle_api_err wal, session
 
-  erb :wallet, { :locals => session }   
+  erb :wallet, { :locals => {:wal => wal, :txs => nil} }   
 end
 
 get "/byron-wallets-create-many" do

@@ -36,7 +36,7 @@ wallets.each do |wal|
   <div class="list-group-item">
     <div class="d-flex w-100 justify-content-between">
       <h5 class="mb-1">
-        <a href="/<%= deleg_status ? "wallets" : "byron-wallets" %>/<%= id %>"><%= name %></a>
+        <a href="/<%= (path_info.include? "byron") ? "byron-wallets" : "wallets" %>/<%= id %>"><%= name %></a>
       </h5>
     </div>
     <b>Balance:</b> (Total: <%= wal['balance']['total']['quantity'] if wal['balance'] %>
