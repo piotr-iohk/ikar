@@ -30,7 +30,7 @@ wallets.each do |wal|
   id = wal['id']
   name = wal['name']
   status = wal['state']['status'] if wal['state']
-  deleg_status = wal['delegation']['status'] if wal['delegation']
+  wal['delegation'] ? has_delegation = true : has_delegation = false
 %>
 
   <div class="list-group-item">
@@ -54,11 +54,23 @@ wallets.each do |wal|
                   , Slot: <%= wal['tip']['slot_number'] if wal['tip'] %>)
     </small><br/>
     <%# Display this only for Shelley wallets %>
-    <% if deleg_status %>
-      <small><b>Delegation:</b> <%= deleg_status %>
-        <%= deleg_status == "delegating" ? ", Target: #{wal['delegation']['target']}" : ""%>
+    <% if has_delegation 
+        active_delegation = wal['delegation']['active']
+        next_delegation = wal['delegation']['next']
+    %>
+      <small><b>Delegation active:</b><br/>
+        &nbsp;&nbsp;<b>Status:</b> <%= active_delegation['status']%>
+        <%= active_delegation['status'] == "delegating" ? "<br/>&nbsp;&nbsp;<b>Target:</b> #{active_delegation['target']}" : ""%>
       </small><br/>
-
+        <% if next_delegation %>
+          <small><b>Delegation next:</b> <br/>
+            &nbsp;&nbsp;<b>Status:</b> <%= next_delegation['status']%><br/>
+            &nbsp;&nbsp;<b>Target:</b> <%= next_delegation['target']%><br/>
+            &nbsp;&nbsp;<b>Changes at:</b><br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;<b>Epoch start time:</b> <%= next_delegation['changes_at']['epoch_start_time']%><br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;<b>Epoch number:</b> <%= next_delegation['changes_at']['epoch_number']%>
+          </small><br/>
+        <% end %>
     <% end %>
     
   </div>
