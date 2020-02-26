@@ -28,12 +28,17 @@ quit_ep = "/stake-pools-quit"
 
       <div class="form-group">
         <label for="spid">Stake pool</label>
-        <select class="form-control" name="spid" id="spid">
-          <% stake_pools.each do |s| %>
-          <option <%= sid == s['id'] ? "selected" : "" %> value="<%= s['id'] %>">
-            <%= "#{s['id']} [perf: #{s['apparent_performance']}]" %></option>      
+          <% if url_path.include? "join" %>
+            <select class="form-control" name="spid" id="spid">
+              <% stake_pools.each do |s| %>
+                  <option <%= sid == s['id'] ? "selected" : "" %> value="<%= s['id'] %>">
+                    <%= "#{s['id']} [perf: #{s['apparent_performance']}]" %></option>      
+             <% end %> 
+           </select> 
           <% end %>
-        </select>
+          <% if url_path.include? "quit" %>
+           <input type="text" class="form-control" name="spid" id="spid" placeholder="*" value="*">
+          <% end %>
       </div>
 
       
