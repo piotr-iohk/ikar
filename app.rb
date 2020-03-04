@@ -466,7 +466,14 @@ get "/network-info" do
   r = w.network_information
   handle_api_err r, session
   session[:network_info] = r
-  erb :network_info, {:locals => session}
+  erb :network_info, :locals => { :network_info => r }
+end
+
+get "/network-clock" do
+  w = NewWalletBackend.new session[:wallet_port]
+  r = w.network_clock
+  handle_api_err r, session
+  erb :network_clock, :locals => { :network_clock => r }
 end
 
 get "/network-stats" do

@@ -1,5 +1,5 @@
 <%
- n = session[:network_info]
+ n = network_info
 %>
 <div class="list-group">
   <div class="list-group-item">
@@ -20,6 +20,6 @@
     </small><br/>
     <small><b>Next epoch: </b></small><br/>
     <small>&nbsp;&nbsp;<b>Epoch start time: </b><%= n['next_epoch']['epoch_start_time'] %></small><br/>
-    <small>&nbsp;&nbsp;<b>Epoch number: </b><%= n['next_epoch']['epoch_number'] %></small><br/>    
+    <small>&nbsp;&nbsp;<b>Epoch number: </b><%= n['next_epoch']['epoch_number'] %></small><br/>
   </div>
 </div>

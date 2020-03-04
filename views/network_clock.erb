@@ -1,0 +1,21 @@
+<%
+ n = network_clock
+%>
+<div class="list-group">
+  <div class="list-group-item">
+     Network clock
+     <small><a href="/network-clock">refresh</a></small>
+  </div>
+  <div class="list-group-item">
+    <small><b>Status: </b><%= n['status'] %> </small><br/>
+    <%
+      if (n['status'] == "available")
+    %>
+    <small>&nbsp;&nbsp;<b>Offset: </b>
+      <%= "#{n['offset']['quantity']} #{n['offset']['unit']}" %>
+    </small><br/>
+    <%
+      end
+    %>
+  </div>
+</div>

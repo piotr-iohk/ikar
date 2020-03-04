@@ -23,6 +23,10 @@ class NewWalletBackend
     self.class.get("#{@api}/network/information")
   end
 
+  def network_clock
+    self.class.get("#{@api}/network/clock")
+  end
+
   def network_parameters(epoch_num)
     self.class.get("#{@api}/network/parameters/#{epoch_num}")
   end
