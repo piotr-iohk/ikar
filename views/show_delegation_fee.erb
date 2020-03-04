@@ -1,0 +1,16 @@
+<%
+ df = delegation_fee
+%>
+
+<div class="list-group">
+  <div class="list-group-item">
+     Delegation fee
+     <small><a href="/stake-pools-fee/<%= wallet_id %>">refresh</a></small>
+     | <small><a href="/wallets/<%= wallet_id %>">go back to wallet</a></small>
+  </div>
+  <div class="list-group-item">
+    <small><b>Delegation fee: </b>
+      <%= "#{df['amount']['quantity']} #{df['amount']['unit']}" %>
+    </small>
+  </div>
+</div>

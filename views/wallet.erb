@@ -1,4 +1,4 @@
-<% 
+<%
   url_path = request.env['PATH_INFO'].to_s
   id = wal['id']
   name = wal['name']
@@ -20,29 +20,14 @@
         </div>
     </div>
 </div>
-<% unless url_path.include? "byron" %>
-<div class="modal fade" id="delegation-fee" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-body">
-                Delegation fee: <%= "<b>#{delegation_fee['amount'] ? delegation_fee['amount']['quantity'] : delegation_fee}</b>" %>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
-            </div>
-        </div>
-    </div>
-</div>
-<% end %>
-
  <div class="list-group">
    <div class="list-group-item">
-          
+
      <% unless url_path.include? "byron" %>
          <nav class="nav nav-tabs">
            <a class="nav-link" href="/wallets">List All Shelley</a>
            <div>
-             <a class="nav-link dropdown-toggle" 
+             <a class="nav-link dropdown-toggle"
                data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Manage</a>
              <div class="dropdown-menu">
                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#confirm-delete">Delete</a>
@@ -50,8 +35,8 @@
                <a class="dropdown-item disabled" href="/wallet-update-name">Update name</a>
              </div>
            </div>
-           <div>           
-             <a class="nav-link dropdown-toggle" 
+           <div>
+             <a class="nav-link dropdown-toggle"
                data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Tx</a>
              <div class="dropdown-menu">
                <a class="dropdown-item" href="/tx-between-wallets?wid=<%= id %>">Between my wallets</a>
@@ -59,19 +44,19 @@
                <a class="dropdown-item disabled" href="/tx-to-address?wid=<%= id %>">Tx Fee</a>
              </div>
            </div>
-           <div>           
-             <a class="nav-link dropdown-toggle" 
+           <div>
+             <a class="nav-link dropdown-toggle"
                data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Delegation</a>
              <div class="dropdown-menu">
                <a class="dropdown-item" href="/stake-pools-join?wid=<%= wal['id']%>">Join SP</a>
-               <a class="dropdown-item" 
-                  href="/stake-pools-quit<%="?wid=#{wal['id']}"%><%= "&sid=#{wal['delegation']['target']}" if wal['delegation']%>">Quit SP</a>       
-               <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delegation-fee">Delegation Fee</a>
+               <a class="dropdown-item"
+                  href="/stake-pools-quit<%="?wid=#{wal['id']}"%><%= "&sid=#{wal['delegation']['target']}" if wal['delegation']%>">Quit SP</a>
+               <a class="dropdown-item" href="/stake-pools-fee/<%= wal['id'] %>" >Delegation Fee</a>
              </div>
            </div>
 
-           <a class="nav-link" href="/wallets/<%= wal['id']%>/utxo">UTxO</a>  
-           <a class="nav-link" href="/wallets-force-resync?wid=<%= wal['id']%>">Force resync</a>  
+           <a class="nav-link" href="/wallets/<%= wal['id']%>/utxo">UTxO</a>
+           <a class="nav-link" href="/wallets-force-resync?wid=<%= wal['id']%>">Force resync</a>
            <!-- <a class="nav-link" href="#" onClick="showIt('utxo_show')">UTxO</a>   -->
          </nav>
     <% else %>
@@ -79,9 +64,9 @@
           <a class="nav-link" href="/byron-wallets">List All Byron</a>
           <a class="nav-link" href="#" data-toggle="modal" data-target="#confirm-delete">Delete</a>
           <a class="nav-link"  href="/byron-wallets-migrate<%="?wid=#{wal['id']}"%>">Migrate</a>
-          <a class="nav-link disabled"  href="/byron-wallets-fee">Migration Fee</a>
-          <a class="nav-link" href="/byron-wallets-force-resync?wid=<%= wal['id']%>">Force resync</a>  
-          
+          <a class="nav-link"  href="/byron-wallets-migration-fee/<%="#{wal['id']}"%>">Migration Fee</a>
+          <a class="nav-link" href="/byron-wallets-force-resync?wid=<%= wal['id']%>">Force resync</a>
+
         </nav>
     <% end %>
 
@@ -100,7 +85,7 @@
          <small>
            <b>Status:</b> <%= status %>
                           <%= status == "syncing" ? ", Progress: #{wal['state']['progress']['quantity']}%" : ""%>
-          
+
          </small><br/>
          <small>
            <b>Tip:</b> (Height: <%= wal['tip']['height']['quantity'] %>
@@ -108,7 +93,7 @@
                        , Slot: <%= wal['tip']['slot_number'] %>)
          </small><br/>
          <%# Display this only for Shelley wallets %>
-         <% unless url_path.include? "byron" 
+         <% unless url_path.include? "byron"
              active_delegation = wal['delegation']['active']
              next_delegation = wal['delegation']['next']
          %>
@@ -116,7 +101,7 @@
                &nbsp;&nbsp;<b>Status:</b> <%= active_delegation['status']%>
                <%= active_delegation['status'] == "delegating" ? "<br/>&nbsp;&nbsp;<b>Target:</b> #{active_delegation['target']}" : ""%>
              </small><br/>
-             <% if next_delegation 
+             <% if next_delegation
                  next_delegation.each do |n|
              %>
                <small><b>Delegation next:</b> <br/>
@@ -126,32 +111,32 @@
                  &nbsp;&nbsp;&nbsp;&nbsp;<b>Epoch start time:</b> <%= n['changes_at']['epoch_start_time']%><br/>
                  &nbsp;&nbsp;&nbsp;&nbsp;<b>Epoch number:</b> <%= n['changes_at']['epoch_number']%>
                </small><br/>
-             <%  end 
+             <%  end
                end %>
          <% end %>
-         
+
            <%
-           unless url_path.include? "byron" 
+           unless url_path.include? "byron"
               if addrs
                 addresses = addrs
                 used = addresses.select{ |a| a['state'] == "used" }
                 unused = addresses.select{ |a| a['state'] == "unused" }
-            %>     
+            %>
                <small><b>Addresses:</b> <br/>
                          &nbsp;&nbsp;<a href="#" onClick="showIt('addr')">Total:</a> <%= addresses.size %> <br/>
                           &nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('addr_used')">Used:</a> <%= used.size %> <br/>
                           &nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('addr_unused')">Unused:</a> <%= unused.size %> <br/>
-                        
+
                </small>
             <% end %>
            <% end %>
-           <% 
+           <%
               if txs
                 txs_pending = txs.select{ |t| t['status'] == "pending" }
                 txs_inledger = txs.select{ |t| t['status'] == "in_ledger" }
                 txs_in = txs.select{ |t| t['direction'] == "incoming" }
                 txs_out = txs.select{ |t| t['direction'] == "outgoing" }
-            %>   
+            %>
            <small><b>Transactions:</b>  <br/>
                  &nbsp;&nbsp;<a href="#" onClick="showIt('txs')" >Total:</a> <%= txs.size %> <br/>
                  &nbsp;&nbsp;&nbsp;&nbsp;Status: <br/>
@@ -161,8 +146,8 @@
                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('txs_in')" >Incoming:</a>  <%= txs_in.size %> <br/>
                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('txs_out')" >Outgoing:</a>  <%= txs_out.size %> <br/>
            </small><br/>
-           <% end %> 
-         
+           <% end %>
+
        </div>
        <div class="col displ_details" style="display:none" id="addr">
          <div class="list-group-item">
@@ -182,7 +167,7 @@
            <small><%= unused.map { |a| a['id'] }.join("<br/>") if addresses %></small>
          </div>
        </div>
-       
+
        <% if txs %>
          <div class="col displ_details" style="display:none" id="txs">
            <div class="list-group-item">
@@ -267,7 +252,7 @@
                 <small>---</small><br/>
              <% end %>
            </div>
-         </div>   
+         </div>
          <div class="col displ_details" style="display:none" id="txs_in">
            <div class="list-group-item">
              Txs incoming:<br/>
@@ -295,7 +280,7 @@
                 <small>---</small><br/>
              <% end %>
            </div>
-         </div>   
+         </div>
          <div class="col displ_details" style="display:none" id="txs_out">
            <div class="list-group-item">
              Txs outgoing:<br/>
@@ -327,6 +312,6 @@
        <% end %>
 
      </div>
- 
+
    </div>
  </div>

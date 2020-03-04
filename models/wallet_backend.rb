@@ -48,7 +48,7 @@ class NewWalletBackend
 
 
   def fee_stake_pools(wid)
-    self.class.get("#{@api}/wallets/#{wid}/delegations/fees")
+    self.class.get("#{@api}/wallets/#{wid}/delegation-fees")
   end
 
   def get_stake_pools

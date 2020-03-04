@@ -1,0 +1,16 @@
+<%
+ mf = migration_fee
+%>
+
+<div class="list-group">
+  <div class="list-group-item">
+     Migration fee
+     <small><a href="/byron-wallets-migration-fee/<%= wallet_id %>">refresh</a></small>
+     | <small><a href="/byron-wallets/<%= wallet_id %>">go back to wallet</a></small>
+  </div>
+  <div class="list-group-item">
+    <small><b>Migration fee: </b>
+      <%= "#{mf['migration_cost']['quantity']} #{mf['migration_cost']['unit']}" %>
+    </small>
+  </div>
+</div>

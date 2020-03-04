@@ -32,7 +32,7 @@ def handle_api_err(r, session)
   unless [200, 201, 202, 204].include? r.code
     j = JSON.parse r.to_s
     session[:error] = "Wallet backend responded with:<br/>
-                      Code = #{r.code},<br/> 
+                      Code = #{r.code},<br/>
                       Json = #{j}"
     redirect "/"
   end
@@ -91,10 +91,11 @@ get "/wallets/:wal_id" do
   handle_api_err txs, session
   addrs = w.addresses params[:wal_id]
   handle_api_err addrs, session
-  deleg_fee = w.fee_stake_pools params[:wal_id]
 
-  erb :wallet, { :locals => { :wal => wal, :txs => txs, :addrs => addrs, :delegation_fee => deleg_fee} }
+  erb :wallet, { :locals => { :wal => wal, :txs => txs, :addrs => addrs} }
 end
+
+
 
 get "/wallets-force-resync" do
   w = NewWalletBackend.new session[:wallet_port]
@@ -341,6 +342,14 @@ get "/byron-wallets-migrate" do
   erb :form_migrate_byron, { :locals => session }
 end
 
+get "/byron-wallets-migration-fee/:wal_id" do
+  w = NewWalletBackend.new session[:wallet_port]
+  wid = params[:wal_id]
+  r = w.migration_cost_byron_wallet wid
+  handle_api_err(r, session)
+  erb :show_migration_fee, { :locals => { :migration_fee => r, :wallet_id => wid} }
+end
+
 post "/byron-wallets-migrate" do
   wid_src = params[:wid_src]
   wid_dst = params[:wid_dst]
@@ -428,6 +437,15 @@ post "/stake-pools-quit" do
   r = w.quit_stake_pool sp_id, pass, w_id
   handle_api_err r, session
   redirect "/wallets/#{w_id}/txs/#{r['id']}"
+end
+
+get "/stake-pools-fee/:wal_id" do
+  w = NewWalletBackend.new session[:wallet_port]
+  wid = params['wal_id']
+  r = w.fee_stake_pools wid
+  handle_api_err r, session
+
+  erb :show_delegation_fee, { :locals => { :delegation_fee => r, :wallet_id => wid} }
 end
 
 # MISC
