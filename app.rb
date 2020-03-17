@@ -140,6 +140,25 @@ post "/wallets-create" do
   redirect "/wallets/#{wal['id']}"
 end
 
+get "/wallets-create-from-pub-key" do
+  # 15-word mnemonics
+  erb :form_create_wallet_from_pub_key, { :locals => session }
+end
+
+post "/wallets-create-from-pub-key" do
+
+  w = NewWalletBackend.new session[:wallet_port]
+  pub_key = params[:pub_key]
+  name = params[:wal_name]
+  pool_gap = params[:pool_gap].to_i
+  wal = w.create_wallet_from_pub_key(pub_key, name, pool_gap)
+  handle_api_err wal, session
+
+  redirect "/wallets/#{wal['id']}"
+end
+
+
+
 get "/wallets-create-many" do
   erb :form_create_many
 end

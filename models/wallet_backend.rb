@@ -99,6 +99,15 @@ class NewWalletBackend
     :headers => { 'Content-Type' => 'application/json' } )
   end
 
+  def create_wallet_from_pub_key(pub_key, name, pool_gap = 20)
+    self.class.post("#{@api}/wallets",
+    :body => { :name => name,
+               :account_public_key => pub_key,
+               :address_pool_gap => pool_gap
+             }.to_json,
+    :headers => { 'Content-Type' => 'application/json' } )
+  end
+
   def byron_forget_transaction(wid, txid)
     self.class.delete("#{@api}/byron-wallets/#{wid}/transactions/#{txid}")
   end
