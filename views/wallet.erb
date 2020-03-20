@@ -62,6 +62,15 @@
     <% else %>
         <nav class="nav nav-tabs">
           <a class="nav-link" href="/byron-wallets">List All Byron</a>
+          <div>
+            <a class="nav-link dropdown-toggle"
+              data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Tx</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item disabled" href="/byron-tx-between-wallets?wid=<%= id %>">Between my wallets</a>
+              <a class="dropdown-item" href="/byron-tx-to-address?wid=<%= id %>">To address</a>
+              <a class="dropdown-item disabled" href="/byron-tx-to-address?wid=<%= id %>">Tx Fee</a>
+            </div>
+          </div>
           <a class="nav-link" href="#" data-toggle="modal" data-target="#confirm-delete">Delete</a>
           <a class="nav-link"  href="/byron-wallets-migrate<%="?wid=#{wal['id']}"%>">Migrate</a>
           <a class="nav-link"  href="/byron-wallets-migration-fee/<%="#{wal['id']}"%>">Migration Fee</a>

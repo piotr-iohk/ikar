@@ -108,6 +108,44 @@ class NewWalletBackend
     :headers => { 'Content-Type' => 'application/json' } )
   end
 
+  def wallets
+    self.class.get("#{@api}/wallets")
+  end
+
+  def wallets_ids
+    wallets.map { |w| w['id'] }
+  end
+
+  def wallet (id = @wid)
+    self.class.get("#{@api}/wallets/#{id}")
+  end
+
+  def wallet_balance (id = @wid)
+    wallet(id)['balance']['available']['quantity']
+  end
+
+  def addresses (id = @wid, q = "")
+    self.class.get("#{@api}/wallets/#{id}/addresses#{q}")
+  end
+
+  def addresses_used (id = @wid)
+    addresses(id, "?state=used")
+  end
+
+  def addresses_unused (id = @wid)
+    addresses(id, "?state=unused")
+  end
+
+  def delete (id = @wid)
+    self.class.delete("#{@api}/wallets/#{id}")
+  end
+
+  def transactions (id = @wid, q = "")
+    self.class.get("#{@api}/wallets/#{id}/transactions#{q}")
+  end
+
+  # BYRON
+
   def byron_forget_transaction(wid, txid)
     self.class.delete("#{@api}/byron-wallets/#{wid}/transactions/#{txid}")
   end
@@ -156,40 +194,18 @@ class NewWalletBackend
     self.class.get("#{@api}/byron-wallets/#{id}/transactions#{q}")
   end
 
-  def wallets
-    self.class.get("#{@api}/wallets")
-  end
-
-  def wallets_ids
-    wallets.map { |w| w['id'] }
-  end
-
-  def wallet (id = @wid)
-    self.class.get("#{@api}/wallets/#{id}")
-  end
-
-  def wallet_balance (id = @wid)
-    wallet(id)['balance']['available']['quantity']
-  end
-
-  def addresses (id = @wid, q = "")
-    self.class.get("#{@api}/wallets/#{id}/addresses#{q}")
-  end
-
-  def addresses_used (id = @wid)
-    addresses(id, "?state=used")
-  end
-
-  def addresses_unused (id = @wid)
-    addresses(id, "?state=unused")
-  end
-
-  def delete (id = @wid)
-    self.class.delete("#{@api}/wallets/#{id}")
-  end
-
-  def transactions (id = @wid, q = "")
-    self.class.get("#{@api}/wallets/#{id}/transactions#{q}")
+  def byron_create_transaction(amount, address, passphrase, id)
+    amount = amount.to_i
+    self.class.post("#{@api}/byron-wallets/#{id}/transactions",
+    :body => { :payments =>
+                   [ { :address => address,
+                       :amount => { :quantity => amount,
+                                    :unit => 'lovelace' }
+                     }
+                   ],
+               :passphrase => passphrase
+             }.to_json,
+    :headers => { 'Content-Type' => 'application/json' } )
   end
 
 end

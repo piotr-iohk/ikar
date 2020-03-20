@@ -203,8 +203,8 @@ end
 
 get "/tx-to-address" do
   w = NewWalletBackend.new session[:wallet_port]
-  session[:wallets] = w.wallets
-  erb :form_tx_to_address, { :locals => session }
+  wallets = w.wallets
+  erb :form_tx_to_address, { :locals => { :wallets => wallets } }
 end
 
 post "/tx-to-address" do
@@ -217,15 +217,13 @@ post "/tx-to-address" do
   r = w.create_transaction(amount, address, pass, wid_src)
   handle_api_err r, session
 
-  session[:tx] = r
-  session[:wid] = wid_src
   redirect "/wallets/#{wid_src}/txs/#{r['id']}"
 end
 
 get "/tx-between-wallets" do
   w = NewWalletBackend.new session[:wallet_port]
-  session[:wallets] = w.wallets
-  erb :form_tx_between_wallets, { :locals => session }
+  wallets = w.wallets
+  erb :form_tx_between_wallets, { :locals => { :wallets => wallets } }
 end
 
 post "/tx-between-wallets" do
@@ -239,8 +237,6 @@ post "/tx-between-wallets" do
   r = w.create_transaction(amount, address_dst, pass, wid_src)
   handle_api_err r, session
 
-  session[:tx] = r
-  session[:wid] = wid_src
   redirect "/wallets/#{wid_src}/txs/#{r['id']}"
 end
 
@@ -399,6 +395,49 @@ get "/byron-wallets/:wal_id/forget-tx/:tx_to_forget_id" do
   handle_api_err r, session
   session[:forgotten] = txid
   redirect "/byron-wallets/#{id}"
+end
+
+# TRANSACTIONS BYRON
+
+get "/byron-tx-to-address" do
+  w = NewWalletBackend.new session[:wallet_port]
+  wallets = w.byron_wallets
+  erb :form_tx_to_address, { :locals => { :wallets => wallets } }
+end
+
+post "/byron-tx-to-address" do
+  wid_src = params[:wid_src]
+  pass = params[:pass]
+  amount = params[:amount]
+  address = params[:address]
+
+  w = NewWalletBackend.new session[:wallet_port]
+  r = w.byron_create_transaction(amount, address, pass, wid_src)
+  handle_api_err r, session
+
+  redirect "/byron-wallets/#{wid_src}/txs/#{r['id']}"
+end
+
+get "/byron-tx-between-wallets" do
+  w = NewWalletBackend.new session[:wallet_port]
+  session[:wallets] = w.byron_wallets
+  erb :form_tx_between_wallets, { :locals => session }
+end
+
+post "/byron-tx-between-wallets" do
+  wid_src = params[:wid_src]
+  wid_dst = params[:wid_dst]
+  pass = params[:pass]
+  amount = params[:amount]
+
+  w = NewWalletBackend.new session[:wallet_port]
+  address_dst = w.addresses_unused(wid_dst).sample['id']
+  r = w.create_transaction(amount, address_dst, pass, wid_src)
+  handle_api_err r, session
+
+  session[:tx] = r
+  session[:wid] = wid_src
+  redirect "/wallets/#{wid_src}/txs/#{r['id']}"
 end
 
 # MNEMONICS
