@@ -1,14 +1,13 @@
-<% 
-wallets = session[:wallets] 
-exit unless wallets
+<%
+# wallets = wallets
 path_info = request.env['PATH_INFO'].to_s
 byron_ep = "/byron-wallets"
 shelley_ep = "/wallets"
 %>
 <div class="list-group">
   <div class="list-group-item">
-     <%= "Shelley wallets: #{wallets.size} " unless path_info.include? "byron" %> 
-     <%= "Byron wallets: #{wallets.size} " if path_info.include? "byron" %> 
+     <%= "Shelley wallets: #{wallets.size} " unless path_info.include? "byron" %>
+     <%= "Byron wallets: #{wallets.size} " if path_info.include? "byron" %>
      <small>
        <a href="<%= (path_info.include? "byron") ? byron_ep : shelley_ep %>">refresh</a>
      </small>
@@ -54,7 +53,7 @@ wallets.each do |wal|
                   , Slot: <%= wal['tip']['slot_number'] if wal['tip'] %>)
     </small><br/>
     <%# Display this only for Shelley wallets %>
-    <% if has_delegation 
+    <% if has_delegation
         active_delegation = wal['delegation']['active']
         next_delegation = wal['delegation']['next']
     %>
@@ -62,7 +61,7 @@ wallets.each do |wal|
         &nbsp;&nbsp;<b>Status:</b> <%= active_delegation['status']%>
         <%= active_delegation['status'] == "delegating" ? "<br/>&nbsp;&nbsp;<b>Target:</b> #{active_delegation['target']}" : ""%>
       </small><br/>
-        <% if next_delegation 
+        <% if next_delegation
             next_delegation.each do |n|
         %>
           <small><b>Delegation next:</b> <br/>
@@ -72,13 +71,13 @@ wallets.each do |wal|
             &nbsp;&nbsp;&nbsp;&nbsp;<b>Epoch start time:</b> <%= n['changes_at']['epoch_start_time']%><br/>
             &nbsp;&nbsp;&nbsp;&nbsp;<b>Epoch number:</b> <%= n['changes_at']['epoch_number']%>
           </small><br/>
-        <%  end 
+        <%  end
           end %>
     <% end %>
-    
+
   </div>
 
-<% 
+<%
   end
 %>
 </div>

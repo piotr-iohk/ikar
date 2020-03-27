@@ -79,8 +79,8 @@ get "/wallets" do
   w = NewWalletBackend.new session[:wallet_port]
   r = w.wallets
   handle_api_err r, session
-  session[:wallets] = r
-  erb :wallets, { :locals => session }
+  wallets = r
+  erb :wallets, { :locals => { :wallets => wallets } }
 end
 
 get "/wallets/:wal_id" do
@@ -95,7 +95,33 @@ get "/wallets/:wal_id" do
   erb :wallet, { :locals => { :wal => wal, :txs => txs, :addrs => addrs} }
 end
 
+get "/wallets/:wal_id/update" do
+  w = NewWalletBackend.new session[:wallet_port]
+  wal = w.wallet params[:wal_id]
+  handle_api_err wal, session
+  erb :form_wallet_update, { :locals => { :wal => wal } }
+end
 
+post "/wallets/:wal_id/update" do
+  w = NewWalletBackend.new session[:wallet_port]
+  r = w.wallet_update params[:wal_id], params[:name]
+  handle_api_err r, session
+  redirect "/wallets/#{params[:wal_id]}"
+end
+
+get "/wallets/:wal_id/update-pass" do
+  w = NewWalletBackend.new session[:wallet_port]
+  wal = w.wallet params[:wal_id]
+  handle_api_err wal, session
+  erb :form_wallet_update_pass, { :locals => { :wal => wal } }
+end
+
+post "/wallets/:wal_id/update-pass" do
+  w = NewWalletBackend.new session[:wallet_port]
+  r = w.wallet_update_pass params[:wal_id], params[:old_pass], params[:new_pass]
+  handle_api_err r, session
+  redirect "/wallets/#{params[:wal_id]}"
+end
 
 get "/wallets-force-resync" do
   w = NewWalletBackend.new session[:wallet_port]
@@ -196,7 +222,7 @@ get "/wallets/:wal_id/utxo" do
   w = NewWalletBackend.new session[:wallet_port]
   utxo = w.get_utxo params[:wal_id]
   wal = w.wallet params[:wal_id]
-  erb :utxo_details, { :locals => { :wai => wal, :utxo => utxo } }
+  erb :utxo_details, { :locals => { :wal => wal, :utxo => utxo } }
 end
 
 # TRANSACTIONS SHELLEY
@@ -259,6 +285,33 @@ get "/wallets/:wal_id/txs/:tx_id" do
 end
 
 # BYRON WALLETS
+get "/byron-wallets/:wal_id/update" do
+  w = NewWalletBackend.new session[:wallet_port]
+  wal = w.byron_wallet params[:wal_id]
+  handle_api_err wal, session
+  erb :form_wallet_update, { :locals => { :wal => wal } }
+end
+
+post "/byron-wallets/:wal_id/update" do
+  w = NewWalletBackend.new session[:wallet_port]
+  r = w.byron_wallet_update params[:wal_id], params[:name]
+  handle_api_err r, session
+  redirect "/byron-wallets/#{params[:wal_id]}"
+end
+
+get "/byron-wallets/:wal_id/update-pass" do
+  w = NewWalletBackend.new session[:wallet_port]
+  wal = w.byron_wallet params[:wal_id]
+  handle_api_err wal, session
+  erb :form_wallet_update_pass, { :locals => { :wal => wal } }
+end
+
+post "/byron-wallets/:wal_id/update-pass" do
+  w = NewWalletBackend.new session[:wallet_port]
+  r = w.byron_wallet_update_pass params[:wal_id], params[:old_pass], params[:new_pass]
+  handle_api_err r, session
+  redirect "/byron-wallets/#{params[:wal_id]}"
+end
 
 get "/byron-wallets/:wal_id/utxo" do
   w = NewWalletBackend.new session[:wallet_port]

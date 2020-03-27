@@ -1,0 +1,19 @@
+<%
+url_path = request.env['PATH_INFO'].to_s
+byron_ep = "/byron-wallets/#{wal['id']}/update"
+shelley_ep = "/wallets/#{wal['id']}/update"
+wid = params[:wid] if params[:wid]
+%>
+<div class="list-group">
+  <div class="list-group-item">
+    <form action="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>" method="POST">
+      <div class="form-group">
+        <label for="epoch_number">Wallet Name</label>
+        <input type="text" class="form-control" name="name" id="name"
+            placeholder="Name" value="<%= wal['name'] %>">
+      </div>
+
+      <button type="submit" class="btn btn-success">Update name</button>
+    </form>
+  </div>
+</div>
