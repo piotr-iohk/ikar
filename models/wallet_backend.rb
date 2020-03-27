@@ -35,6 +35,10 @@ class NewWalletBackend
     self.class.get("#{@api}/wallets/#{wid}/statistics/utxos")
   end
 
+  def byron_get_utxo(wid)
+    self.class.get("#{@api}/byron-wallets/#{wid}/statistics/utxos")
+  end
+
   def force_resync(wid, slot_num, epoch_num)
     resync("wallets", wid, slot_num, epoch_num)
   end

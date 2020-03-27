@@ -194,9 +194,9 @@ end
 
 get "/wallets/:wal_id/utxo" do
   w = NewWalletBackend.new session[:wallet_port]
-  session[:utxo] = w.get_utxo params[:wal_id]
-  session[:wal] = w.wallet params[:wal_id]
-  erb :utxo_details, { :locals => session }
+  utxo = w.get_utxo params[:wal_id]
+  wal = w.wallet params[:wal_id]
+  erb :utxo_details, { :locals => { :wai => wal, :utxo => utxo } }
 end
 
 # TRANSACTIONS SHELLEY
@@ -259,6 +259,13 @@ get "/wallets/:wal_id/txs/:tx_id" do
 end
 
 # BYRON WALLETS
+
+get "/byron-wallets/:wal_id/utxo" do
+  w = NewWalletBackend.new session[:wallet_port]
+  utxo = w.byron_get_utxo params[:wal_id]
+  wal = w.byron_wallet params[:wal_id]
+  erb :utxo_details, { :locals => { :wal => wal, :utxo => utxo } }
+end
 
 get "/byron-wallets-force-resync" do
   w = NewWalletBackend.new session[:wallet_port]

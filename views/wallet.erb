@@ -74,6 +74,7 @@
           <a class="nav-link" href="#" data-toggle="modal" data-target="#confirm-delete">Delete</a>
           <a class="nav-link"  href="/byron-wallets-migrate<%="?wid=#{wal['id']}"%>">Migrate</a>
           <a class="nav-link"  href="/byron-wallets-migration-fee/<%="#{wal['id']}"%>">Migration Fee</a>
+          <a class="nav-link" href="/byron-wallets/<%= wal['id']%>/utxo">UTxO</a>
           <a class="nav-link" href="/byron-wallets-force-resync?wid=<%= wal['id']%>">Force resync</a>
 
         </nav>
