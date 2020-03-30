@@ -19,6 +19,7 @@ class NewWalletBackend
     end
   end
 
+# NETWORK
   def network_information
     self.class.get("#{@api}/network/information")
   end
@@ -31,14 +32,10 @@ class NewWalletBackend
     self.class.get("#{@api}/network/parameters/#{epoch_num}")
   end
 
+# SHELLEY
+
   def wallet_update(wal_id, name)
     self.class.put("#{@api}/wallets/#{wal_id}",
-    :body => { :name => name }.to_json,
-    :headers => { 'Content-Type' => 'application/json' } )
-  end
-
-  def byron_wallet_update(wal_id, name)
-    self.class.put("#{@api}/byron-wallets/#{wal_id}",
     :body => { :name => name }.to_json,
     :headers => { 'Content-Type' => 'application/json' } )
   end
@@ -50,27 +47,12 @@ class NewWalletBackend
     :headers => { 'Content-Type' => 'application/json' } )
   end
 
-  def byron_wallet_update_pass(wal_id, old_pass, new_pass)
-    self.class.put("#{@api}/byron-wallets/#{wal_id}/passphrase",
-    :body => { :old_passphrase => old_pass,
-               :new_passphrase => new_pass }.to_json,
-    :headers => { 'Content-Type' => 'application/json' } )
-  end
-
   def get_utxo(wid)
     self.class.get("#{@api}/wallets/#{wid}/statistics/utxos")
   end
 
-  def byron_get_utxo(wid)
-    self.class.get("#{@api}/byron-wallets/#{wid}/statistics/utxos")
-  end
-
   def force_resync(wid, slot_num, epoch_num)
     resync("wallets", wid, slot_num, epoch_num)
-  end
-
-  def byron_force_resync(wid, slot_num, epoch_num)
-    resync("byron-wallets", wid, slot_num, epoch_num)
   end
 
   def resync(ep, wid, slot_num, epoch_num)
@@ -173,7 +155,40 @@ class NewWalletBackend
     self.class.get("#{@api}/wallets/#{id}/transactions#{q}")
   end
 
+  def payment_fees(amount, address, id)
+    amount = amount.to_i
+    self.class.post("#{@api}/wallets/#{id}/payment-fees",
+    :body => { :payments =>
+                   [ { :address => address,
+                       :amount => { :quantity => amount,
+                                    :unit => 'lovelace' }
+                     }
+                   ]}.to_json,
+    :headers => { 'Content-Type' => 'application/json' } )
+  end
+
   # BYRON
+
+  def byron_wallet_update(wal_id, name)
+    self.class.put("#{@api}/byron-wallets/#{wal_id}",
+    :body => { :name => name }.to_json,
+    :headers => { 'Content-Type' => 'application/json' } )
+  end
+
+  def byron_wallet_update_pass(wal_id, old_pass, new_pass)
+    self.class.put("#{@api}/byron-wallets/#{wal_id}/passphrase",
+    :body => { :old_passphrase => old_pass,
+               :new_passphrase => new_pass }.to_json,
+    :headers => { 'Content-Type' => 'application/json' } )
+  end
+
+  def byron_get_utxo(wid)
+    self.class.get("#{@api}/byron-wallets/#{wid}/statistics/utxos")
+  end
+
+  def byron_force_resync(wid, slot_num, epoch_num)
+    resync("byron-wallets", wid, slot_num, epoch_num)
+  end
 
   def byron_forget_transaction(wid, txid)
     self.class.delete("#{@api}/byron-wallets/#{wid}/transactions/#{txid}")
@@ -234,6 +249,18 @@ class NewWalletBackend
                    ],
                :passphrase => passphrase
              }.to_json,
+    :headers => { 'Content-Type' => 'application/json' } )
+  end
+
+  def byron_payment_fees(amount, address, id)
+    amount = amount.to_i
+    self.class.post("#{@api}/byron-wallets/#{id}/payment-fees",
+    :body => { :payments =>
+                   [ { :address => address,
+                       :amount => { :quantity => amount,
+                                    :unit => 'lovelace' }
+                     }
+                   ]}.to_json,
     :headers => { 'Content-Type' => 'application/json' } )
   end
 

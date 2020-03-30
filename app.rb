@@ -227,6 +227,24 @@ end
 
 # TRANSACTIONS SHELLEY
 
+post "/tx-fee-to-address" do
+  wid_src = params[:wid_src]
+  amount = params[:amount]
+  address = params[:address]
+
+  w = NewWalletBackend.new session[:wallet_port]
+  r = w.payment_fees(amount, address, wid_src)
+  handle_api_err r, session
+
+  erb :show_tx_fee, { :locals => { :tx_fee => r, :wallet_id => wid_src} }
+end
+
+get "/tx-fee-to-address" do
+  w = NewWalletBackend.new session[:wallet_port]
+  wallets = w.wallets
+  erb :form_tx_fee_to_address, { :locals => { :wallets => wallets } }
+end
+
 get "/tx-to-address" do
   w = NewWalletBackend.new session[:wallet_port]
   wallets = w.wallets
@@ -458,6 +476,24 @@ get "/byron-wallets/:wal_id/forget-tx/:tx_to_forget_id" do
 end
 
 # TRANSACTIONS BYRON
+
+post "/byron-tx-fee-to-address" do
+  wid_src = params[:wid_src]
+  amount = params[:amount]
+  address = params[:address]
+
+  w = NewWalletBackend.new session[:wallet_port]
+  r = w.byron_payment_fees(amount, address, wid_src)
+  handle_api_err r, session
+
+  erb :show_tx_fee, { :locals => { :tx_fee => r, :wallet_id => wid_src} }
+end
+
+get "/byron-tx-fee-to-address" do
+  w = NewWalletBackend.new session[:wallet_port]
+  wallets = w.byron_wallets
+  erb :form_tx_fee_to_address, { :locals => { :wallets => wallets } }
+end
 
 get "/byron-tx-to-address" do
   w = NewWalletBackend.new session[:wallet_port]
