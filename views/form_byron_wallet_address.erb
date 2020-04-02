@@ -1,0 +1,22 @@
+<%
+# url_path = request.env['PATH_INFO'].to_s
+# byron_ep = "/byron-wallets/#{wal['id']}/update-pass"
+# shelley_ep = "/wallets/#{wal['id']}/update-pass"
+# wid = wal['id']
+ep = "/byron-wallets/#{wid}/address"
+%>
+<div class="list-group">
+  <div class="list-group-item">
+    <form action="<%= ep %>" method="POST">
+      <div class="form-group">
+        <label for="epoch_number">Passphrase</label>
+        <input type="text" class="form-control" name="pass" id="pass"
+            placeholder="Passphrase" value="Secure Passphrase">
+        <label for="epoch_number">Index</label>
+        <input type="text" class="form-control" name="idx" id="idx"
+            placeholder="Index" value="0">
+      </div>
+      <button type="submit" class="btn btn-success">Gen address</button>
+    </form>
+  </div>
+</div>

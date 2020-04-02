@@ -1,7 +1,13 @@
 require 'httparty'
+# require_relative '../../httparty/lib/httparty'
 
 class NewWalletBackend
   include HTTParty
+  # default_options.update(verify_peer: false)
+  # ssl_version :TLSv1_2
+  # pem (File.read "/home/piotr/.local/share/Daedalus/mainnet_flight/tls/client/client.pem")
+  # ssl_ca_file (File.read "/home/piotr/.local/share/Daedalus/mainnet_flight/tls/client/ca.crt")
+
   attr_accessor :wid, :port
 
   def initialize(port, id = "0")
@@ -169,6 +175,17 @@ class NewWalletBackend
 
   # BYRON
 
+  def byron_address_create (wal_id, pass, idx = 0)
+    self.class.post("#{@api}/byron-wallets/#{wal_id}/addresses",
+    :body => { :passphrase => pass,
+               :address_index => idx.to_i }.to_json,
+    :headers => { 'Content-Type' => 'application/json' } )
+  end
+
+  def byron_addresses (id, q = "")
+    self.class.get("#{@api}/byron-wallets/#{id}/addresses#{q}")
+  end
+
   def byron_wallet_update(wal_id, name)
     self.class.put("#{@api}/byron-wallets/#{wal_id}",
     :body => { :name => name }.to_json,
@@ -272,7 +289,9 @@ class String
     end
 end
 
-# w = NewWalletBackend.new "8090"
+# w = NewWalletBackend.new "43639"
+# puts w.byron_wallets
+
 # id = "307bf05a10316a7cd4d07690b731e2e0fa37b531"
 # amount = 90000000000
 # address = "addr1sk7cjynnqpamfnls5nnlvdr3duehy99dv3pce6yemulq42zpr039s2crfyp"

@@ -84,6 +84,7 @@
           <a class="nav-link"  href="/byron-wallets-migration-fee/<%="#{wal['id']}"%>">Migration Fee</a>
           <a class="nav-link" href="/byron-wallets/<%= wal['id']%>/utxo">UTxO</a>
           <a class="nav-link" href="/byron-wallets-force-resync?wid=<%= wal['id']%>">Force resync</a>
+          <a class="nav-link" href="/byron-wallets/<%= wal['id']%>/address">Generate address</a>
 
         </nav>
     <% end %>
@@ -134,7 +135,7 @@
          <% end %>
 
            <%
-           unless url_path.include? "byron"
+           # unless url_path.include? "byron"
               if addrs
                 addresses = addrs
                 used = addresses.select{ |a| a['state'] == "used" }
@@ -147,7 +148,7 @@
 
                </small>
             <% end %>
-           <% end %>
+           <% # end %>
            <%
               if txs
                 txs_pending = txs.select{ |t| t['status'] == "pending" }

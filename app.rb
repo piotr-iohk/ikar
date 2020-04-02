@@ -303,6 +303,21 @@ get "/wallets/:wal_id/txs/:tx_id" do
 end
 
 # BYRON WALLETS
+
+get "/byron-wallets/:wal_id/address" do
+  w = NewWalletBackend.new session[:wallet_port]
+  # r = w.byron_address_create params[:wal_id] ,params[:pass], params[:idx]
+  # handle_api_err r, session
+  erb :form_byron_wallet_address, { :locals => { :wid => params[:wal_id] } }
+end
+
+post "/byron-wallets/:wal_id/address" do
+  w = NewWalletBackend.new session[:wallet_port]
+  r = w.byron_address_create params[:wal_id] ,params[:pass], params[:idx]
+  handle_api_err r, session
+  redirect "/byron-wallets/#{params[:wal_id]}"
+end
+
 get "/byron-wallets/:wal_id/update" do
   w = NewWalletBackend.new session[:wallet_port]
   wal = w.byron_wallet params[:wal_id]
@@ -366,8 +381,10 @@ get "/byron-wallets/:wal_id" do
   txs = w.byron_transactions params[:wal_id]
   handle_api_err wallet, session
   handle_api_err txs, session
+  addrs = w.byron_addresses params[:wal_id]
+  # handle_api_err addrs, session
 
-  erb :wallet, { :locals => {:wal => wallet, :txs => txs} }
+  erb :wallet, { :locals => {:wal => wallet, :txs => txs, :addrs => addrs} }
 end
 
 get "/byron-wallets-delete/:wal_id" do
@@ -392,7 +409,7 @@ post "/byron-wallets-create" do
   wal = w.create_byron_wallet(style, m, pass, "#{name} (#{style})")
   handle_api_err wal, session
 
-  erb :wallet, { :locals => {:wal => wal, :txs => nil} }
+  redirect "/byron-wallets/#{wal['id']}"
 end
 
 get "/byron-wallets-create-many" do
