@@ -30,10 +30,10 @@ end
 
 def handle_api_err(r, session)
   unless [200, 201, 202, 204].include? r.code
-    j = JSON.parse r.to_s
+    # j = JSON.parse r.to_s
     session[:error] = "Wallet backend responded with:<br/>
                       Code = #{r.code},<br/>
-                      Json = #{j}"
+                      Json = #{r.to_s}"
     redirect "/"
   end
 end
