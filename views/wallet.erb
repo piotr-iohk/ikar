@@ -171,19 +171,19 @@
        <div class="col displ_details" style="display:none" id="addr">
          <div class="list-group-item">
            Addresses total:<br/>
-           <small><%= addresses.map { |a| a['id'] }.join("<br/>") if addresses %></small>
+           <small><%= addresses.map { |a| a['id'] }.join("<br/>") if addrs %></small>
          </div>
        </div>
        <div class="col displ_details" style="display:none" id="addr_used">
          <div class="list-group-item">
            Addresses used:<br/>
-           <small><%= used.map { |a| a['id'] }.join("<br/>") if addresses %></small>
+           <small><%= used.map { |a| a['id'] }.join("<br/>") if addrs %></small>
          </div>
        </div>
        <div class="col displ_details" style="display:none" id="addr_unused">
          <div class="list-group-item">
            Addresses unused:<br/>
-           <small><%= unused.map { |a| a['id'] }.join("<br/>") if addresses %></small>
+           <small><%= unused.map { |a| a['id'] }.join("<br/>") if addrs %></small>
          </div>
        </div>
 

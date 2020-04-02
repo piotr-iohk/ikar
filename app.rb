@@ -382,7 +382,12 @@ get "/byron-wallets/:wal_id" do
   handle_api_err wallet, session
   handle_api_err txs, session
   addrs = w.byron_addresses params[:wal_id]
-  # handle_api_err addrs, session
+  if addrs.code != 200
+    addrs = nil
+  else
+    handle_api_err addrs, session
+  end
+
 
   erb :wallet, { :locals => {:wal => wallet, :txs => txs, :addrs => addrs} }
 end
