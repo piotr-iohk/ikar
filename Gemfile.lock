@@ -12,7 +12,6 @@ GEM
     mime-types-data (3.2019.1009)
     multi_xml (0.6.0)
     mustermann (1.0.3)
-    pp (0.1.1)
     rack (2.0.8)
     rack-protection (2.0.7)
       rack
@@ -31,7 +30,6 @@ DEPENDENCIES
   chartkick
   docopt
   httparty
-  pp
   sinatra
 
 BUNDLED WITH
