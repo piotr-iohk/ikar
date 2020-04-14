@@ -64,14 +64,14 @@ class OldWalletBackend
 
 end
 
-ow = OldWalletBackend.new "40449"
-# ow.wallets_ids.each do |id|
-#   ow.delete id if id != "Ae2tdPwUPEYw3WFC6g6sMo76uPq314Fd3CA8k2zpkJF1QEXBjNEMgdLgPBj"
-# end
-mems = BipMnemonic.to_mnemonic(bits: 128, language: 'english')
-puts ow.create_wallet "cardano-wallet", mems.split, ""
-mems2 = BipMnemonic.to_mnemonic(bits: 128, language: 'english')
-puts ow.create_wallet "patate", mems2.split, ""
+# ow = OldWalletBackend.new "40449"
+# # ow.wallets_ids.each do |id|
+# #   ow.delete id if id != "Ae2tdPwUPEYw3WFC6g6sMo76uPq314Fd3CA8k2zpkJF1QEXBjNEMgdLgPBj"
+# # end
+# mems = BipMnemonic.to_mnemonic(bits: 128, language: 'english')
+# puts ow.create_wallet "cardano-wallet", mems.split, ""
+# mems2 = BipMnemonic.to_mnemonic(bits: 128, language: 'english')
+# puts ow.create_wallet "patate", mems2.split, ""
 # wallets =
 #   [ "АаБбВвГгДдЕеЁёЖжЗз ИиЙйКкЛлМмНнО оПпРрСсТтУуФф ХхЦцЧчШшЩщЪъ ЫыЬьЭэЮюЯяІ ѢѲѴѵѳѣі", "aąbcćdeęfghijklłmnoóprsś\r\ntuvwyzżźAĄBCĆDEĘFGHIJKLŁMNOP\rRSŚTUVWYZŻŹ", "ثم نفس سقطت وبالتحديد،, جزيرتي باستخدام أن دنو. إذ هنا؟ الستار وتنصيب كان. أهّل ايطاليا، بريطانيا-فرنسا قد أخذ. سليمان، إتفاقية بين ما, يذكر الحدود أي بعد, معاملة بولندا، الإطلاق عل إيو.", "亜哀挨愛曖悪握圧扱宛嵐安案暗以衣位囲医依委威為畏胃尉異移萎偉椅彙意違維慰\
 #   \遺緯域育一壱逸茨芋引印因咽姻員院淫陰飲隠韻右宇羽雨唄鬱畝浦運雲永泳英映栄\n営詠影鋭衛易疫益液駅悦越謁\
