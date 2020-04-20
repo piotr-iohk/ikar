@@ -3,6 +3,7 @@
   id = wal['id']
   name = wal['name']
   status = wal['state']['status'] if wal['state']
+  discovery = wal['discovery']
 %>
 
 <script src="../lib.js" type="text/javascript"></script>
@@ -111,6 +112,9 @@
                        , Epoch: <%= wal['tip']['epoch_number'] %>
                        , Slot: <%= wal['tip']['slot_number'] %>)
          </small><br/>
+         <small>
+           <b>Address discovery:</b> <%= discovery %>
+        </small><br/>
          <%# Display this only for Shelley wallets %>
          <% unless url_path.include? "byron"
              active_delegation = wal['delegation']['active']

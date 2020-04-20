@@ -29,6 +29,8 @@ wallets.each do |wal|
   id = wal['id']
   name = wal['name']
   status = wal['state']['status'] if wal['state']
+  discovery = wal['discovery']
+
   wal['delegation'] ? has_delegation = true : has_delegation = false
 %>
 
@@ -52,6 +54,9 @@ wallets.each do |wal|
                   , Epoch: <%= wal['tip']['epoch_number'] if wal['tip'] %>
                   , Slot: <%= wal['tip']['slot_number'] if wal['tip'] %>)
     </small><br/>
+    <small>
+      <b>Address discovery:</b> <%= discovery %>
+   </small><br/>
     <%# Display this only for Shelley wallets %>
     <% if has_delegation
         active_delegation = wal['delegation']['active']
