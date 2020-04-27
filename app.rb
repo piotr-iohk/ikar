@@ -2,6 +2,7 @@ require 'sinatra'
 require 'bip_mnemonic'
 require 'chartkick'
 
+require_relative 'helpers/app_helpers'
 require_relative './models/wallet_backend'
 require_relative './models/jormungandr'
 
@@ -11,6 +12,7 @@ set :root, File.dirname(__FILE__)
 
 # enable :sessions
 use Rack::Session::Pool
+helpers Helpers::App
 
 def show_session
   session.each_with_key do |k,v|

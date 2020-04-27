@@ -46,8 +46,8 @@ wallets.each do |wal|
     <br/>
     <small><b>ID:</b> <%= id %></small><br/>
     <small>
-      <b>Status:</b> <%= status %>
-                     <%= status == "syncing" ? ", Progress: #{wal['state']['progress']['quantity']}%" : ""%>
+      <b>Status:</b>
+        <%= render_wal_status status, wal %>
     </small><br/>
     <small>
       <b>Tip:</b> (Height: <%= wal['tip']['height']['quantity'] if wal['tip'] %>
