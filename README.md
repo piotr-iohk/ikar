@@ -1,3 +1,7 @@
+<a href="https://github.com/piotr-iohk/icarus/actions?query=workflow%3A%22Linux+%7C+Windows+%7C+MacOS%22">
+  <img src="https://github.com/piotr-iohk/icarus/workflows/Linux%20%7C%20Windows%20%7C%20MacOS/badge.svg" />
+</a>
+
 # Icarus
 
 A helper web-app and cli to test [cardano wallet backend](https://github.com/input-output-hk/cardano-wallet).
