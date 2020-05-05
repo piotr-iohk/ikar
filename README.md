@@ -13,14 +13,28 @@
 
 A helper web-app and cli to test [cardano-wallet](https://github.com/input-output-hk/cardano-wallet).
 
-### How to use
+## Quick start
+
+```
+git clone https://github.com/piotr-iohk/icarus.git
+cd icarus
+docker-compose up
+```
+
+This immediately spins up:
+ - cardano-node connected to `mainnet`
+ - cardano-wallet on port `8090`
+ - icarus web-app on port `4444`
+
+Visit http://localhost:4444/ and click _Connect_. Play around!
+
+
+## Alternative setup
+Alternatively one can [set up cardano-wallet](https://github.com/input-output-hk/cardano-wallet/releases) with any of the supported block producer and start icarus on top of it:
 
 <details>
-    <summary>Set up via docker</summary>
+    <summary>Via docker</summary>
 
-1. [Install and start cardano-wallet](https://github.com/input-output-hk/cardano-wallet/releases).
-
-2. :point_down:
 ```
 docker pull piotrstachyra/icarus:latest
 docker run --network=host piotrstachyra/icarus:latest
@@ -31,13 +45,10 @@ docker run --network=host piotrstachyra/icarus:latest
 or
 
 <details>
-    <summary>Set up from repository</summary>
+    <summary>From repository</summary>
 
-1. [Install ruby](https://www.ruby-lang.org/en/documentation/installation/).
-
-2. [Install and start cardano-wallet](https://github.com/input-output-hk/cardano-wallet/releases).
-
-3. :point_down:
+1. [Have ruby](https://www.ruby-lang.org/en/documentation/installation/).
+2.  :point_down:
 ```
 git clone https://github.com/piotr-iohk/icarus.git
 cd icarus
@@ -50,6 +61,6 @@ ruby app.rb
 Good! Now go to http://localhost:4444/ and torture cardano-wallet with the web-app...
 
 
-### Releasing
+## Releases
 
-Releases have the same versions as [cardano-wallet](https://github.com/input-output-hk/cardano-wallet/releases) and should be compatible with them.
+[Releases]([https://github.com/piotr-iohk/icarus/releases](https://github.com/piotr-iohk/icarus/releases)) have the same versions as [cardano-wallet](https://github.com/input-output-hk/cardano-wallet/releases) and should be compatible with them.
