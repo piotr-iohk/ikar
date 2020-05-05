@@ -53,8 +53,3 @@ Good! Now go to http://localhost:4444/ and torture cardano-wallet with the web-a
 ### Releasing
 
 Releases have the same versions as [cardano-wallet](https://github.com/input-output-hk/cardano-wallet/releases) and should be compatible with them.
-
-```bash
-git tag -a v2020-04-28
-git push origin --tags
-```
