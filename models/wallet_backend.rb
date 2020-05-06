@@ -57,17 +57,6 @@ class NewWalletBackend
     self.class.get("#{@api}/wallets/#{wid}/statistics/utxos")
   end
 
-  def force_resync(wid, slot_num, epoch_num)
-    resync("wallets", wid, slot_num, epoch_num)
-  end
-
-  def resync(ep, wid, slot_num, epoch_num)
-    self.class.put("#{@api}/#{ep}/#{wid}/tip",
-    :body => { :slot_number => slot_num.to_i,
-               :epoch_number => epoch_num.to_i  }.to_json,
-    :headers => { 'Content-Type' => 'application/json' } )
-  end
-
   def fee_stake_pools(wid)
     self.class.get("#{@api}/wallets/#{wid}/delegation-fees")
   end
@@ -201,10 +190,6 @@ class NewWalletBackend
 
   def byron_get_utxo(wid)
     self.class.get("#{@api}/byron-wallets/#{wid}/statistics/utxos")
-  end
-
-  def byron_force_resync(wid, slot_num, epoch_num)
-    resync("byron-wallets", wid, slot_num, epoch_num)
   end
 
   def byron_forget_transaction(wid, txid)
