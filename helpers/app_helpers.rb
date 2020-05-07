@@ -10,5 +10,18 @@ module Helpers
       r += ", Progress: #{wal['state']['progress']['quantity']}%" if status == "syncing"
       r
     end
+
+    def os
+      case RUBY_PLATFORM
+      when /cygwin|mswin|mingw|bccwin|wince|emx/
+        "Windows"
+      when /darwin/
+        "MacOS"
+      when /linux/
+        "Linux"
+      else
+        RUBY_PLATFORM
+      end
+    end
   end
 end

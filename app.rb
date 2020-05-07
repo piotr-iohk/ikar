@@ -61,6 +61,7 @@ end
 get "/" do
   session[:wallet_port] ||= "8090"
   session[:jorm_port] ||= "8080"
+  session[:platform] ||= os
   erb :index, { :locals => session }
 end
 
