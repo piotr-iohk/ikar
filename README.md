@@ -16,17 +16,16 @@ A helper web-app and cli to test [cardano-wallet](https://github.com/input-outpu
 ## Quick start
 
 ```
-git clone https://github.com/piotr-iohk/icarus.git
-cd icarus
-docker-compose up
+wget https://raw.githubusercontent.com/piotr-iohk/icarus/master/docker-compose.yml
+NETWORK=testnet docker-compose up
 ```
 
 This immediately spins up:
- - cardano-node connected to `mainnet`
+ - cardano-node connected to `testnet`
  - cardano-wallet on port `8090`
  - icarus web-app on port `4444`
 
-Visit http://localhost:4444/ and click _Connect_. Play around!
+Visit http://localhost:4444/, click _Connect_ and play around!
 
 
 ## Alternative setup
@@ -58,7 +57,7 @@ ruby app.rb
 
 </details>
 
-Good! Now go to http://localhost:4444/ and torture cardano-wallet with the web-app...
+Good! now visit http://localhost:4444/, click _Connect_ and play around!
 
 
 ## Releases
