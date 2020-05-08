@@ -14,50 +14,6 @@ set :root, File.dirname(__FILE__)
 use Rack::Session::Pool
 helpers Helpers::App
 
-def show_session
-  session.each_with_key do |k,v|
-    puts "#{k} => #{v}"
-  end
-end
-
-def prepare_mnemonics(mn)
-  if mn.include? "["
-    mn
-  elsif mn.include? ","
-    mn.split(",").map {|w| w.strip}
-  else
-    mn.split
-  end
-end
-
-def handle_api_err(r, session)
-  unless [200, 201, 202, 204].include? r.code
-    # j = JSON.parse r.to_s
-    session[:error] = "Wallet backend responded with:<br/>
-                      Code = #{r.code},<br/>
-                      Json = #{r.to_s}"
-    redirect "/"
-  end
-end
-
-def bits_from_word_count wc
-  case wc
-    when '9'
-      bits = 96
-    when '12'
-      bits = 128
-    when '15'
-      bits = 164
-    when '18'
-      bits = 196
-    when '21'
-      bits = 224
-    when '24'
-      bits = 256
-  end
-  bits
-end
-
 get "/" do
   session[:wallet_port] ||= "8090"
   session[:jorm_port] ||= "8080"
@@ -169,8 +125,6 @@ post "/wallets-create-from-pub-key" do
 
   redirect "/wallets/#{wal['id']}"
 end
-
-
 
 get "/wallets-create-many" do
   erb :form_create_many
@@ -583,7 +537,7 @@ get "/stake-pools-quit" do
   stake_pools = w.get_stake_pools
   handle_api_err stake_pools, session
   wallets = w.wallets
-  handle_api_err wallets, session  
+  handle_api_err wallets, session
   erb :form_join_quit_sp, { :locals => { :wallets => wallets,  :stake_pools => stake_pools} }
 end
 
