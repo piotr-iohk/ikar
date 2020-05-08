@@ -423,9 +423,12 @@ end
 
 get "/byron-wallets-migrate" do
   w = NewWalletBackend.new session[:wallet_port]
-  session[:wallets] = w.wallets
-  session[:byron_wallets] = w.byron_wallets
-  erb :form_migrate_byron, { :locals => session }
+  wallets = w.wallets
+  handle_api_err(wallets, session)
+  byron_wallets = w.byron_wallets
+  handle_api_err(byron_wallets, session)
+
+  erb :form_migrate_byron, { :locals => { :wallets => wallets, :byron_wallets => byron_wallets} }
 end
 
 get "/byron-wallets-migration-fee/:wal_id" do
