@@ -198,7 +198,9 @@ end
 
 post "/wallets-delete-all" do
   w = NewWalletBackend.new session[:wallet_port]
-  w.wallets.each do |wal|
+  s = w.wallets
+  handle_api_err s, session
+  s.each do |wal|
     r = w.delete wal['id']
     handle_api_err r, session
   end
@@ -414,7 +416,9 @@ end
 
 post "/byron-wallets-delete-all" do
   w = NewWalletBackend.new session[:wallet_port]
-  w.byron_wallets.each do |wal|
+  b = w.byron_wallets
+  handle_api_err b, session
+  b.each do |wal|
     r = w.byron_delete wal['id']
     handle_api_err r, session
   end
@@ -557,9 +561,11 @@ end
 
 get "/stake-pools-join" do
   w = NewWalletBackend.new session[:wallet_port]
-  session[:stake_pools] = w.get_stake_pools
-  session[:wallets] = w.wallets
-  erb :form_join_quit_sp, { :locals => session }
+  stake_pools = w.get_stake_pools
+  handle_api_err stake_pools, session
+  wallets = w.wallets
+  handle_api_err wallets, session
+  erb :form_join_quit_sp, { :locals => { :wallets => wallets,  :stake_pools => stake_pools} }
 end
 
 post "/stake-pools-join" do
@@ -574,9 +580,11 @@ end
 
 get "/stake-pools-quit" do
   w = NewWalletBackend.new session[:wallet_port]
-  session[:stake_pools] = w.get_stake_pools
-  session[:wallets] = w.wallets
-  erb :form_join_quit_sp, { :locals => session }
+  stake_pools = w.get_stake_pools
+  handle_api_err stake_pools, session
+  wallets = w.wallets
+  handle_api_err wallets, session  
+  erb :form_join_quit_sp, { :locals => { :wallets => wallets,  :stake_pools => stake_pools} }
 end
 
 post "/stake-pools-quit" do
