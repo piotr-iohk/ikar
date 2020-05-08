@@ -39,7 +39,7 @@ Alternatively one can [set up cardano-wallet](https://github.com/input-output-hk
 
 ```
 docker pull piotrstachyra/icarus:latest
-docker run --network=host piotrstachyra/icarus:latest
+docker run --network=host --rm piotrstachyra/icarus:latest
 ```
 
 </details>
