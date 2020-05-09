@@ -23,14 +23,16 @@ describe Helpers::App do
     t2b = render_wal_status("syncing", wal).include? progress
     t3a = render_wal_status("ready", wal).include? "ready"
     t3b = render_wal_status("ready", wal).include? progress
-    t4 = render_wal_status("unknown", wal).include? "unknown"
+    t4a = render_wal_status("unknown", wal).include? "unknown"
+    t4b = render_wal_status("unknown", wal).include? progress
     expect(t1a).to eq true
     expect(t1b).to eq false
     expect(t2a).to eq true
     expect(t2b).to eq true
     expect(t3a).to eq true
     expect(t3b).to eq false
-    expect(t4).to eq true
+    expect(t4a).to eq true
+    expect(t4b).to eq false
   end
 
   it "prepare_mnemonics" do
