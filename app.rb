@@ -468,28 +468,6 @@ post "/byron-tx-to-address" do
   redirect "/byron-wallets/#{wid_src}/txs/#{r['id']}"
 end
 
-get "/byron-tx-between-wallets" do
-  w = NewWalletBackend.new session[:wallet_port]
-  session[:wallets] = w.byron_wallets
-  erb :form_tx_between_wallets, { :locals => session }
-end
-
-post "/byron-tx-between-wallets" do
-  wid_src = params[:wid_src]
-  wid_dst = params[:wid_dst]
-  pass = params[:pass]
-  amount = params[:amount]
-
-  w = NewWalletBackend.new session[:wallet_port]
-  address_dst = w.addresses_unused(wid_dst).sample['id']
-  r = w.create_transaction(amount, address_dst, pass, wid_src)
-  handle_api_err r, session
-
-  session[:tx] = r
-  session[:wid] = wid_src
-  redirect "/wallets/#{wid_src}/txs/#{r['id']}"
-end
-
 # MNEMONICS
 
 get "/gen-mnemonics" do
