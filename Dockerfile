@@ -1,6 +1,4 @@
-FROM ruby:2.7.1
-
-RUN apt-get update -qq && apt-get install -y build-essential
+FROM ruby:2.7.1-alpine
 
 ENV APP_HOME /app
 RUN mkdir $APP_HOME
