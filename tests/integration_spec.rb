@@ -87,6 +87,65 @@ describe 'Using App', type: :feature do
       expect(page).to have_link("My Test Wallet (random)")
     end
 
+    it "I can see UTxO" do
+      create_byron_wallet "random"
+      expect(page).to have_link("My Test Wallet (random)")
+      click_link "UTxO"
+      expect(page).to have_link("go back to wallet")
+    end
+
+    it "I can see Migration Fee" do
+      create_byron_wallet "random"
+      click_link "Migration Fee"
+      expect(page).to have_text "nothing_to_migrate"
+    end
+
+    it "I cannot Migrate" do
+      create_byron_wallet "random"
+      click_link "Migrate"
+      expect(page).to have_text "not_implemented"
+    end
+
+    it "I could check migration fee - if I had money" do
+      address = "37btjrVyb4KEpFyPXAJjJib9FeBRNH8oT4abThrXGQTAmrb2LPo7q2jE9ehutvPrDRBhSp5zFLAwN2CSNu1xqppffvBK5sHaFGM2zW1HukJ4ZRje3u"
+      create_byron_wallet "random"
+      click_link "Tx"
+      click_link "Tx Fee"
+      find("#address").set address
+      click_button "Tx fee"
+      expect(page).to have_text "not_enough_money"
+    end
+
+    it "I could send tx - if I had money" do
+      address = "37btjrVyb4KEpFyPXAJjJib9FeBRNH8oT4abThrXGQTAmrb2LPo7q2jE9ehutvPrDRBhSp5zFLAwN2CSNu1xqppffvBK5sHaFGM2zW1HukJ4ZRje3u"
+      create_byron_wallet "random"
+      click_link "Tx"
+      click_link "To address"
+      find("#address").set address
+      click_button "Send Tx"
+      expect(page).to have_text "not_enough_money"
+    end
+
+    it "I can update wallet's name" do
+      new_name = "Updated wallet name!"
+      create_byron_wallet "random"
+      click_link "Manage"
+      click_link "Update name"
+      find("#name").set new_name
+      click_button "Update name"
+      expect(page).to have_link new_name
+    end
+
+    it "I can update wallet's passphrase" do
+      new_pass = "Updated wallet passphrase!"
+      create_byron_wallet "random"
+      click_link "Manage"
+      click_link "Update passphrase"
+      find("#new_pass").set new_pass
+      click_button "Update passphrase"
+      expect(page).to have_text "Balance:"
+    end
+
   end
 
   describe "Shelley wallets" do
