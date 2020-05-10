@@ -5,11 +5,11 @@
 <a href="https://hub.docker.com/r/piotrstachyra/icarus">
   <img src="https://img.shields.io/docker/pulls/piotrstachyra/icarus.svg" />
 </a>
-<a href="https://github.com/piotr-iohk/icarus/actions?query=workflow%3A%22Linux+%7C+Windows+%7C+MacOS%22">
-  <img src="https://github.com/piotr-iohk/icarus/workflows/Linux%20%7C%20Windows%20%7C%20MacOS/badge.svg" />
+<a href="https://github.com/piotr-iohk/icarus/actions?query=workflow%3ATests">
+  <img src="https://github.com/piotr-iohk/icarus/workflows/Tests/badge.svg" />
 </a>
-<a href="https://github.com/piotr-iohk/icarus/actions?query=workflow%3A%22Docker+Image+CI%22">
-  <img src="https://github.com/piotr-iohk/icarus/workflows/Docker%20Image%20CI/badge.svg" />
+<a href="https://github.com/piotr-iohk/icarus/actions?query=workflow%3ADocker">
+  <img src="https://github.com/piotr-iohk/icarus/workflows/Docker/badge.svg" />
 </a>
 
 # Icarus
