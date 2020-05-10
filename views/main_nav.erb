@@ -50,8 +50,6 @@
       data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Jörmungandr</a>
     <div class="dropdown-menu">
       <a class="dropdown-item" href="/jorm-stats">Stats</a>
-      <a class="dropdown-item disabled" href="#">Stake</a>
-      <a class="dropdown-item disabled" href="#">Stake-pools</a>
     </div>
   </li>
   <li class="nav-item dropdown">
@@ -59,7 +57,7 @@
       data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Tools</a>
     <div class="dropdown-menu">
       <a class="dropdown-item" href="/gen-mnemonics">Generate mnemonics</a>
-      <a class="dropdown-item"  href="/network-stats">Network info</a>
+      <a class="dropdown-item <%="disabled" unless session[:w_connected]%>"  href="/network-stats">Network info</a>
     </div>
   </li>
 </ul>
