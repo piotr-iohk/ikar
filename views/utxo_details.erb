@@ -10,8 +10,11 @@
 
 <div class="list-group">
     <div class="list-group-item">
-        <small><a href="<%= (url_path.include? "byron") ? "/byron-wallets/" : "/wallets/" %><%= wal['id'] %>/utxo">refresh</a></small>
-      | <small><a href="<%= (url_path.include? "byron") ? "/byron-wallets/" : "/wallets/" %><%= wal['id'] %>">go back to wallet</a></small>
+      <small><a href="<%= (url_path.include? "byron") ? "/byron-wallets/" : "/wallets/" %><%= wal['id'] %>/utxo">refresh</a></small>
+    | <small><a href="<%= (url_path.include? "byron") ? "/byron-wallets/" : "/wallets/" %><%= wal['id'] %>">go back to wallet</a></small>
+    </div>
+
+    <div class="list-group-item">
       <div class="card">
           <div class="card-body">
               <%= column_chart utxo['distribution'].sort, title: "#{wal['name']} UTxO distribution" %>
