@@ -11,13 +11,17 @@ def connect
   expect(page).to have_css("img[src*='usb-connected']")
 end
 
-def create_byron_wallet(style)
+def create_byron_wallet(style, options = {})
   visit "/byron-wallets-create"
   find("#style option[value='#{style}']").select_option
 
   if style == "icarus"
     words = BipMnemonic.to_mnemonic(bits: 164, language: 'english')
     find("#mnemonics").set words
+  end
+
+  if options[:mnemonics]
+    find("#mnemonics").set options[:mnemonics].join ","
   end
 
   click_button "Create"
