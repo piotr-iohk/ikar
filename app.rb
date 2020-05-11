@@ -247,10 +247,18 @@ end
 
 # BYRON WALLETS
 
-get "/byron-wallets/:wal_id/address" do
+get "/byron-wallets/:wal_id/address-import" do
+  erb :form_byron_wallet_address_import, { :locals => { :wid => params[:wal_id] } }
+end
+
+post "/byron-wallets/:wal_id/address-import" do
   w = NewWalletBackend.new session[:wallet_port]
-  # r = w.byron_address_create params[:wal_id] ,params[:pass], params[:idx]
-  # handle_api_err r, session
+  r = w.byron_address_import params[:wal_id], params[:address]
+  handle_api_err r, session
+  redirect "/byron-wallets/#{params[:wal_id]}"
+end
+
+get "/byron-wallets/:wal_id/address" do
   erb :form_byron_wallet_address, { :locals => { :wid => params[:wal_id] } }
 end
 

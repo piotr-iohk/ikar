@@ -1,0 +1,21 @@
+<%
+url_path = request.env['PATH_INFO'].to_s
+ep = "/byron-wallets/#{wid}/address-import"
+%>
+<div class="list-group">
+  <div class="list-group-item">
+    <small><a href="<%= (url_path.include? "byron") ? "/byron-wallets/" : "/wallets/" %><%= wid %>">go back to wallet</a></small>
+  </div>
+
+  <div class="list-group-item">
+    <form action="<%= ep %>" method="POST">
+      <div class="form-group">
+        <label for="epoch_number">Address</label>
+        <input type="text" class="form-control" name="address" id="address"
+            placeholder="Address" value="">
+        <small>e.g. 37btjrVyb4KECAbGSZucHRWZnbfDs1qu5E6WLQsJDVMGKwqySd84oUXLtjoUfRYqQ2S4bcYBLMSCizhyZ13rdV1A8BJsMfyKnqWJjPq83uhaFPBMDo</small>
+      </div>
+      <button type="submit" class="btn btn-success">Import address</button>
+    </form>
+  </div>
+</div>
