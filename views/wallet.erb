@@ -83,6 +83,7 @@
           <a class="nav-link"  href="/byron-wallets-migration-fee/<%="#{wal['id']}"%>">Migration Fee</a>
           <a class="nav-link" href="/byron-wallets/<%= wal['id']%>/utxo">UTxO</a>
           <a class="nav-link" href="/byron-wallets/<%= wal['id']%>/address">Generate address</a>
+          <a class="nav-link" href="/byron-wallets/<%= wal['id']%>/address-import">Import address</a>
 
         </nav>
     <% end %>
@@ -142,9 +143,9 @@
                 unused = addresses.select{ |a| a['state'] == "unused" }
             %>
                <small><b>Addresses:</b> <br/>
-                         &nbsp;&nbsp;<a href="#" onClick="showIt('addr')">Total:</a> <%= addresses.size %> <br/>
-                          &nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('addr_used')">Used:</a> <%= used.size %> <br/>
-                          &nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('addr_unused')">Unused:</a> <%= unused.size %> <br/>
+                         &nbsp;&nbsp;<a href="#" onClick="showIt('addr')">Total:</a> <span id="addresses_total"><%= addresses.size %></span> <br/>
+                          &nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('addr_used')">Used:</a> <span id="addresses_used"><%= used.size %></span>  <br/>
+                          &nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('addr_unused')">Unused:</a> <span id="addresses_unused"><%= unused.size %></span>  <br/>
 
                </small>
             <% end %>
@@ -157,13 +158,13 @@
                 txs_out = txs.select{ |t| t['direction'] == "outgoing" }
             %>
            <small><b>Transactions:</b>  <br/>
-                 &nbsp;&nbsp;<a href="#" onClick="showIt('txs')" >Total:</a> <%= txs.size %> <br/>
+                 &nbsp;&nbsp;<a href="#" onClick="showIt('txs')" >Total:</a> <span id="txs_total"><%= txs.size %></span> <br/>
                  &nbsp;&nbsp;&nbsp;&nbsp;Status: <br/>
-                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('txs_pending')" >Pending:</a>  <%= txs_pending.size %> <br/>
-                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('txs_inledger')" >InLedger:</a>  <%= txs_inledger.size %> <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('txs_pending')" >Pending:</a>  <span id="txs_pending"><%= txs_pending.size %></span> <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('txs_inledger')" >InLedger:</a>  <span id="txs_inledger"><%= txs_inledger.size %></span> <br/>
                  &nbsp;&nbsp;&nbsp;&nbsp;Direction: <br/>
-                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('txs_in')" >Incoming:</a>  <%= txs_in.size %> <br/>
-                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('txs_out')" >Outgoing:</a>  <%= txs_out.size %> <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('txs_in')" >Incoming:</a>  <span id="txs_in"><%= txs_in.size %></span> <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('txs_out')" >Outgoing:</a>  <span id="txs_out"><%= txs_out.size %></span> <br/>
            </small><br/>
            <% end %>
 

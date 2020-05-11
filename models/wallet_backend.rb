@@ -163,15 +163,18 @@ class NewWalletBackend
   end
 
   # BYRON
+  def byron_address_import(wal_id, addr)
+    self.class.put("#{@api}/byron-wallets/#{wal_id}/addresses/#{addr}")
+  end
 
-  def byron_address_create (wal_id, pass, idx = 0)
+  def byron_address_create(wal_id, pass, idx = 0)
     self.class.post("#{@api}/byron-wallets/#{wal_id}/addresses",
     :body => { :passphrase => pass,
                :address_index => idx.to_i }.to_json,
     :headers => { 'Content-Type' => 'application/json' } )
   end
 
-  def byron_addresses (id, q = "")
+  def byron_addresses(id, q = "")
     self.class.get("#{@api}/byron-wallets/#{id}/addresses#{q}")
   end
 
