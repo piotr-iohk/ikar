@@ -6,8 +6,11 @@ require_relative 'helpers/app_helpers'
 require_relative './models/wallet_backend'
 require_relative './models/jormungandr'
 
-set :port, 4444
-set :bind, '0.0.0.0'
+ENV['ICARUS_PORT'] ||= '4444'
+ENV['ICARUS_BIND_ADDR'] ||= '0.0.0.0'
+
+set :port, ENV['ICARUS_PORT'].to_i
+set :bind, ENV['ICARUS_BIND_ADDR']
 set :root, File.dirname(__FILE__)
 
 # enable :sessions
