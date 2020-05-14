@@ -2,10 +2,13 @@ module Helpers
   module App
     def handle_api_err(r, session)
       unless [200, 201, 202, 204].include? r.code
-        # j = JSON.parse r.to_s
-        session[:error] = "cardano-wallet responded with:<br/>
+        uri = r.request.last_uri
+        method = r.request.http_method.to_s.split('::').last.upcase
+        session[:error] = "Whoops!... I did:<br/>
+                          #{method} #{uri} <br/><br/>
+                          The response was:<br/>
                           Code = #{r.code},<br/>
-                          Json = #{r.to_s}"
+                          Message = #{r.to_s}"
         redirect "/"
       end
     end
