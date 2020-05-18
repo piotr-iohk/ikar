@@ -103,8 +103,8 @@ describe 'Using App', type: :feature do
         expect(page).to have_link("My Test Wallet (random)")
       end
 
-      expect(find("#addresses_total").text).to eq addresses.size.to_s
-      expect(find("#addresses_unused").text).to eq addresses.size.to_s
+      expect(find("#addr_size").text).to eq addresses.size.to_s
+      expect(find("#addr_unused_size").text).to eq addresses.size.to_s
 
     end
 
