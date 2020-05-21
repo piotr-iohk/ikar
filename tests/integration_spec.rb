@@ -121,13 +121,13 @@ describe 'Using App', type: :feature do
       expect(page).to have_text "nothing_to_migrate"
     end
 
-    it "I cannot Migrate" do
+    it "I could Migrate" do
       create_byron_wallet "random"
       click_link "Migrate"
-      expect(page).to have_text "not_implemented"
+      expect(page).to have_button "Migrate Funds"
     end
 
-    it "I could check migration fee - if I had money" do
+    it "I could check tx fee - if I had money" do
       address = "37btjrVyb4KEpFyPXAJjJib9FeBRNH8oT4abThrXGQTAmrb2LPo7q2jE9ehutvPrDRBhSp5zFLAwN2CSNu1xqppffvBK5sHaFGM2zW1HukJ4ZRje3u"
       create_byron_wallet "random"
       click_link "Tx"

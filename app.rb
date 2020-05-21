@@ -392,12 +392,20 @@ end
 
 get "/byron-wallets-migrate" do
   w = NewWalletBackend.new session[:wallet_port]
-  wallets = w.wallets
+  wallets = w.byron_wallets
   handle_api_err(wallets, session)
-  byron_wallets = w.byron_wallets
-  handle_api_err(byron_wallets, session)
 
-  erb :form_migrate_byron, { :locals => { :wallets => wallets, :byron_wallets => byron_wallets} }
+  erb :form_migrate, { :locals => { :wallets => wallets} }
+end
+
+post "/byron-wallets-migrate" do
+  wid_src = params[:wid_src]
+  addresses = params[:addresses].split("\n").map{|a| a.strip}
+  pass = params[:pass]
+  w = NewWalletBackend.new session[:wallet_port]
+  r = w.migrate_byron_wallet(wid_src, addresses, pass)
+  handle_api_err(r, session)
+  erb :show_migrated, { :locals => { transactions: r, wid_src: wid_src} }
 end
 
 get "/byron-wallets-migration-fee/:wal_id" do
@@ -406,21 +414,6 @@ get "/byron-wallets-migration-fee/:wal_id" do
   r = w.migration_cost_byron_wallet wid
   handle_api_err(r, session)
   erb :show_migration_fee, { :locals => { :migration_fee => r, :wallet_id => wid} }
-end
-
-post "/byron-wallets-migrate" do
-  wid_src = params[:wid_src]
-  wid_dst = params[:wid_dst]
-  pass = params[:pass]
-
-  w = NewWalletBackend.new session[:wallet_port]
-  r = w.migrate_byron_wallet(wid_src, wid_dst, pass)
-  handle_api_err(r, session)
-
-  session[:txs] = r
-  session[:wid_src] = wid_src
-  session[:wid_dst] = wid_dst
-  erb :byron_migrated, { :locals => session }
 end
 
 get "/byron-wallets/:wal_id/txs/:tx_id" do
