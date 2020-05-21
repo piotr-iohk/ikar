@@ -9,7 +9,7 @@ shelley_ep = "/wallets/#{wallet_id}"
 
 <div class="list-group">
   <div class="list-group-item">
-     Transaction fee | 
+     Transaction fees  |
        <small>
          <a href="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>">
            go back to wallet
@@ -17,8 +17,12 @@ shelley_ep = "/wallets/#{wallet_id}"
        </small>
   </div>
   <div class="list-group-item">
-    <small><b>Transaction fee: </b>
-      <%= "#{tx_fee['amount']['quantity']} #{tx_fee['amount']['unit']}" %>
+    <small>
+      <b>Estimated min: </b> <%= "#{tx_fee['estimated_min']['quantity']} #{tx_fee['estimated_min']['unit']}" %>
+    </small>
+    <br/>
+    <small>
+      <b>Estimated max: </b> <%= "#{tx_fee['estimated_max']['quantity']} #{tx_fee['estimated_max']['unit']}" %>
     </small>
   </div>
 </div>
