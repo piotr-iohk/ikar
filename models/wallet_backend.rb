@@ -199,9 +199,10 @@ class NewWalletBackend
     self.class.delete("#{@api}/byron-wallets/#{wid}/transactions/#{txid}")
   end
 
-  def migrate_byron_wallet(srcWid, dstWid, passphrase)
-    self.class.post("#{@api}/byron-wallets/#{srcWid}/migrations/#{dstWid}",
-      :body => { :passphrase => passphrase }.to_json,
+  def migrate_byron_wallet(srcWid, addresses, passphrase)
+    self.class.post("#{@api}/byron-wallets/#{srcWid}/migrations",
+      :body => { :passphrase => passphrase,
+                 :addresses => addresses }.to_json,
       :headers => { 'Content-Type' => 'application/json' } )
   end
 
