@@ -1,5 +1,4 @@
 <%
-stake_pools = session[:stake_pools]
 sort_by = params[:sort_by] if params[:sort_by]
 case sort_by
 when "blocks"
@@ -21,7 +20,7 @@ end
 
 <div class="list-group">
   <div class="list-group-item">
-     <%= "Stake pools: #{stake_pools.size}" %> 
+     <%= "Stake pools: #{stake_pools.size}" %>
      <small><a href="/stake-pools">by desirability</a></small>
      | <small><a href="/stake-pools?sort_by=performance">by performance</a></small>
      | <small><a href="/stake-pools?sort_by=saturation">by saturation</a></small>
@@ -33,7 +32,7 @@ end
   <% sp.each_with_index do |s, i| %>
       <div class="list-group-item">
         <div class="d-flex w-100 justify-content-between">
-          <h5 class="mb-1"><%= "#{i + 1}: #{s['id']}" %></h5> 
+          <h5 class="mb-1"><%= "#{i + 1}: #{s['id']}" %></h5>
         </div>
         <small><b>Desirability:</b> <%= s['desirability'] %></small><br/>
         <small><b>Apparent performance:</b> <%= s['apparent_performance'] %></small><br/>
@@ -42,32 +41,32 @@ end
         <small><b>Produced blocks:</b> <%= s['metrics']['produced_blocks']['quantity'] if s['metrics'] %></small><br/>
         <small><b>Margin:</b> <%= s['margin']['quantity'] %>%</small><br/>
         <small><b>Cost:</b> <%= s['cost']['quantity'] %> lovelace</small><br/>
-        
+
         <% if s['metadata'] %>
           <small><b>Metadata:</b></small></br>
-          <small>&nbsp;&nbsp;<b>Homepage:</b> 
+          <small>&nbsp;&nbsp;<b>Homepage:</b>
           <a href="<%= s['metadata']['homepage']%>" target="_blank"><%= s['metadata']['homepage']%></a>
-          </small></br> 
-          <small>&nbsp;&nbsp;<b>Name:</b> 
+          </small></br>
+          <small>&nbsp;&nbsp;<b>Name:</b>
             <%= s['metadata']['name']%>
           </small></br>
-          <small>&nbsp;&nbsp;<b>Owner:</b> 
+          <small>&nbsp;&nbsp;<b>Owner:</b>
             <%= s['metadata']['owner']%>
           </small></br>
-          <small>&nbsp;&nbsp;<b>Pledge address:</b> 
+          <small>&nbsp;&nbsp;<b>Pledge address:</b>
             <%= s['metadata']['pledge_address']%>
           </small></br>
-          <small>&nbsp;&nbsp;<b>Ticker:</b> 
+          <small>&nbsp;&nbsp;<b>Ticker:</b>
             <%= s['metadata']['ticker']%>
           </small></br>
-          <small>&nbsp;&nbsp;<b>Description:</b> 
+          <small>&nbsp;&nbsp;<b>Description:</b>
             <%= s['metadata']['description']%>
           </small></br>
         <% else %>
           <small><b style="text-color:red">No metadata.</b></small></br>
         <% end %>
         <small>
-            <a href="/stake-pools-join?sid=<%= s['id']%>">join</a> 
+            <a href="/stake-pools-join?sid=<%= s['id']%>">join</a>
           | <a href="/stake-pools-quit?sid=<%= s['id']%>">quit</a>
         </small>
       </div>
