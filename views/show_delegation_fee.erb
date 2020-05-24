@@ -4,13 +4,17 @@
 
 <div class="list-group">
   <div class="list-group-item">
-     Delegation fee
+     Delegation fees
      <small><a href="/stake-pools-fee/<%= wallet_id %>">refresh</a></small>
      | <small><a href="/wallets/<%= wallet_id %>">go back to wallet</a></small>
   </div>
   <div class="list-group-item">
-    <small><b>Delegation fee: </b>
-      <%= "#{df['amount']['quantity']} #{df['amount']['unit']}" %>
+    <small>
+      <b>Estimated min: </b> <%= "#{df['estimated_min']['quantity']} #{df['estimated_min']['unit']}" %>
+    </small>
+    <br/>
+    <small>
+      <b>Estimated max: </b> <%= "#{df['estimated_max']['quantity']} #{df['estimated_max']['unit']}" %>
     </small>
   </div>
 </div>

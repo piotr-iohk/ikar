@@ -1,8 +1,8 @@
 <%
   url_path = request.env['PATH_INFO'].to_s
-  tx = session[:tx] if session[:tx]
-  wid = session[:wid] if session[:wid]
+
 %>
+
 <script src="../../../../lib.js" type="text/javascript"></script>
 <div class="list-group">
 
@@ -31,44 +31,44 @@
       <small><b>Status: </b><%= tx['status'] %></small><br/>
       <small><b>Amount: </b><%= tx['amount']['quantity'] %> <%= "(sent amount + fee)" if tx['direction'] == "outgoing" %></small><br/>
       <small><b>Direction: </b><%= tx['direction'] %></small><br/>
-      
+
       <small><b>Depth: </b><%= "#{tx['depth']['quantity']} blocks" if tx['depth'] %></small><br/>
       <% if tx['inputs'] %>
         <div class="list-group-item">
-          <small><b>Inputs: </b> <%= tx['inputs'].size %></small><br/>  
+          <small><b>Inputs: </b> <%= tx['inputs'].size %></small><br/>
           <% tx['inputs'].each do |i| %>
               <small>
                 &nbsp;&nbsp;<b>Amount: </b><%= i['amount']['quantity'] if i['amount'] %>
               </small><br/>
               <small>&nbsp;&nbsp;<b>Address: </b><%= i['address'] %></small><br/>
               <small>&nbsp;&nbsp;<b>Id: </b><%= i['id'] %></small><br/>
-              <small>&nbsp;&nbsp;<b>Index: </b><%= i['index'] %></small><br/> 
-              <b>---</b><br/>   
+              <small>&nbsp;&nbsp;<b>Index: </b><%= i['index'] %></small><br/>
+              <b>---</b><br/>
             <% end %>
         </div>
       <% else%>
         <small><b>No Inputs!</b></small><br/>
       <% end %>
       <% if tx['outputs'] %>
-        <div class="list-group-item">  
-          <small><b>Outputs: </b><%= tx['outputs'].size %></small><br/>    
+        <div class="list-group-item">
+          <small><b>Outputs: </b><%= tx['outputs'].size %></small><br/>
           <% tx['outputs'].each do |out| %>
               <small>&nbsp;&nbsp;<b>Amount: </b><%= out['amount']['quantity'] %></small><br/>
-              <small>&nbsp;&nbsp;<b>Address: </b><%= out['address'] %></small><br/>  
-              <b>---</b> <br/>  
+              <small>&nbsp;&nbsp;<b>Address: </b><%= out['address'] %></small><br/>
+              <b>---</b> <br/>
             <% end %>
         </div>
-          
+
       <% else%>
         <small>&nbsp;&nbsp;<b>No Outputs! </b></small><br/>
-      <% end %>  
+      <% end %>
       <small><a href="#" onClick="showIt('tx_json')">raw tx.json</a></small><br/>
       <div class="list-group-item"  >
         <small id="tx_json" style="display:none">
         <%= tx.to_json %>
         </small>
-      </div>      
+      </div>
   </div>
 
-  
+
 </div>

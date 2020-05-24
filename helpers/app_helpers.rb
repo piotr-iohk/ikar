@@ -1,5 +1,14 @@
 module Helpers
   module App
+    def is_connected?(w)
+      begin
+        w.misc.network.information
+        true
+      rescue
+        false
+      end
+    end
+
     def handle_api_err(r, session)
       unless [200, 201, 202, 204].include? r.code
         uri = r.request.last_uri

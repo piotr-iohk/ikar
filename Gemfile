@@ -1,10 +1,10 @@
 source 'https://rubygems.org'
 
-gem 'httparty'
-gem 'docopt'
-gem 'bip_mnemonic'
-gem 'sinatra'
-gem 'chartkick'
+gem 'cardano_wallet'
+gem 'docopt', '~> 0.6.1'
+gem 'bip_mnemonic', '~> 0.0.4'
+gem 'sinatra', '~> 2.0.8.1'
+gem 'chartkick', '~> 3.3.1'
 
 group :development, :test do
   gem 'rspec'
