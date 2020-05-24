@@ -26,7 +26,7 @@ get "/" do
   session[:wallet_port] ||= "8090"
   session[:jorm_port] ||= "8080"
   session[:platform] ||= os
-  erb :index, { :locals => session }
+  erb :index
 end
 
 post "/connect" do
@@ -93,8 +93,9 @@ end
 
 get "/wallets-create" do
   # 15-word mnemonics
-  session[:mnemonics] = BipMnemonic.to_mnemonic(bits: 164, language: 'english')
-  erb :form_create_wallet, { :locals => session }
+  bits = bits_from_word_count '15'
+  mnemonics = BipMnemonic.to_mnemonic(bits: bits, language: 'english')
+  erb :form_create_wallet, { :locals => { :mnemonics => mnemonics} }
 end
 
 post "/wallets-create" do
@@ -116,7 +117,7 @@ end
 
 get "/wallets-create-from-pub-key" do
   # 15-word mnemonics
-  erb :form_create_wallet_from_pub_key, { :locals => session }
+  erb :form_create_wallet_from_pub_key
 end
 
 post "/wallets-create-from-pub-key" do
@@ -155,7 +156,7 @@ post "/wallets-create-many" do
 end
 
 get "/wallets-delete-all" do
-  erb :form_del_all, { :locals => session }
+  erb :form_del_all
 end
 
 post "/wallets-delete-all" do
@@ -339,8 +340,9 @@ end
 
 get "/byron-wallets-create" do
   # 12-word mnemonics
-  session[:mnemonics] = BipMnemonic.to_mnemonic(bits: 128, language: 'english')
-  erb :form_create_wallet, { :locals => session }
+  bits = bits_from_word_count '12'
+  mnemonics = BipMnemonic.to_mnemonic(bits: bits, language: 'english')
+  erb :form_create_wallet, { :locals => { :mnemonics => mnemonics} }
 end
 
 post "/byron-wallets-create" do
@@ -359,7 +361,7 @@ post "/byron-wallets-create" do
 end
 
 get "/byron-wallets-create-many" do
-  erb :form_create_many, { :locals => session }
+  erb :form_create_many
 end
 
 post "/byron-wallets-create-many" do
@@ -381,7 +383,7 @@ post "/byron-wallets-create-many" do
 end
 
 get "/byron-wallets-delete-all" do
-  erb :form_del_all, { :locals => session }
+  erb :form_del_all
 end
 
 post "/byron-wallets-delete-all" do
@@ -427,7 +429,7 @@ get "/byron-wallets/:wal_id/txs/:tx_id" do
   session[:wid] = params[:wal_id]
   session[:tx] = @cw.byron.transactions.list(params[:wal_id]).
                                         select{ |tx| tx['id'] == params[:tx_id]}[0]
-  erb :tx_details, { :locals => session }
+  erb :tx_details
 end
 
 get "/byron-wallets/:wal_id/forget-tx/:tx_to_forget_id" do
@@ -474,14 +476,16 @@ end
 # MNEMONICS
 
 get "/gen-mnemonics" do
-  erb :form_gen_mnemonics, { :locals => session }
+  erb :form_gen_mnemonics, { :locals => {:mnemonics => nil,
+                                         :words_count => nil } }
 end
 
 post "/gen-mnemonics" do
   bits = bits_from_word_count params[:words_count]
-  session[:words_count] = params[:words_count]
-  session[:mnemonics] = BipMnemonic.to_mnemonic(bits: bits, language: 'english')
-  erb :form_gen_mnemonics, { :locals => session }
+  words_count = params[:words_count]
+  mnemonics = BipMnemonic.to_mnemonic(bits: bits, language: 'english')
+  erb :form_gen_mnemonics, { :locals => {:mnemonics => mnemonics,
+                                         :words_count => words_count } }
 end
 
 # STAKE-POOLS
@@ -579,7 +583,8 @@ end
 
 get "/jorm-stats" do
   j = Jormungandr.new session[:jorm_port]
-  session[:jorm_stats] = j.get_node_stats
-  session[:jorm_settings] = j.get_settings
-  erb :jorm_stats, { :locals => session }
+  my = Hash.new
+  my[:jorm_stats] = j.get_node_stats
+  my[:jorm_settings] = j.get_settings
+  erb :jorm_stats, :locals => { :my => my }
 end

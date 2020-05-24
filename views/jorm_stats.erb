@@ -1,6 +1,6 @@
 <%
-jorm_stats = session[:jorm_stats]
-jorm_settings = session[:jorm_settings]
+jorm_stats = my[:jorm_stats]
+jorm_settings = my[:jorm_settings]
 %>
 
 <div class="list-group">
@@ -42,7 +42,7 @@ jorm_settings = session[:jorm_settings]
     <small><b>rewardParams: </b></small><br/>
     <small>  <%= jorm_settings['rewardParams'] %></small><br/>
     <% end %>
-    
+
     <small><b>slotDuration: </b>  <%= jorm_settings['slotDuration'] %></small><br/>
     <small><b>slotsPerEpoch: </b>  <%= jorm_settings['slotsPerEpoch'] %></small><br/>
     <% if jorm_settings['treasuryTax'] %>
