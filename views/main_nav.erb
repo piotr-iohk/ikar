@@ -46,18 +46,11 @@
     </div>
   </li>
   <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle <%="disabled" unless session[:j_connected]%>"
-      data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Jörmungandr</a>
-    <div class="dropdown-menu">
-      <a class="dropdown-item" href="/jorm-stats">Stats</a>
-    </div>
-  </li>
-  <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle"
       data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Tools</a>
     <div class="dropdown-menu">
       <a class="dropdown-item" href="/gen-mnemonics">Generate mnemonics</a>
-      <a class="dropdown-item <%="disabled" unless session[:w_connected]%>"  href="/network-stats">Network info</a>
+      <a class="dropdown-item <%="disabled" unless session[:w_connected]%>"  href="/wallet-jorm-stats">Jörmungandr</a>
     </div>
   </li>
 </ul>

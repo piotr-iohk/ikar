@@ -24,20 +24,19 @@ end
 
 get "/" do
   session[:wallet_port] ||= "8090"
-  session[:jorm_port] ||= "8080"
   session[:platform] ||= os
   erb :index
 end
 
 post "/connect" do
   session[:wallet_port] = params["wallet_port"]
-  session[:jorm_port] = params["jorm_port"]
-
-  j = Jormungandr.new session[:jorm_port]
   session[:opt] = {port: session[:wallet_port].to_i}
   @cw = CardanoWallet.new session[:opt]
   session[:w_connected] = is_connected? @cw
-  session[:j_connected] = j.is_connected?
+  redirect "/"
+end
+
+get "/discovery" do
   redirect "/"
 end
 
@@ -588,25 +587,28 @@ get "/network-clock" do
   erb :network_clock, :locals => { :network_clock => r }
 end
 
-get "/network-stats" do
-  j = Jormungandr.new session[:jorm_port]
 
+# JORMUNGANDR
+
+post "/connect-jorm" do
+  session[:jorm_port] = params["jorm_port"]
+  j = Jormungandr.new session[:jorm_port]
+  session[:j_connected] = j.is_connected?
+  redirect "/wallet-jorm-stats"
+end
+
+get "/wallet-jorm-stats" do
+  session[:jorm_port] ||= "8080"
+
+  j = Jormungandr.new session[:jorm_port]
+  session[:j_connected] = j.is_connected?
+  
   my = Hash.new
   my[:jorm_stats] = j.get_node_stats if j.is_connected?
   my[:jorm_settings] = j.get_settings if j.is_connected?
   my[:network_info] = @cw.misc.network.information if is_connected?(@cw)
   my[:network_params] = @cw.misc.network.parameters if is_connected?(@cw)
   handle_api_err my[:network_info], session
-  erb :network_stats, :locals => { :my => my }
+  erb :wallet_jorm_stats, :locals => { :my => my }
 
-end
-
-# JORMUNGANDR
-
-get "/jorm-stats" do
-  j = Jormungandr.new session[:jorm_port]
-  my = Hash.new
-  my[:jorm_stats] = j.get_node_stats
-  my[:jorm_settings] = j.get_settings
-  erb :jorm_stats, :locals => { :my => my }
 end

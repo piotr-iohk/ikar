@@ -7,23 +7,23 @@
           <img src="https://img.icons8.com/small/16/000000/wallet.png" title="Wallet Backend port">
           <img src="https://img.icons8.com/color/16/000000/<%= session[:w_connected] ? "usb-connected.png" : "usb-disconnected.png"%>">
         </div>
-        <input title="cardano-wallet port" placeholder="Wallet port" type="text" value="<%=session[:wallet_port]%>" name="wallet_port"
-              class="form-control" >
-      </div>
-    </div>
-    <div class="col">
-      <div class="input-group-prepend">
-        <div class="input-group-text">
-          <img src="https://img.icons8.com/ios-glyphs/16/000000/snake.png" title="Jörmungandr port">
-          <img src="https://img.icons8.com/color/16/000000/<%= session[:j_connected] ? "usb-connected.png" : "usb-disconnected.png"%>">
+        <div class="input-group">
+          <select class="custom-select mr-sm-2" name="protocol">
+            <option value="http" selected>http</option>
+            <option value="https" >https</option>
+          </select>
         </div>
-        <input title="Jörmungandr port" placeholder="Jörm port" type="text" value="<%=session[:jorm_port]%>" name="jorm_port"
-              class="form-control">
+        <div class="input-group">
+          <input title="cardano-wallet port" placeholder="Wallet port" type="text" value="<%=session[:wallet_port]%>" name="wallet_port"
+                class="form-control" >
+        </div>
       </div>
     </div>
 
     <div class="col">
       <button type="submit" class="btn btn-success">Connect</button>
+      <a class="btn btn-dark" href="/discovery" role="button">Discover</a>
     </div>
+
   </div>
 </form>
