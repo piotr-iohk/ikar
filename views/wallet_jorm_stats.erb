@@ -84,7 +84,6 @@
   </div>
   <div class="col">
     <!-- NETWORK INFORMATION -->
-
     <div class="list-group">
       <div class="list-group-item">
          Network information (from wallet backend)
@@ -107,7 +106,7 @@
           <small>&nbsp;&nbsp;<b>Epoch number: </b><%= n['next_epoch']['epoch_number'] %></small><br/>
         </div>
       <% else %>
-        <div class="alert alert-danger" role="alert">Cannot connect to wallet backend! Is port correct? [PORT = <%= session[:wallet_port] %>]</div>
+        <div class="alert alert-danger" role="alert">Cannot connect to wallet backend! Is port correct? [PORT = <%= session[:opt][:port] %>]</div>
       <% end %>
     </div>
 
@@ -118,6 +117,8 @@
          Network parameters (from wallet backend)
          <small>Epoch: "latest"</a></small>
       </div>
+      <% if p %>
+
       <div class="list-group-item">
         <small><b>Slot length: </b>
           <%= "#{p['slot_length']['quantity']} #{p['slot_length']['unit']}" %>
@@ -138,6 +139,9 @@
           <%= p['blockchain_start_time'] %>
         </small><br/>
       </div>
+      <% else %>
+        <div class="alert alert-danger" role="alert">Cannot connect to wallet backend! Is port correct? [PORT = <%= session[:opt][:port] %>]</div>
+      <% end %>
     </div>
 
 

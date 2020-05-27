@@ -1,0 +1,39 @@
+<% if wallet_servers.size == 0 %>
+      <div class="alert alert-info" role="alert">
+        <img src="https://img.icons8.com/ultraviolet/40/000000/system-information.png"/> Please note that wallet discovery does not work if Ikar is running in a docker image.
+      </div>
+<% end %>
+<div class="list-group-item">
+  Wallet servers discovered: <%= wallet_servers.size %>
+</div>
+<%
+wallet_servers.each do |s|
+%>
+<div class="list-group-item">
+  <form action="/connect" method="POST">
+    <div class="form-row">
+
+      <div class="col">
+        <input type="text" class="form-control" name="cmd_line" id="cmd_line"
+             value="<%= s.cmdline %>">
+      </div>
+      <input type="hidden" name="wallet_port" value="<%= get_port(s.cmdline) %>"/>
+      <input type="hidden" name="protocol" value="<%= guess_protocol(s.cmdline) %>"/>
+      <% srv_path = get_cert_server_path(s.cmdline) %>
+      <input type="hidden" name="cacert" value="<%= guess_client_cert_path(srv_path, "ca.crt") %>"/>
+      <input type="hidden" name="pem" value="<%= guess_client_cert_path(srv_path, "client.pem") %>"/>
+      <div class="col">
+        <% if get_port(s.cmdline) %>
+          <button type="submit" class="btn btn-success">Connect</button>
+        <% else %>
+          <span class="alert alert-warning">
+            Cannot determine wallet's port.
+          </span>
+        <% end %>
+      </div>
+
+    </div>
+  </form>
+</div>
+
+<% end %>
