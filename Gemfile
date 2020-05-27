@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'cardano_wallet'
+gem 'cardano_wallet', '~> 0.1.1'
 gem 'docopt', '~> 0.6.1'
 gem 'bip_mnemonic', '~> 0.0.4'
 gem 'sinatra', '~> 2.0.8.1'
