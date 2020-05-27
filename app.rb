@@ -542,13 +542,8 @@ get "/stake-pools-fee/:wal_id" do
 end
 
 # MISC
-
 get "/network-params" do
-  erb :form_network_params
-end
-
-post "/network-params" do
-  r = @cw.misc.network.parameters params['epoch_number']
+  r = @cw.misc.network.parameters ''
   handle_api_err r, session
   erb :network_params, :locals => { :network_params => r }
 end
@@ -573,7 +568,7 @@ get "/network-stats" do
   my[:jorm_stats] = j.get_node_stats if j.is_connected?
   my[:jorm_settings] = j.get_settings if j.is_connected?
   my[:network_info] = @cw.misc.network.information if is_connected?(@cw)
-  my[:network_params] = @cw.misc.network.parameters("latest") if is_connected?(@cw)
+  my[:network_params] = @cw.misc.network.parameters("") if is_connected?(@cw)
   handle_api_err my[:network_info], session
   erb :network_stats, :locals => { :my => my }
 
