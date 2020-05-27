@@ -48,7 +48,6 @@ describe 'Using App', type: :feature do
     it "I can check /network/parameters" do
       click_link "Network"
       click_link "Network Parameters"
-      click_button "Get Network Params"
       expect(page).to have_text "Network parameters"
     end
   end
