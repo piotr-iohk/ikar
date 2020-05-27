@@ -11,8 +11,29 @@ module Helpers
 
     def get_cert_server_path(wallet_cmdline)
       cmd = wallet_cmdline.split
-      cert_path_idx = cmd.index("--tls-ca-cert")
-      cmd[cert_path_idx + 1] if cert_path_idx
+      id = cmd.index("--tls-ca-cert")
+      res = ''
+      i = 1
+
+      if id
+        cert_path = cmd[id + i]
+        if cert_path.start_with? "\""
+          until res.strip.end_with?("\"") do
+            res += "#{cmd[id + i]} "
+            i += 1
+          end
+          res = res.strip
+        elsif cert_path.start_with? "'"
+          until res.strip.end_with?("'") do
+            res += "#{cmd[id + i]} "
+            i += 1
+          end
+          res = res.strip
+        else
+          res = cert_path
+        end
+      end
+      res
     end
 
     def guess_protocol(wallet_cmdline)
@@ -20,9 +41,14 @@ module Helpers
     end
 
     # Guess client cert location based on server_path
-    def guess_client_cert_path(server_path, client_cert)
-      cp = server_path.split('/')[0...-2].join("/") if server_path
-      cp + "/client/#{client_cert}" if cp
+    def guess_client_cert_path(server_path, client_cert, s = App.separator)
+      if server_path
+        suffix = ''
+        suffix = "\"" if server_path.start_with?("\"")
+        suffix = "'" if server_path.start_with?("'")
+        cp = server_path.split(s)[0...-2].join(s)
+      end
+      cp + "#{s}client#{s}#{client_cert}#{suffix}" if cp
     end
   end
 end

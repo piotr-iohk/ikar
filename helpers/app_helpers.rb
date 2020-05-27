@@ -39,6 +39,16 @@ module Helpers
       end
     end
 
+    def separator
+      if os == "Windows"
+        "\\"
+      else
+        "/"
+      end
+    end
+
+    module_function :os, :separator
+
     # units
     def render_wal_status(status, wal)
       case status
@@ -79,5 +89,6 @@ module Helpers
       end
       bits
     end
+
   end
 end

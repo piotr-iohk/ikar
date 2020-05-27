@@ -18,24 +18,59 @@ describe Helpers::Discovery do
     expect(get_port cmd).to eq 0
   end
 
+  it "get_cert_server_path - no path" do
+    cmd = "cardano-wallet-byron serve --shutdown-handler --port 45381"
+    expect(get_cert_server_path cmd).to eq ''
+  end
+
   it "get_cert_server_path" do
     path = "/path/server/ca.crt"
     cmd = "cardano-wallet-byron serve --shutdown-handler --port 45381 --tls-ca-cert #{path}"
     expect(get_cert_server_path cmd).to eq path
   end
 
+  it "get_cert_server_path - path on Windows no spaces" do
+    path = "\"C:\\Users\\piotr\\AppData\\Roaming\\Daedalus\\tls\\server\\ca.crt\""
+    cmd = "cardano-wallet-byron serve --shutdown-handler --port 50065 --database \"C:\\Users\" --tls-ca-cert #{path}"
+    expect(get_cert_server_path cmd).to eq path
+
+    path = "'C:\\Users\\piotr\\AppData\\Roaming\\Daedalus\\tls\\server\\ca.crt'"
+    cmd = "cardano-wallet-byron serve --shutdown-handler --port 50065 --database \"C:\\Users\" --tls-ca-cert #{path}"
+    expect(get_cert_server_path cmd).to eq path
+  end
+
+  it "get_cert_server_path - path on Windows with spaces" do
+    path = "\"C:\\Users\\piotr\\AppData\\Roaming\\Daedalus Mainnet\\tls\\server\\ca.crt\""
+    cmd = "cardano-wallet-byron serve --shutdown-handler --port 50065 --database \"C:\\Users\" --tls-ca-cert #{path}"
+    expect(get_cert_server_path cmd).to eq path
+
+    path = "'C:\\Users\\piotr\\AppData\\Roaming\\Daedalus Mainnet\\tls\\server\\ca.crt'"
+    cmd = "cardano-wallet-byron serve --shutdown-handler --port 50065 --database \"C:\\Users\" --tls-ca-cert #{path}"
+    expect(get_cert_server_path cmd).to eq path
+  end
+
   it "guess_protocol" do
     cmd1 = "cardano-wallet-byron serve --shutdown-handler --port 45381 --tls-ca-cert /path/to/cert"
     cmd2 = "cardano-wallet-byron serve --shutdown-handler --port 45381"
-
     expect(guess_protocol cmd1).to eq 'https'
     expect(guess_protocol cmd2).to eq 'http'
   end
 
   it "guess_client_cert_path" do
     path = "/path/server/ca.crt"
-
     expect(guess_client_cert_path path, "client.pem").to eq "/path/client/client.pem"
+  end
+
+  it "guess_client_cert_path" do
+    expect(guess_client_cert_path '', "client.pem").to eq "/client/client.pem"
+  end
+
+  it "guess_client_cert_path on Windows" do
+    path = "\"C:\\Users\\piotr\\AppData\\Roaming\\Daedalus Mainnet\\tls\\server\\ca.crt\""
+    expect(guess_client_cert_path(path, "client.pem", "\\")).to eq "\"C:\\Users\\piotr\\AppData\\Roaming\\Daedalus Mainnet\\tls\\client\\client.pem\""
+
+    path = "'C:\\Users\\piotr\\AppData\\Roaming\\Daedalus Mainnet\\tls\\server\\ca.crt'"
+    expect(guess_client_cert_path(path, "client.pem", "\\")).to eq "'C:\\Users\\piotr\\AppData\\Roaming\\Daedalus Mainnet\\tls\\client\\client.pem'"
   end
 
 end

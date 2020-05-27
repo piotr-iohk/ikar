@@ -1,6 +1,7 @@
 <% if wallet_servers.size == 0 %>
       <div class="alert alert-info" role="alert">
-        <img src="https://img.icons8.com/ultraviolet/40/000000/system-information.png"/> Please note that wallet discovery does not work if Ikar is running in a docker image.
+        <img src="https://img.icons8.com/ultraviolet/40/000000/system-information.png"/>
+        Please note that wallet discovery will not work if Ikar is flying inside a docker image.
       </div>
 <% end %>
 <div class="list-group-item">
@@ -8,26 +9,33 @@
 </div>
 <%
 wallet_servers.each do |s|
+  cmdline_to_print = s.cmdline.gsub("\"", "")
+  srv_path = get_cert_server_path(s.cmdline)
+  port = get_port(s.cmdline)
+  protocol = guess_protocol(s.cmdline)
+  unless srv_path.empty?
+    cacert = guess_client_cert_path(srv_path, "ca.crt").gsub("\"", "")
+    pem = guess_client_cert_path(srv_path, "client.pem").gsub("\"", "")
+  end
 %>
-<div class="list-group-item">
+<div class="list-group-item discovery">
   <form action="/connect" method="POST">
     <div class="form-row">
 
       <div class="col">
         <input type="text" class="form-control" name="cmd_line" id="cmd_line"
-             value="<%= s.cmdline %>">
+             value="<%= cmdline_to_print %>">
       </div>
-      <input type="hidden" name="wallet_port" value="<%= get_port(s.cmdline) %>"/>
-      <input type="hidden" name="protocol" value="<%= guess_protocol(s.cmdline) %>"/>
-      <% srv_path = get_cert_server_path(s.cmdline) %>
-      <input type="hidden" name="cacert" value="<%= guess_client_cert_path(srv_path, "ca.crt") %>"/>
-      <input type="hidden" name="pem" value="<%= guess_client_cert_path(srv_path, "client.pem") %>"/>
+      <input type="hidden" name="wallet_port" value="<%= port %>"/>
+      <input type="hidden" name="protocol" value="<%= protocol %>"/>
+      <input type="hidden" name="cacert" value="<%= cacert %>"/>
+      <input type="hidden" name="pem" value="<%= pem %>"/>
       <div class="col">
-        <% if get_port(s.cmdline) %>
+        <% if port %>
           <button type="submit" class="btn btn-success">Connect</button>
         <% else %>
           <span class="alert alert-warning">
-            Cannot determine wallet's port.
+            Cannot read wallet's port from the command-line. ¯\_(ツ)_/¯
           </span>
         <% end %>
       </div>

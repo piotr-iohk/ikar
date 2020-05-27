@@ -34,8 +34,6 @@ end
 
 post "/connect" do
   begin
-    ENV['SSL_CERT_FILE'] = nil
-    @cw = nil
     @cw = CardanoWallet.new({ port: params[:wallet_port].to_i,
                               protocol: params[:protocol],
                               cacert: params[:cacert],
@@ -49,7 +47,7 @@ post "/connect" do
 end
 
 get "/discovery" do
-  wallet_servers = Sys::ProcTable.ps.select{|p| p.cmdline.include? "cardano-wallet"}
+  wallet_servers = Sys::ProcTable.ps.select{|p| p.cmdline.include?("cardano-wallet") if p.cmdline}
   erb :discovery, { :locals => { :wallet_servers => wallet_servers } }
 end
 
