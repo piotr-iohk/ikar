@@ -17,4 +17,25 @@ describe Helpers::Discovery do
     cmd = "cardano-wallet serve --port --other --options"
     expect(get_port cmd).to eq 0
   end
+
+  it "get_cert_server_path" do
+    path = "/path/server/ca.crt"
+    cmd = "cardano-wallet-byron serve --shutdown-handler --port 45381 --tls-ca-cert #{path}"
+    expect(get_cert_server_path cmd).to eq path
+  end
+
+  it "guess_protocol" do
+    cmd1 = "cardano-wallet-byron serve --shutdown-handler --port 45381 --tls-ca-cert /path/to/cert"
+    cmd2 = "cardano-wallet-byron serve --shutdown-handler --port 45381"
+
+    expect(guess_protocol cmd1).to eq 'https'
+    expect(guess_protocol cmd2).to eq 'http'
+  end
+
+  it "guess_client_cert_path" do
+    path = "/path/server/ca.crt"
+
+    expect(guess_client_cert_path path, "client.pem").to eq "/path/client/client.pem"
+  end
+
 end

@@ -620,7 +620,7 @@ get "/wallet-jorm-stats" do
   my[:jorm_settings] = j.get_settings if j.is_connected?
   my[:network_info] = @cw.misc.network.information if is_connected?(@cw)
   my[:network_params] = @cw.misc.network.parameters if is_connected?(@cw)
-  handle_api_err my[:network_info], session
+
   erb :wallet_jorm_stats, :locals => { :my => my }
 
 end

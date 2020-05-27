@@ -6,10 +6,18 @@ Capybara.app = Sinatra::Application
 
 include Helpers::App
 
-describe 'Using App', type: :feature do
+describe 'When not connected', type: :feature do
   it "I can see my platform" do
     visit "/"
     expect(page).to have_text os
+  end
+
+  it "I can visit Jörmungandr screen but see I'm not connected" do
+    visit "/wallet-jorm-stats"
+    expect(page).to have_text "Cannot connect to Jörmungandr"
+    expect(page).to have_button "Refresh"
+    expect(page).to have_text "Network information"
+    expect(page).to have_text "Network parameters"
   end
 
   it "I can generate mnemonics" do
