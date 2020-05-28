@@ -29,7 +29,7 @@
            <a class="nav-link" href="/wallets">List All Shelley</a>
            <div>
              <a class="nav-link dropdown-toggle"
-               data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Manage</a>
+               data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Management</a>
              <div class="dropdown-menu">
                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#confirm-delete">Delete</a>
                <a class="dropdown-item" href="/wallets/<%= id %>/update">Update name</a>
@@ -38,21 +38,31 @@
            </div>
            <div>
              <a class="nav-link dropdown-toggle"
-               data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Tx</a>
+               data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Transactions</a>
              <div class="dropdown-menu">
                <a class="dropdown-item" href="/tx-between-wallets?wid=<%= id %>">Between my wallets</a>
                <a class="dropdown-item" href="/tx-to-address?wid=<%= id %>">To address</a>
-               <a class="dropdown-item" href="/tx-fee-to-address?wid=<%= id %>">Tx Fee</a>
+               <a class="dropdown-item" href="/tx-fee-to-address?wid=<%= id %>">Payment fees</a>
+             </div>
+           </div>
+           <div>
+             <a class="nav-link dropdown-toggle"
+               data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Migrations</a>
+             <div class="dropdown-menu">
+               <a class="dropdown-item" href="/wallets-migrate?wid=<%= id %>">Migrate</a>
+               <a class="dropdown-item" href="/wallets-migration-fee/<%= id %>">Calculate cost</a>
              </div>
            </div>
            <div>
              <a class="nav-link dropdown-toggle"
                data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Delegation</a>
              <div class="dropdown-menu">
-               <a class="dropdown-item" href="/stake-pools-join?wid=<%= wal['id']%>">Join SP</a>
+               <a class="dropdown-item" href="/stake-pools-join?wid=<%= wal['id']%>">Join Stakepool</a>
                <a class="dropdown-item"
-                  href="/stake-pools-quit<%="?wid=#{wal['id']}"%><%= "&sid=#{wal['delegation']['target']}" if wal['delegation']%>">Quit SP</a>
-               <a class="dropdown-item" href="/stake-pools-fee/<%= wal['id'] %>" >Delegation Fee</a>
+                  href="/stake-pools-quit<%="?wid=#{wal['id']}"%><%= "&sid=#{wal['delegation']['target']}" if wal['delegation']%>">
+                  Quit Stakepool
+                </a>
+               <a class="dropdown-item" href="/stake-pools-fee/<%= wal['id'] %>" >Delegation fees</a>
              </div>
            </div>
 
@@ -64,7 +74,9 @@
           <a class="nav-link" href="/byron-wallets">List All Byron</a>
           <div>
             <a class="nav-link dropdown-toggle"
-              data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Manage</a>
+              data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+              Management
+            </a>
             <div class="dropdown-menu">
               <a class="dropdown-item" href="#" data-toggle="modal" data-target="#confirm-delete">Delete</a>
               <a class="dropdown-item" href="/byron-wallets/<%= id %>/update">Update name</a>
@@ -73,18 +85,35 @@
           </div>
           <div>
             <a class="nav-link dropdown-toggle"
-              data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Tx</a>
+              data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+              Transactions
+            </a>
             <div class="dropdown-menu">
               <a class="dropdown-item" href="/byron-tx-to-address?wid=<%= id %>">To address</a>
-              <a class="dropdown-item" href="/byron-tx-fee-to-address?wid=<%= id %>">Tx Fee</a>
+              <a class="dropdown-item" href="/byron-tx-fee-to-address?wid=<%= id %>">Payment fees</a>
             </div>
           </div>
-          <a class="nav-link"  href="/byron-wallets-migrate<%="?wid=#{wal['id']}"%>">Migrate</a>
-          <a class="nav-link"  href="/byron-wallets-migration-fee/<%="#{wal['id']}"%>">Migration Fee</a>
-          <a class="nav-link" href="/byron-wallets/<%= wal['id']%>/utxo">UTxO</a>
-          <a class="nav-link" href="/byron-wallets/<%= wal['id']%>/address">Generate address</a>
-          <a class="nav-link" href="/byron-wallets/<%= wal['id']%>/address-import">Import address</a>
-
+          <div>
+            <a class="nav-link dropdown-toggle"
+              data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+              Migrations
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="/byron-wallets-migrate?wid=<%= id %>">Migrate</a>
+              <a class="dropdown-item" href="/byron-wallets-migration-fee/<%= id %>">Calculate cost</a>
+            </div>
+          </div>
+          <div>
+            <a class="nav-link dropdown-toggle"
+              data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+              Addresses
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="/byron-wallets/<%= id %>/address">Generate</a>
+              <a class="dropdown-item" href="/byron-wallets/<%= id %>/address-import">Import</a>
+            </div>
+          </div>
+          <a class="nav-link" href="/byron-wallets/<%= id %>/utxo">UTxO</a>
         </nav>
     <% end %>
 

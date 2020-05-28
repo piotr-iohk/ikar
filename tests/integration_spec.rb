@@ -81,7 +81,8 @@ describe 'Using App', type: :feature do
     it "I can gen address" do
       create_byron_wallet "random"
       expect(page).to have_link("My Test Wallet (random)")
-      click_link "Generate address"
+      click_link "Addresses"
+      click_link "Generate"
       click_button "Gen address"
       expect(page).to have_link("My Test Wallet (random)")
     end
@@ -96,7 +97,8 @@ describe 'Using App', type: :feature do
       create_byron_wallet "random", {mnemonics: mnemonics}
       expect(page).to have_link("My Test Wallet (random)")
       (addresses * 2).each do |addr|
-        click_link "Import address"
+        click_link "Addresses"
+        click_link "Import"
         find("#address").set addr
         click_button "Import address"
         expect(page).to have_link("My Test Wallet (random)")
@@ -114,9 +116,10 @@ describe 'Using App', type: :feature do
       expect(page).to have_link("go back to wallet")
     end
 
-    it "I can see Migration Fee" do
+    it "I can see Migration cost" do
       create_byron_wallet "random"
-      click_link "Migration Fee"
+      click_link "Migrations"
+      click_link "Calculate cost"
       expect(page).to have_text "nothing_to_migrate"
     end
 
@@ -129,8 +132,8 @@ describe 'Using App', type: :feature do
     it "I could check tx fee - if I had money" do
       address = "37btjrVyb4KEpFyPXAJjJib9FeBRNH8oT4abThrXGQTAmrb2LPo7q2jE9ehutvPrDRBhSp5zFLAwN2CSNu1xqppffvBK5sHaFGM2zW1HukJ4ZRje3u"
       create_byron_wallet "random"
-      click_link "Tx"
-      click_link "Tx Fee"
+      click_link "Transactions"
+      click_link "Payment fees"
       find("#address").set address
       click_button "Tx fee"
       expect(page).to have_text "not_enough_money"
@@ -139,7 +142,7 @@ describe 'Using App', type: :feature do
     it "I could send tx - if I had money" do
       address = "37btjrVyb4KEpFyPXAJjJib9FeBRNH8oT4abThrXGQTAmrb2LPo7q2jE9ehutvPrDRBhSp5zFLAwN2CSNu1xqppffvBK5sHaFGM2zW1HukJ4ZRje3u"
       create_byron_wallet "random"
-      click_link "Tx"
+      click_link "Transactions"
       click_link "To address"
       find("#address").set address
       click_button "Send Tx"

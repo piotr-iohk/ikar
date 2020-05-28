@@ -175,6 +175,33 @@ get "/wallets/:wal_id/utxo" do
   erb :utxo_details, { :locals => { :wal => wal, :utxo => utxo } }
 end
 
+get "/wallets-migrate" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err(wallets, session)
+
+  erb :form_migrate, { :locals => { :wallets => wallets} }
+end
+
+post "/wallets-migrate" do
+  wid_src = params[:wid_src]
+  addresses = params[:addresses].split("\n").map{|a| a.strip}
+  pass = params[:pass]
+
+  r = @cw.shelley.migrations.migrate(wid_src, pass, addresses)
+  handle_api_err(r, session)
+
+  erb :show_migrated, { :locals => { transactions: r, wid_src: wid_src} }
+end
+
+get "/wallets-migration-fee/:wal_id" do
+  wid = params[:wal_id]
+
+  r = @cw.shelley.migrations.cost wid
+  handle_api_err(r, session)
+
+  erb :show_migration_fee, { :locals => { :migration_fee => r, :wallet_id => wid} }
+end
+
 # TRANSACTIONS SHELLEY
 
 post "/tx-fee-to-address" do

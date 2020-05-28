@@ -1,10 +1,17 @@
+<%
+url_path = request.env['PATH_INFO'].to_s
+byron_ep = "/byron-wallets/#{wid_src}"
+shelley_ep = "/wallets/#{wid_src}"
+%>
 
-      <div class="alert alert-success" role="alert">
-        Funds migrated successfully using <%= transactions.size %> tx.
-      </div>
+<div class="alert alert-success" role="alert">
+  Funds migrated successfully using <%= transactions.size %> tx.
+</div>
 
-      <div class="list-group">
-        <div class="list-group-item">
-           <small><a href="/byron-wallets/<%= wid_src %>">go to Byron Wallet (src)</a></small>
-        </div>
-      </div>
+<div class="list-group">
+  <div class="list-group-item">
+     <small><a href="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>">
+       go back to <%= (url_path.include? "byron") ? "Byron" : "Shelley" %> Wallet
+     </a></small>
+  </div>
+</div>
