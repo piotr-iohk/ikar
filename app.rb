@@ -2,8 +2,10 @@ require 'sinatra'
 require 'bip_mnemonic'
 require 'chartkick'
 require 'cardano_wallet'
+require 'sys/proctable'
 
 require_relative 'helpers/app_helpers'
+require_relative 'helpers/discovery_helpers'
 require_relative './models/jormungandr'
 
 ENV['ICARUS_PORT'] ||= '4444'
@@ -16,29 +18,37 @@ set :root, File.dirname(__FILE__)
 # enable :sessions
 use Rack::Session::Pool
 helpers Helpers::App
+helpers Helpers::Discovery
+
 
 before do
   session[:opt] ||= {port: 8090}
   @cw = CardanoWallet.new session[:opt]
+  session[:opt] = @cw.opt
+  session[:platform] ||= os
 end
 
 get "/" do
-  session[:wallet_port] ||= "8090"
-  session[:jorm_port] ||= "8080"
-  session[:platform] ||= os
   erb :index
 end
 
 post "/connect" do
-  session[:wallet_port] = params["wallet_port"]
-  session[:jorm_port] = params["jorm_port"]
-
-  j = Jormungandr.new session[:jorm_port]
-  session[:opt] = {port: session[:wallet_port].to_i}
-  @cw = CardanoWallet.new session[:opt]
+  begin
+    @cw = CardanoWallet.new({ port: params[:wallet_port].to_i,
+                              protocol: params[:protocol],
+                              cacert: params[:cacert],
+                              pem: params[:pem] })
+  rescue
+    session[:error] = "Failed to initialize CardanoWallet! (Hint: Make sure Cacert and Pem point to real files)."
+  end
+  session[:opt] = @cw.opt
   session[:w_connected] = is_connected? @cw
-  session[:j_connected] = j.is_connected?
   redirect "/"
+end
+
+get "/discovery" do
+  wallet_servers = Sys::ProcTable.ps.select{|p| p.cmdline.include?("cardano-wallet") if p.cmdline}
+  erb :discovery, { :locals => { :wallet_servers => wallet_servers } }
 end
 
 # SHELLEY WALLETS
@@ -453,10 +463,10 @@ end
 # TRANSACTIONS BYRON
 
 get "/byron-wallets/:wal_id/txs/:tx_id" do
-  session[:wid] = params[:wal_id]
-  session[:tx] = @cw.byron.transactions.list(params[:wal_id]).
-                                        select{ |tx| tx['id'] == params[:tx_id]}[0]
-  erb :tx_details
+  wid = params[:wal_id]
+  tx = @cw.byron.transactions.list(params[:wal_id]).
+                              select{ |tx| tx['id'] == params[:tx_id]}[0]
+  erb :tx_details, { :locals => { :tx => tx, :wid => wid }  }
 end
 
 get "/byron-wallets/:wal_id/forget-tx/:tx_to_forget_id" do
@@ -578,7 +588,6 @@ end
 get "/network-info" do
   r = @cw.misc.network.information
   handle_api_err r, session
-  session[:network_info] = r
   erb :network_info, :locals => { :network_info => r }
 end
 
@@ -588,25 +597,28 @@ get "/network-clock" do
   erb :network_clock, :locals => { :network_clock => r }
 end
 
-get "/network-stats" do
+
+# JORMUNGANDR
+
+post "/connect-jorm" do
+  session[:jorm_port] = params["jorm_port"]
   j = Jormungandr.new session[:jorm_port]
+  session[:j_connected] = j.is_connected?
+  redirect "/wallet-jorm-stats"
+end
+
+get "/wallet-jorm-stats" do
+  session[:jorm_port] ||= "8080"
+
+  j = Jormungandr.new session[:jorm_port]
+  session[:j_connected] = j.is_connected?
 
   my = Hash.new
   my[:jorm_stats] = j.get_node_stats if j.is_connected?
   my[:jorm_settings] = j.get_settings if j.is_connected?
   my[:network_info] = @cw.misc.network.information if is_connected?(@cw)
   my[:network_params] = @cw.misc.network.parameters if is_connected?(@cw)
-  handle_api_err my[:network_info], session
-  erb :network_stats, :locals => { :my => my }
 
-end
+  erb :wallet_jorm_stats, :locals => { :my => my }
 
-# JORMUNGANDR
-
-get "/jorm-stats" do
-  j = Jormungandr.new session[:jorm_port]
-  my = Hash.new
-  my[:jorm_stats] = j.get_node_stats
-  my[:jorm_settings] = j.get_settings
-  erb :jorm_stats, :locals => { :my => my }
 end

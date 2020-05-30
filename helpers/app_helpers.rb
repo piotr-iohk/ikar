@@ -10,6 +10,10 @@ module Helpers
     end
 
     def handle_api_err(r, session)
+      unless r
+        session[:error] = "It seems I cannot make a connection to wallet..."
+        redirect "/"
+      end
       unless [200, 201, 202, 204].include? r.code
         uri = r.request.last_uri
         method = r.request.http_method.to_s.split('::').last.upcase
@@ -34,6 +38,16 @@ module Helpers
         RUBY_PLATFORM
       end
     end
+
+    def separator
+      if os == "Windows"
+        "\\"
+      else
+        "/"
+      end
+    end
+
+    module_function :os, :separator
 
     # units
     def render_wal_status(status, wal)
@@ -75,5 +89,6 @@ module Helpers
       end
       bits
     end
+
   end
 end

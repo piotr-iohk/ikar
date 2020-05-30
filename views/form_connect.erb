@@ -1,29 +1,56 @@
+<script type="text/javascript">
+  $(function() {
+      if($('#protocol').val() == 'https') {
+          $('#certs').show();
+      } else {
+          $('#certs').hide();
+      }
+      $('#protocol').change(function(){
+          if($('#protocol').val() == 'https') {
+              $('#certs').show();
+          } else {
+              $('#certs').hide();
+          }
+      });
+  });
+</script>
 <form action="/connect" method="POST">
   <div class="form-row">
 
     <div class="col">
       <div class="input-group-prepend">
         <div class="input-group-text">
-          <img src="https://img.icons8.com/small/16/000000/wallet.png" title="Wallet Backend port">
+          <img src="https://img.icons8.com/small/16/000000/wallet.png" title="Wallet connection status">
           <img src="https://img.icons8.com/color/16/000000/<%= session[:w_connected] ? "usb-connected.png" : "usb-disconnected.png"%>">
         </div>
-        <input title="cardano-wallet port" placeholder="Wallet port" type="text" value="<%=session[:wallet_port]%>" name="wallet_port"
-              class="form-control" >
-      </div>
-    </div>
-    <div class="col">
-      <div class="input-group-prepend">
-        <div class="input-group-text">
-          <img src="https://img.icons8.com/ios-glyphs/16/000000/snake.png" title="Jörmungandr port">
-          <img src="https://img.icons8.com/color/16/000000/<%= session[:j_connected] ? "usb-connected.png" : "usb-disconnected.png"%>">
+        <div class="input-group">
+          <select id="protocol" class="custom-select mr-sm-2" name="protocol" title="Wallet connection protocol">
+            <option value="http" <%= "selected" if session[:opt][:protocol] == 'http' %>>http</option>
+            <option value="https" <%= "selected" if session[:opt][:protocol] == 'https' %>>https</option>
+          </select>
         </div>
-        <input title="Jörmungandr port" placeholder="Jörm port" type="text" value="<%=session[:jorm_port]%>" name="jorm_port"
-              class="form-control">
+        <div class="input-group">
+          <input title="Wallet connection port" placeholder="Wallet port" type="text" value="<%= session[:opt][:port].to_s %>" name="wallet_port"
+                class="form-control" >
+        </div>
       </div>
+
+    </div>
+    <div id="certs" class="col">
+        <div class="input-group">
+          <input title="Cacert" placeholder="Cacert" type="text" value="<%= session[:opt][:cacert]%>" name="cacert"
+                class="form-control" >
+        </div>
+        <div class="input-group">
+          <input title="Client.pem" placeholder="Pem" type="text" value="<%= session[:opt][:pem]%>" name="pem"
+                class="form-control" >
+        </div>
     </div>
 
     <div class="col">
       <button type="submit" class="btn btn-success">Connect</button>
+      <a class="btn btn-dark" href="/discovery" role="button">Discover</a>
     </div>
+
   </div>
 </form>

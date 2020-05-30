@@ -35,3 +35,4 @@ end
 
 require_relative '../app'  # <-- your sinatra app
 require_relative '../helpers/app_helpers'
+require_relative '../helpers/discovery_helpers'

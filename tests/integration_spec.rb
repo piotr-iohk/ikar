@@ -7,25 +7,47 @@ Capybara.app = Sinatra::Application
 include Helpers::App
 
 describe 'Using App', type: :feature do
-  it "I can see my platform" do
-    visit "/"
-    expect(page).to have_text os
-  end
+  describe "When not connected" do
+    it "I can see my platform" do
+      visit "/"
+      expect(page).to have_text os
+    end
 
-  it "I can generate mnemonics" do
-    visit "/gen-mnemonics"
-    [9, 12, 15, 21, 24].each do |wc|
-      find("select option[value='#{wc}']").select_option
-      click_button "Generate"
-      gen_wc = all("textarea").first.text.split.size
-      expect(wc).to eq gen_wc
+    it "I can visit Jörmungandr screen but see I'm not connected" do
+      visit "/wallet-jorm-stats"
+      expect(page).to have_text "Cannot connect to Jörmungandr"
+      expect(page).to have_button "Refresh"
+      expect(page).to have_text "Network information"
+      expect(page).to have_text "Network parameters"
+    end
+
+    it "I can generate mnemonics" do
+      visit "/gen-mnemonics"
+      [9, 12, 15, 21, 24].each do |wc|
+        find("select option[value='#{wc}']").select_option
+        click_button "Generate"
+        gen_wc = all("textarea").first.text.split.size
+        expect(wc).to eq gen_wc
+      end
+    end
+
+    it "I can connect to cardano-wallet" do
+      visit "/"
+      click_button "Connect"
+      expect(page).to have_css("img[src*='usb-connected']")
     end
   end
 
-  it "I can connect to cardano-wallet" do
-    visit "/"
-    click_button "Connect"
-    expect(page).to have_css("img[src*='usb-connected']")
+  describe "Discovery" do
+    it "I can discover wallet and connect" do
+      visit "/"
+      click_link "Discover"
+      expect(page).to have_text("Wallet servers discovered: 1")
+      within ".discovery" do
+        click_button "Connect"
+      end
+      expect(page).to have_css("img[src*='usb-connected']")
+    end
   end
 
   describe "Network" do

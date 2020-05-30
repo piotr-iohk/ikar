@@ -1,9 +1,32 @@
 <%
- n = my[:network_info] 
+ n = my[:network_info]
  p = my[:network_params]
  jorm_stats = my[:jorm_stats]
  jorm_settings = my[:jorm_settings]
 %>
+<div class="row" style="margin-left:30px;">
+<form action="/connect-jorm" method="POST">
+  <div class="form-row">
+    <div class="col">
+      <div class="input-group-prepend">
+        <div class="input-group-text">
+          <img src="https://img.icons8.com/ios-glyphs/16/000000/snake.png" title="Jörmungandr port">
+          <img src="https://img.icons8.com/color/16/000000/<%= session[:j_connected] ? "usb-connected.png" : "usb-disconnected.png"%>">
+        </div>
+        <div class="input-group">
+          <input title="Jörmungandr port" placeholder="Jörm port" type="text" value="<%=session[:jorm_port]%>" name="jorm_port"
+                class="form-control">
+        </div>
+      </div>
+      <small id="help" class="form-text text-muted">Jörmungandr port.</small>
+
+    </div>
+    <div class="col">
+      <button type="submit" class="btn btn-info">Refresh</button>
+    </div>
+  </div>
+</form>
+</div>
 <div class="row" style="margin-top:20px; margin-left:10px;">
   <div class="col-4">
     <!-- JORMUNGANDR STATS AND SETTINGS -->
@@ -11,7 +34,7 @@
       <div class="list-group-item">
          Jörmungandr Stats & Settings
       </div>
-      <% if (jorm_stats && jorm_settings) %>  
+      <% if (jorm_stats && jorm_settings) %>
         <div class="list-group-item">
           <div class="d-flex w-100 justify-content-between">
             <h5 class="mb-1">Stats</h5>
@@ -46,7 +69,7 @@
           <small><b>rewardParams: </b></small><br/>
           <small>  <%= jorm_settings['rewardParams'] %></small><br/>
           <% end %>
-          
+
           <small><b>slotDuration: </b>  <%= jorm_settings['slotDuration'] %></small><br/>
           <small><b>slotsPerEpoch: </b>  <%= jorm_settings['slotsPerEpoch'] %></small><br/>
           <% if jorm_settings['treasuryTax'] %>
@@ -61,7 +84,6 @@
   </div>
   <div class="col">
     <!-- NETWORK INFORMATION -->
-    
     <div class="list-group">
       <div class="list-group-item">
          Network information (from wallet backend)
@@ -81,13 +103,13 @@
           </small><br/>
           <small><b>Next epoch: </b></small><br/>
           <small>&nbsp;&nbsp;<b>Epoch start time: </b><%= n['next_epoch']['epoch_start_time'] %></small><br/>
-          <small>&nbsp;&nbsp;<b>Epoch number: </b><%= n['next_epoch']['epoch_number'] %></small><br/>    
+          <small>&nbsp;&nbsp;<b>Epoch number: </b><%= n['next_epoch']['epoch_number'] %></small><br/>
         </div>
       <% else %>
-        <div class="alert alert-danger" role="alert">Cannot connect to wallet backend! Is port correct? [PORT = <%= session[:wallet_port] %>]</div>
+        <div class="alert alert-danger" role="alert">Cannot connect to wallet backend! Is port correct? [PORT = <%= session[:opt][:port] %>]</div>
       <% end %>
     </div>
-    
+
     <!-- NETWORK PARAMETERS -->
 
     <div class="list-group">
@@ -95,28 +117,33 @@
          Network parameters (from wallet backend)
          <small>Epoch: "latest"</a></small>
       </div>
+      <% if p %>
+
       <div class="list-group-item">
-        <small><b>Slot length: </b> 
+        <small><b>Slot length: </b>
           <%= "#{p['slot_length']['quantity']} #{p['slot_length']['unit']}" %>
-        </small><br/>    
-        <small><b>Epoch stability: </b> 
+        </small><br/>
+        <small><b>Epoch stability: </b>
           <%= "#{p['epoch_stability']['quantity']} #{p['epoch_stability']['unit']}" %>
-        </small><br/> 
-        <small><b>Epoch length: </b> 
+        </small><br/>
+        <small><b>Epoch length: </b>
           <%= "#{p['epoch_length']['quantity']} #{p['epoch_length']['unit']}" %>
-        </small><br/> 
-        <small><b>Active slot coefficient: </b> 
+        </small><br/>
+        <small><b>Active slot coefficient: </b>
           <%= "#{p['active_slot_coefficient']['quantity']} #{p['active_slot_coefficient']['unit']}" %>
-        </small><br/> 
-        <small><b>Genesis block hash: </b> 
+        </small><br/>
+        <small><b>Genesis block hash: </b>
           <%= p['genesis_block_hash'] %>
-        </small><br/> 
-        <small><b>Blockchain start time: </b> 
+        </small><br/>
+        <small><b>Blockchain start time: </b>
           <%= p['blockchain_start_time'] %>
-        </small><br/> 
+        </small><br/>
       </div>
+      <% else %>
+        <div class="alert alert-danger" role="alert">Cannot connect to wallet backend! Is port correct? [PORT = <%= session[:opt][:port] %>]</div>
+      <% end %>
     </div>
-    
+
 
   </div>
 </div>
