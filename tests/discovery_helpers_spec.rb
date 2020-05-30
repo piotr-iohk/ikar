@@ -23,29 +23,51 @@ describe Helpers::Discovery do
     expect(get_cert_server_path cmd).to eq ''
   end
 
-  it "get_cert_server_path" do
+  it "get_cert_server_path on Linux (last)" do
     path = "/path/server/ca.crt"
-    cmd = "cardano-wallet-byron serve --shutdown-handler --port 45381 --tls-ca-cert #{path}"
+    cmd = "cardano-wallet-byron serve --shutdown-handler --tls-ca-cert #{path}"
     expect(get_cert_server_path cmd).to eq path
   end
 
-  it "get_cert_server_path - path on Windows no spaces" do
+  it "get_cert_server_path on Linux (middle)" do
+    path = "/path/server/ca.crt"
+    cmd = "cardano-wallet-byron serve --shutdown-handler --tls-ca-cert #{path} --port 4444"
+    expect(get_cert_server_path cmd).to eq path
+  end
+
+  it "get_cert_server_path - path on Windows no spaces (last)" do
     path = "\"C:\\Users\\piotr\\AppData\\Roaming\\Daedalus\\tls\\server\\ca.crt\""
-    cmd = "cardano-wallet-byron serve --shutdown-handler --port 50065 --database \"C:\\Users\" --tls-ca-cert #{path}"
-    expect(get_cert_server_path cmd).to eq path
-
-    path = "'C:\\Users\\piotr\\AppData\\Roaming\\Daedalus\\tls\\server\\ca.crt'"
-    cmd = "cardano-wallet-byron serve --shutdown-handler --port 50065 --database \"C:\\Users\" --tls-ca-cert #{path}"
+    cmd = "cardano-wallet-byron serve --shutdown-handler --tls-ca-cert #{path}"
     expect(get_cert_server_path cmd).to eq path
   end
 
-  it "get_cert_server_path - path on Windows with spaces" do
-    path = "\"C:\\Users\\piotr\\AppData\\Roaming\\Daedalus Mainnet\\tls\\server\\ca.crt\""
-    cmd = "cardano-wallet-byron serve --shutdown-handler --port 50065 --database \"C:\\Users\" --tls-ca-cert #{path}"
+  it "get_cert_server_path - path on Windows no spaces (middle)" do
+    path = "'C:\\Users\\piotr\\AppData\\Roaming\\Daedalus\\tls\\server\\ca.crt'"
+    cmd = "cardano-wallet-byron serve --shutdown-handler --tls-ca-cert #{path} --database"
     expect(get_cert_server_path cmd).to eq path
+  end
 
+  it "get_cert_server_path - path on Windows with spaces (last)" do
+    path = "\"C:\\Users\\piotr\\AppData\\Roaming\\Daedalus Mainnet\\tls\\server\\ca.crt\""
+    cmd = "cardano-wallet-byron serve --shutdown-handler --tls-ca-cert #{path}"
+    expect(get_cert_server_path cmd).to eq path
+  end
+
+  it "get_cert_server_path - path on Windows with spaces (middle)" do
     path = "'C:\\Users\\piotr\\AppData\\Roaming\\Daedalus Mainnet\\tls\\server\\ca.crt'"
-    cmd = "cardano-wallet-byron serve --shutdown-handler --port 50065 --database \"C:\\Users\" --tls-ca-cert #{path}"
+    cmd = "cardano-wallet-byron serve --shutdown-handler --tls-ca-cert #{path} --database"
+    expect(get_cert_server_path cmd).to eq path
+  end
+
+  it "get_cert_server_path - path on Mac (last)" do
+    path = "/Users/eoaslzzcn/Library/Application Support/Daedalus Mainnet/tls/server/ca.crt"
+    cmd = "cardano-wallet-byron serve --tls-ca-cert #{path}"
+    expect(get_cert_server_path cmd).to eq path
+  end
+
+  it "get_cert_server_path - path on Mac (middle)" do
+    path = "/Users/eoaslzzcn/Library/Application Support/Daedalus Mainnet/tls/server/ca.crt"
+    cmd = "cardano-wallet-byron serve --tls-ca-cert #{path} --tls-sv-cert"
     expect(get_cert_server_path cmd).to eq path
   end
 

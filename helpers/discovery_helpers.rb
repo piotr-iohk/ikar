@@ -12,26 +12,17 @@ module Helpers
     def get_cert_server_path(wallet_cmdline)
       cmd = wallet_cmdline.split
       id = cmd.index("--tls-ca-cert")
+      size = cmd.size
       res = ''
       i = 1
 
       if id
-        cert_path = cmd[id + i]
-        if cert_path.start_with? "\""
-          until res.strip.end_with?("\"") do
-            res += "#{cmd[id + i]} "
-            i += 1
-          end
-          res = res.strip
-        elsif cert_path.start_with? "'"
-          until res.strip.end_with?("'") do
-            res += "#{cmd[id + i]} "
-            i += 1
-          end
-          res = res.strip
-        else
-          res = cert_path
+        res = cmd[id + i]
+        until (id + i == size - 1) || (cmd[id + i + 1].start_with? "--") do
+          res += " #{cmd[id + i + 1]}"
+          i += 1
         end
+        res = res.strip
       end
       res
     end
