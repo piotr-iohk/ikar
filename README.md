@@ -54,6 +54,7 @@ or
 ```
 git clone https://github.com/piotr-iohk/ikar.git
 cd ikar
+bundle config set without 'development test'
 bundle install
 ruby app.rb
 ```
