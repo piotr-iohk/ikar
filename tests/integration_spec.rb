@@ -109,27 +109,27 @@ describe 'Using App', type: :feature do
       expect(page).to have_link("My Test Wallet (random)")
     end
 
-    it "I can import address" do
-      mnemonics = ["faculty", "banner", "purity", "fox", "little", "clever",
-                   "announce", "culture", "light", "frown", "anchor", "found"]
-      addresses = ["37btjrVyb4KECAbGSZucHRWZnbfDs1qu5E6WLQsJDVMGKwqySd84oUXLtjoUfRYqQ2S4bcYBLMSCizhyZ13rdV1A8BJsMfyKnqWJjPq83uhaFPBMDo",
-                   "37btjrVyb4KBSA8djaLN6RQRLjMeKPsrPEMAXGt8PmeEdiRSbXHK8RGDdCxhtcWQmeLwnc4EAvNkq4xikTmjkoxrEo8orMQbAwJMwk6mbddJemacwu",
-                   "37btjrVyb4KEBL6ars22ro737YYqXg6ax8jR8AoGu1ER24iQN2zhDA253MsrjE15CTkVKqCUE3XDxfzKWsTGwdBG2QJs2B9u9VAfDbBBwhqDr6EEpL"]
-
-      create_byron_wallet "random", {mnemonics: mnemonics}
-      expect(page).to have_link("My Test Wallet (random)")
-      (addresses * 2).each do |addr|
-        click_link "Addresses"
-        click_link "Import"
-        find("#address").set addr
-        click_button "Import address"
-        expect(page).to have_link("My Test Wallet (random)")
-      end
-
-      expect(find("#addr_size").text).to eq addresses.size.to_s
-      expect(find("#addr_unused_size").text).to eq addresses.size.to_s
-
-    end
+    # it "I can import address" do
+    #   mnemonics = ["faculty", "banner", "purity", "fox", "little", "clever",
+    #                "announce", "culture", "light", "frown", "anchor", "found"]
+    #   addresses = ["37btjrVyb4KECAbGSZucHRWZnbfDs1qu5E6WLQsJDVMGKwqySd84oUXLtjoUfRYqQ2S4bcYBLMSCizhyZ13rdV1A8BJsMfyKnqWJjPq83uhaFPBMDo",
+    #                "37btjrVyb4KBSA8djaLN6RQRLjMeKPsrPEMAXGt8PmeEdiRSbXHK8RGDdCxhtcWQmeLwnc4EAvNkq4xikTmjkoxrEo8orMQbAwJMwk6mbddJemacwu",
+    #                "37btjrVyb4KEBL6ars22ro737YYqXg6ax8jR8AoGu1ER24iQN2zhDA253MsrjE15CTkVKqCUE3XDxfzKWsTGwdBG2QJs2B9u9VAfDbBBwhqDr6EEpL"]
+    #
+    #   create_byron_wallet "random", {mnemonics: mnemonics}
+    #   expect(page).to have_link("My Test Wallet (random)")
+    #   (addresses * 2).each do |addr|
+    #     click_link "Addresses"
+    #     click_link "Import"
+    #     find("#address").set addr
+    #     click_button "Import address"
+    #     expect(page).to have_link("My Test Wallet (random)")
+    #   end
+    #
+    #   expect(find("#addr_size").text).to eq addresses.size.to_s
+    #   expect(find("#addr_unused_size").text).to eq addresses.size.to_s
+    #
+    # end
 
     it "I can see UTxO" do
       create_byron_wallet "random"
@@ -151,25 +151,25 @@ describe 'Using App', type: :feature do
       expect(page).to have_button "Migrate Funds"
     end
 
-    it "I could check tx fee - if I had money" do
-      address = "37btjrVyb4KEpFyPXAJjJib9FeBRNH8oT4abThrXGQTAmrb2LPo7q2jE9ehutvPrDRBhSp5zFLAwN2CSNu1xqppffvBK5sHaFGM2zW1HukJ4ZRje3u"
-      create_byron_wallet "random"
-      click_link "Transactions"
-      click_link "Payment fees"
-      find("#address").set address
-      click_button "Tx fee"
-      expect(page).to have_text "not_enough_money"
-    end
-
-    it "I could send tx - if I had money" do
-      address = "37btjrVyb4KEpFyPXAJjJib9FeBRNH8oT4abThrXGQTAmrb2LPo7q2jE9ehutvPrDRBhSp5zFLAwN2CSNu1xqppffvBK5sHaFGM2zW1HukJ4ZRje3u"
-      create_byron_wallet "random"
-      click_link "Transactions"
-      click_link "To address"
-      find("#address").set address
-      click_button "Send Tx"
-      expect(page).to have_text "not_enough_money"
-    end
+    # it "I could check tx fee - if I had money" do
+    #   address = "37btjrVyb4KEpFyPXAJjJib9FeBRNH8oT4abThrXGQTAmrb2LPo7q2jE9ehutvPrDRBhSp5zFLAwN2CSNu1xqppffvBK5sHaFGM2zW1HukJ4ZRje3u"
+    #   create_byron_wallet "random"
+    #   click_link "Transactions"
+    #   click_link "Payment fees"
+    #   find("#address").set address
+    #   click_button "Tx fee"
+    #   expect(page).to have_text "not_enough_money"
+    # end
+    #
+    # it "I could send tx - if I had money" do
+    #   address = "37btjrVyb4KEpFyPXAJjJib9FeBRNH8oT4abThrXGQTAmrb2LPo7q2jE9ehutvPrDRBhSp5zFLAwN2CSNu1xqppffvBK5sHaFGM2zW1HukJ4ZRje3u"
+    #   create_byron_wallet "random"
+    #   click_link "Transactions"
+    #   click_link "To address"
+    #   find("#address").set address
+    #   click_button "Send Tx"
+    #   expect(page).to have_text "not_enough_money"
+    # end
 
     it "I can update wallet's name" do
       new_name = "Updated wallet name!"
@@ -198,9 +198,19 @@ describe 'Using App', type: :feature do
       connect
     end
 
-    it "Not implemented" do
+    after(:each) do
+      delete_all
+    end
+
+    it "List Shelley wallets" do
       visit "/wallets"
-      expect(page).to have_text "not_implemented"
+      expect(page).to have_link "refresh"
+    end
+
+    it "Create Shelley wallet" do
+      create_shelley_wallet
+      visit "/wallets"
+      expect(page).to have_text("Shelley wallets: 1")
     end
   end
 
@@ -210,7 +220,9 @@ describe 'Using App', type: :feature do
     end
 
     it "Not implemented" do
+      create_shelley_wallet
       visit "/stake-pools"
+      click_button "List Stake Pools"
       expect(page).to have_text "not_implemented"
     end
   end

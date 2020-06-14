@@ -27,10 +27,20 @@ def create_byron_wallet(style, options = {})
   click_button "Create"
 end
 
+def create_shelley_wallet
+  visit "/wallets-create"
+  click_button "Create"
+end
+
 def delete_all
   visit "/byron-wallets-delete-all"
   click_button "Delete all Byron wallets?"
   expect(page).to have_text("Byron wallets: 0")
+
+  visit "/wallets-delete-all"
+  click_button "Delete all Shelley wallets?"
+  expect(page).to have_text("Shelley wallets: 0")
+
 end
 
 require_relative '../app'  # <-- your sinatra app
