@@ -526,16 +526,26 @@ post "/gen-mnemonics" do
 end
 
 # STAKE-POOLS
-
 get "/stake-pools" do
-  stake_pools = @cw.shelley.stake_pools.list
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  erb :form_list_sp, { :locals => {:wallets => wallets} }
+end
+
+get "/stake-pools-list" do
+  stake_pools = @cw.shelley.stake_pools.list params[:wid]
   handle_api_err stake_pools, session
   erb :stake_pools, { :locals => {:stake_pools => stake_pools} }
 end
 
 get "/stake-pools-join" do
-  stake_pools = @cw.shelley.stake_pools.list
-  handle_api_err stake_pools, session
+  wid = params[:wid]
+  if wid
+    stake_pools = @cw.shelley.stake_pools.list wid
+    handle_api_err stake_pools, session
+  else
+    stake_pools = nil
+  end
   wallets = @cw.shelley.wallets.list
   handle_api_err wallets, session
   erb :form_join_quit_sp, { :locals => { :wallets => wallets,
@@ -552,12 +562,10 @@ post "/stake-pools-join" do
 end
 
 get "/stake-pools-quit" do
-  stake_pools = @cw.shelley.stake_pools.list
-  handle_api_err stake_pools, session
   wallets = @cw.shelley.wallets.list
   handle_api_err wallets, session
   erb :form_join_quit_sp, { :locals => { :wallets => wallets,
-                                         :stake_pools => stake_pools} }
+                                         :stake_pools => nil} }
 end
 
 post "/stake-pools-quit" do
