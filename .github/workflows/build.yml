@@ -32,14 +32,16 @@ jobs:
         ruby-version: 2.6
     - name: Install dependencies
       run: bundle install
-    - name: Set up cardano-wallet
+    - name: Set up cardano-wallet & cardano-node on Shelley testnet
       run: |
-        rm docker-compose.yml
-        wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/docker-compose.yml
-        docker-compose up --detach
+        wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/docker-compose-shelley.yml
+        wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/spec/shelley-testnet/configuration.yaml
+        wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/spec/shelley-testnet/ff-genesis.json
+        wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/spec/shelley-testnet/topology.json
+        NODE_CONFIG_PATH=`pwd` docker-compose -f docker-compose-shelley.yml up --detach
     - name: Run tests
       run: rspec tests
     env:
       NETWORK: testnet
-      WALLET: dev-master-byron
-      NODE: latest
+      WALLET: dev-master-shelley
+      NODE: 1.13.0
