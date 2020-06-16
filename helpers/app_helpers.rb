@@ -16,12 +16,14 @@ module Helpers
       end
       unless [200, 201, 202, 204].include? r.code
         uri = r.request.last_uri
+        body = r.request.options[:body]
         method = r.request.http_method.to_s.split('::').last.upcase
-        session[:error] = "Whoops! I did:<br/>
-                          #{method} #{uri} <br/><br/>
-                          The response was:<br/>
-                          Code = #{r.code},<br/>
-                          Message = #{r.to_s}"
+        msg_about_request  = "Whoops! I did:<br/>#{method} #{uri}"
+        msg_about_body     = "<br/>Body: <code>#{body}</code>" if body
+        msg_about_response = "<br/><br/>The response was:<br/>
+                              Code = #{r.code},<br/>
+                              Message = #{r.to_s}"
+        session[:error] = msg_about_request + msg_about_body.to_s + msg_about_response
         redirect "/"
       end
     end
