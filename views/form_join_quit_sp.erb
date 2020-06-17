@@ -24,6 +24,7 @@ quit_ep = "/stake-pools-quit"
         <input type="text" class="form-control" name="pass" id="pass" placeholder="Passphrase" value="Secure Passphrase">
       </div>
 
+      <% if url_path.include? join_ep %>
       <div class="form-group">
         <label for="spid">Stake pool</label>
 
@@ -40,6 +41,7 @@ quit_ep = "/stake-pools-quit"
             <% end %>
 
       </div>
+      <% end %>
 
 
       <button type="submit" class="btn btn-success"><%= (url_path.include? "join") ? "Join" : "Quit" %></button>
