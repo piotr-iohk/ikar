@@ -219,11 +219,11 @@ describe 'Using App', type: :feature do
       connect
     end
 
-    it "Not implemented" do
+    it "I can list stake pools" do
       create_shelley_wallet
       visit "/stake-pools"
       click_button "List Stake Pools"
-      expect(page).to have_text "not_implemented"
+      expect(page).to have_text "Stake pools:"
     end
   end
 end
