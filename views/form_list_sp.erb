@@ -16,7 +16,9 @@ wid = params[:wid] if params[:wid]
         </select>
       </div>
       <button type="submit" class="btn btn-success">List Stake Pools</button>
-
+      <% if wallets.empty? %>
+      (No Shelley wallets? <a href="/wallets-create">Create one first!</a>)
+      <% end %>
     </form>
   </div>
 </div>
