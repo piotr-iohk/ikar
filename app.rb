@@ -535,7 +535,10 @@ end
 get "/stake-pools-list" do
   stake_pools = @cw.shelley.stake_pools.list params[:wid]
   handle_api_err stake_pools, session
-  erb :stake_pools, { :locals => {:stake_pools => stake_pools} }
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  erb :stake_pools, { :locals => {:stake_pools => stake_pools,
+                                  :wallets => wallets } }
 end
 
 get "/stake-pools-join" do
