@@ -526,29 +526,30 @@ post "/gen-mnemonics" do
 end
 
 # STAKE-POOLS
-get "/stake-pools" do
-  wallets = @cw.shelley.wallets.list
-  handle_api_err wallets, session
-  erb :form_list_sp, { :locals => {:wallets => wallets} }
+
+get "/stake-pools-list-wid/:wid" do
+  w = @cw.shelley.wallets.get(params[:wid])
+  handle_api_err w, session
+  balance = w['balance']['available']['quantity']
+  redirect "/stake-pools-list?stake=#{balance}"
 end
 
 get "/stake-pools-list" do
-  stake_pools = @cw.shelley.stake_pools.list params[:wid]
+  stake_pools = @cw.shelley.stake_pools.list({stake: params[:stake]})
   handle_api_err stake_pools, session
-  wallets = @cw.shelley.wallets.list
-  handle_api_err wallets, session
-  erb :stake_pools, { :locals => {:stake_pools => stake_pools,
-                                  :wallets => wallets } }
+  erb :stake_pools, { :locals => {:stake_pools => stake_pools} }
 end
 
 get "/stake-pools-join" do
-  wid = params[:wid]
-  if wid
-    stake_pools = @cw.shelley.stake_pools.list wid
-    handle_api_err stake_pools, session
+  if params[:wid]
+    w = @cw.shelley.wallets.get(params[:wid])
+    handle_api_err w, session
+    balance = w['balance']['available']['quantity']
   else
-    stake_pools = nil
+    balance = 1
   end
+  stake_pools = @cw.shelley.stake_pools.list({stake: balance})
+  handle_api_err stake_pools, session
   wallets = @cw.shelley.wallets.list
   handle_api_err wallets, session
   erb :form_join_quit_sp, { :locals => { :wallets => wallets,

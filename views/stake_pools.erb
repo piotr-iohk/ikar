@@ -1,6 +1,7 @@
 <%
-wid = params['wid']
-ep = "stake-pools-list?wid=#{wid}"
+params['stake'] ||= 1
+stake = params['stake']
+ep = "stake-pools-list?stake=#{stake}"
 sort_by = params[:sort_by] if params[:sort_by]
 
 case sort_by
@@ -25,32 +26,26 @@ end
   <div class="list-group-item">
      <form action="/stake-pools-list" method="GET" >
        <div class="form-row">
-
-         <div class="col">
+         <div class="col-2">
            <div class="form-group">
-             <select class="form-control" name="wid" id="wid">
-               <% wallets.each do |w| %>
-               <option <%= wid == w['id'] ? "selected" : "" %> value="<%= w['id'] %>">
-                 <%= "#{w['name']} [id: #{w['id']}, balance available: #{w['balance']['available']['quantity']} , delegation: #{w['delegation']}]" %>
-               </option>
-               <% end %>
-             </select>
+             <input type="text" class="form-control" name="stake" id="stake" placeholder="Intended stake" value="<%= stake %>">
              <small id="help" class="form-text text-muted">
-               Listing stake pools for <a href="/wallets/<%= wid %>"><%= wallets.select{|w| w['id'] == wid}.first['name'] %>.</a>
+               Intended stake in lovelace.
              </small>
-
            </div>
          </div>
          <div class="col">
-           <button type="submit" class="btn btn-success">List Stake Pools</button>
+           <div class="form-group">
+             <button type="submit" class="btn btn-success">List Stake Pools</button>
+           </div>
          </div>
        </div>
      </form>
   </div>
   <div class="list-group-item">
      <%= "Stake pools: #{stake_pools.size}" %>
-     | <small><a href="<%= ep %>&sort_by=saturation">by saturation</a></small>
      | <small><a href="<%= ep %>&sort_by=non_myopic_member_rewards">by non-myopic member rewards</a></small>
+     | <small><a href="<%= ep %>&sort_by=saturation">by saturation</a></small>
      | <small><a href="<%= ep %>&sort_by=blocks">by produced blocks</a></small>
      | <small><a href="<%= ep %>&sort_by=stake">by relative stake</a></small>
      | <small><a href="<%= ep %>&sort_by=cost">by cost</a></small>
@@ -96,8 +91,8 @@ end
           <small><b style="text-color:red">No metadata.</b></small></br>
         <% end %>
         <small>
-            <a href="/stake-pools-join?sid=<%= s['id']%>&wid=<%= wid %>">join</a>
-          | <a href="/stake-pools-quit?wid=<%= wid %>">quit</a>
+            <a href="/stake-pools-join?sid=<%= s['id']%>">join</a>
+          | <a href="/stake-pools-quit">quit</a>
         </small>
       </div>
    <% end %>

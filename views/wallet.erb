@@ -57,7 +57,7 @@
              <a class="nav-link dropdown-toggle"
                data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Delegation</a>
              <div class="dropdown-menu">
-               <a class="dropdown-item" href="/stake-pools-list?wid=<%= wal['id']%>">List Stakepools</a>
+               <a class="dropdown-item" href="/stake-pools-list-wid/<%= wal['id']%>">List Stakepools</a>
                <a class="dropdown-item" href="/stake-pools-join?wid=<%= wal['id']%>">Join Stakepool</a>
                <a class="dropdown-item"
                   href="/stake-pools-quit<%="?wid=#{wal['id']}"%><%= "&sid=#{wal['delegation']['target']}" if wal['delegation']%>">
