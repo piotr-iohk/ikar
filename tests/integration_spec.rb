@@ -221,7 +221,7 @@ describe 'Using App', type: :feature do
 
     it "I can list stake pools" do
       visit "/stake-pools-list?stake=1"
-      click_button "List Stake Pools"
+      # click_button "List Stake Pools"
       expect(page).to have_text "Stake pools:"
     end
   end
