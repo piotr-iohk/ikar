@@ -53,28 +53,30 @@ end
   </div>
   <div class="list-group-item">
      <%= "Stake pools: #{stake_pools.size}" %>
-     | <small><a href="<%= ep %>&sort_by=blocks">by produced blocks</a></small>
-     | <small><a href="<%= ep %>&sort_by=cost">by cost</a></small>
-     | <small><a href="<%= ep %>&sort_by=margin">by margin</a></small>
-     <%# cardano-node specific: %>
-     <% unless stake_pools.first['metrics']['relative_stake'].nil? %>
-      | <small><a href="<%= ep %>&sort_by=stake">by relative stake</a></small>
-     <% end %>
-     <% unless stake_pools.first['metrics']['non_myopic_member_rewards'].nil? %>
-      | <small><a href="<%= ep %>&sort_by=non_myopic_member_rewards">by non-myopic member rewards</a></small>
-     <% end %>
-     <% unless stake_pools.first['metrics']['saturation'].nil? %>
-      | <small><a href="<%= ep %>&sort_by=saturation">by saturation</a></small>
-     <% end %>
-     <%# jorm specific: %>
-     <% unless stake_pools.first['desirability'].nil? %>
-      | <small><a href="<%= ep %>&sort_by=desirability">by desirability</a></small>
-     <% end %>
-     <% unless stake_pools.first['apparent_performance'].nil? %>
-      | <small><a href="<%= ep %>&sort_by=apparent_performance">by apparent performance</a></small>
-     <% end %>
-     <% unless stake_pools.first['saturation'].nil? %>
-      | <small><a href="<%= ep %>&sort_by=saturation_jorm">by saturation</a></small>
+     <% if stake_pools.size > 0 %>
+       | <small><a href="<%= ep %>&sort_by=blocks">by produced blocks</a></small>
+       | <small><a href="<%= ep %>&sort_by=cost">by cost</a></small>
+       | <small><a href="<%= ep %>&sort_by=margin">by margin</a></small>
+       <%# cardano-node specific: %>
+       <% unless stake_pools.first['metrics']['relative_stake'].nil? %>
+        | <small><a href="<%= ep %>&sort_by=stake">by relative stake</a></small>
+       <% end %>
+       <% unless stake_pools.first['metrics']['non_myopic_member_rewards'].nil? %>
+        | <small><a href="<%= ep %>&sort_by=non_myopic_member_rewards">by non-myopic member rewards</a></small>
+       <% end %>
+       <% unless stake_pools.first['metrics']['saturation'].nil? %>
+        | <small><a href="<%= ep %>&sort_by=saturation">by saturation</a></small>
+       <% end %>
+       <%# jorm specific: %>
+       <% unless stake_pools.first['desirability'].nil? %>
+        | <small><a href="<%= ep %>&sort_by=desirability">by desirability</a></small>
+       <% end %>
+       <% unless stake_pools.first['apparent_performance'].nil? %>
+        | <small><a href="<%= ep %>&sort_by=apparent_performance">by apparent performance</a></small>
+       <% end %>
+       <% unless stake_pools.first['saturation'].nil? %>
+        | <small><a href="<%= ep %>&sort_by=saturation_jorm">by saturation</a></small>
+       <% end %>
      <% end %>
 
   </div>
