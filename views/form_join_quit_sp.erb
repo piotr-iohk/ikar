@@ -32,7 +32,15 @@ quit_ep = "/stake-pools-quit"
               <select class="form-control" name="spid" id="spid">
                 <% stake_pools.each do |s| %>
                     <option <%= sid == s['id'] ? "selected" : "" %> value="<%= s['id'] %>">
-                      <%= "#{s['id']} [non-myopic rewards: #{s['metrics']['non_myopic_member_rewards']}, saturation: #{s['metrics']['saturation']}]" %></option>
+                      <%
+                        if s['metrics']['non_myopic_member_rewards']
+                          details = "[non-myopic rewards: #{s['metrics']['non_myopic_member_rewards']}, saturation: #{s['metrics']['saturation']}]"
+                        else
+                          details = "[desirability: #{s['desirability']}, saturation: #{s['saturation']}]"
+                        end
+                      %>
+
+                      <%= "#{s['id']} #{details}" %></option>
                 <% end %>
               </select>
             <% else %>
