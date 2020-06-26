@@ -13,6 +13,8 @@ when "cost"
 when "margin"
   sp = stake_pools.sort_by {|s| -s['margin']['quantity']}
 # cardano-node specific
+when "pledge"
+  sp = stake_pools.sort_by {|s| -s['pledge']['quantity']}
 when "stake"
   sp = stake_pools.sort_by {|s| -s['metrics']['relative_stake']['quantity']}
 when "non_myopic_member_rewards"
@@ -67,6 +69,9 @@ end
        <% unless stake_pools.first['metrics']['saturation'].nil? %>
         | <small><a href="<%= ep %>&sort_by=saturation">by saturation</a></small>
        <% end %>
+       <% unless stake_pools.first['pledge'].nil? %>
+        | <small><a href="<%= ep %>&sort_by=pledge">by pledge</a></small>
+       <% end %>
        <%# jorm specific: %>
        <% unless stake_pools.first['desirability'].nil? %>
         | <small><a href="<%= ep %>&sort_by=desirability">by desirability</a></small>
@@ -94,6 +99,12 @@ end
         <% end %>
         <% if s['apparent_performance'] %>
           <small><b>Apparent performance:</b> <%= s['apparent_performance'] %>%</small><br/>
+        <% end %>
+        <%# end %>
+
+        <%# Cardano-node: %>
+        <% if s['pledge'] %>
+          <small><b>Pledge:</b> <%= "#{s['pledge']['quantity']} #{s['pledge']['unit']}" %></small><br/>
         <% end %>
         <%# end %>
 

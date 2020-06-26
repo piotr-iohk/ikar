@@ -283,7 +283,7 @@ end
 get "/wallets/:wal_id/txs/:tx_id" do
   wid = params[:wal_id]
   txid = params[:tx_id]
-  tx = @cw.shelley.transactions.list(wid).select{ |tx| tx['id'] == txid }[0]
+  tx = @cw.shelley.transactions.get(wid, txid)
   erb :tx_details, { :locals => { :tx => tx, :wid => wid }  }
 end
 
@@ -464,8 +464,7 @@ end
 
 get "/byron-wallets/:wal_id/txs/:tx_id" do
   wid = params[:wal_id]
-  tx = @cw.byron.transactions.list(params[:wal_id]).
-                              select{ |tx| tx['id'] == params[:tx_id]}[0]
+  tx = @cw.byron.transactions.get(params[:wal_id], params[:tx_id])
   erb :tx_details, { :locals => { :tx => tx, :wid => wid }  }
 end
 
