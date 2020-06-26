@@ -35,9 +35,9 @@ jobs:
     - name: Set up cardano-wallet & cardano-node on Shelley testnet
       run: |
         wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/docker-compose-shelley.yml
-        wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/spec/shelley-testnet/configuration.yaml
-        wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/spec/shelley-testnet/ff-genesis.json
-        wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/spec/shelley-testnet/topology.json
+        wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/spec/shelley-testnet/shelley_testnet-config.json
+        wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/spec/shelley-testnet/shelley_testnet-genesis.json
+        wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/spec/shelley-testnet/shelley_testnet-topology.json
         NODE_CONFIG_PATH=`pwd` docker-compose -f docker-compose-shelley.yml up --detach
     - name: Run tests
       run: rspec tests
