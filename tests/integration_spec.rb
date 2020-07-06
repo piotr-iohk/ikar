@@ -151,6 +151,13 @@ describe 'Using App', type: :feature do
       expect(page).to have_button "Migrate Funds"
     end
 
+    it "I can see Transaction screen and no rewards checkbox" do
+      create_byron_wallet "random"
+      click_link "Transactions"
+      click_link "To address"
+      expect(page).not_to have_text("Use rewards in transaction")
+    end
+
     # it "I could check tx fee - if I had money" do
     #   address = "37btjrVyb4KEpFyPXAJjJib9FeBRNH8oT4abThrXGQTAmrb2LPo7q2jE9ehutvPrDRBhSp5zFLAwN2CSNu1xqppffvBK5sHaFGM2zW1HukJ4ZRje3u"
     #   create_byron_wallet "random"
@@ -211,6 +218,23 @@ describe 'Using App', type: :feature do
       create_shelley_wallet
       visit "/wallets"
       expect(page).to have_text("Shelley wallets: 1")
+    end
+
+    it "I can see transaction screen" do
+      create_shelley_wallet
+      visit "/wallets"
+      expect(page).to have_text("Shelley wallets: 1")
+      click_link "My Test Wallet"
+      click_link "Transactions"
+      click_link "Between my wallets"
+      expect(page).to have_text("Use rewards in transaction")
+
+      visit "/wallets"
+      expect(page).to have_text("Shelley wallets: 1")
+      click_link "My Test Wallet"
+      click_link "Transactions"
+      click_link "To address"
+      expect(page).to have_text("Use rewards in transaction")
     end
   end
 
