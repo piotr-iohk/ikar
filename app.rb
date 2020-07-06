@@ -240,10 +240,16 @@ post "/tx-to-address" do
   pass = params[:pass]
   amount = params[:amount]
   address = params[:address]
+  if params[:withdrawRewards]
+    q = {withdrawRewards: true}
+  else
+    q = {}
+  end
 
   r = @cw.shelley.transactions.create(wid_src,
                                       pass,
-                                      {address => amount})
+                                      {address => amount},
+                                      q)
   handle_api_err r, session
 
   redirect "/wallets/#{wid_src}/txs/#{r['id']}"
@@ -259,13 +265,19 @@ post "/tx-between-wallets" do
   wid_dst = params[:wid_dst]
   pass = params[:pass]
   amount = params[:amount]
+  if params[:withdrawRewards]
+    q = {withdrawRewards: true}
+  else
+    q = {}
+  end
 
   address_dst = @cw.shelley.addresses.list(wid_dst,
                                           {state: "unused"}).
                                           sample['id']
   r = @cw.shelley.transactions.create(wid_src,
                                       pass,
-                                      {address_dst => amount})
+                                      {address_dst => amount},
+                                      q)
   handle_api_err r, session
 
   redirect "/wallets/#{wid_src}/txs/#{r['id']}"

@@ -24,9 +24,6 @@ wid = params[:wid] if params[:wid]
       </div>
 
       <div class="form-group">
-      </div>
-
-      <div class="form-group">
         <label for="wid_dst">Destination Wallet</label>
         <select class="form-control" name="wid_dst" id="wid_dst">
           <% wallets.each do |w| %>
@@ -36,6 +33,10 @@ wid = params[:wid] if params[:wid]
         <small id="help" class="form-text text-muted">I will pick up an unused address from that wallet and send funds to it.</small>
       </div>
 
+      <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="withdrawRewards" name="withdrawRewards">
+        <label class="form-check-label" for="withdrawRewards">Use rewards in transaction</label>
+      </div>
 
       <button type="submit" class="btn btn-success">Send Tx</button>
       (or <a href="/tx-to-address?wid=<%= wid %>">send to address</a>)
