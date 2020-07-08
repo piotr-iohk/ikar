@@ -1,5 +1,5 @@
 <%
-params['stake'] ||= 1
+params['stake'] ||= 1000000000
 stake = params['stake']
 ep = "stake-pools-list?stake=#{stake}"
 sort_by = params[:sort_by] if params[:sort_by]
@@ -150,12 +150,14 @@ end
           <small>&nbsp;&nbsp;<b>Name:</b>
             <%= s['metadata']['name']%>
           </small></br>
-          <small>&nbsp;&nbsp;<b>Owner:</b>
-            <%= s['metadata']['owner']%>
-          </small></br>
-          <small>&nbsp;&nbsp;<b>Pledge address:</b>
-            <%= s['metadata']['pledge_address']%>
-          </small></br>
+          <% if s['metadata']['owner'] %>
+            <small>&nbsp;&nbsp;<b>Owner:</b>
+              <%= s['metadata']['owner']%>
+            </small></br>
+            <small>&nbsp;&nbsp;<b>Pledge address:</b>
+              <%= s['metadata']['pledge_address']%>
+            </small></br>
+          <% end %>
           <small>&nbsp;&nbsp;<b>Ticker:</b>
             <%= s['metadata']['ticker']%>
           </small></br>

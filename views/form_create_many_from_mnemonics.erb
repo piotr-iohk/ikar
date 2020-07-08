@@ -1,31 +1,16 @@
 <%
   url_path = request.env['PATH_INFO'].to_s
-  byron_ep = "/byron-wallets-create-many"
-  shelley_ep = "/wallets-create-many"
+  byron_ep = "/byron-wallets-create-many-from-mnemonics"
+  shelley_ep = "/wallets-create-many-from-mnemonics"
 %>
 <div class="list-group">
   <div class="list-group-item">
     <form action="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>" method="POST">
       <div class="form-group">
-        <label for="how_many">How many wallets?</label>
-        <input type="text" class="form-control" name="how_many" id="how_many" placeholder="How many?" value="10">
-      </div>
-      <div class="form-group">
-        <label for="words_count">How many mnemonics per wallet?</label>
-        <select class="custom-select mr-sm-2" name="words_count">
-          <% if (url_path.include? "byron") %>
-            <option value="12" selected >12</option>
-            <option value="15">15</option>
-            <option value="18">18</option>
-            <option value="21">21</option>
-            <option value="24">24</option>
-          <% else %>
-            <option value="15" selected>15</option>
-            <option value="18">18</option>
-            <option value="21">21</option>
-            <option value="24">24</option>
-          <% end %>
-        </select>
+        <label for="mnemonics">Mnemonic words</label>
+        <textarea class="form-control" name="mnemonics" id="mnemonics" rows="6"></textarea>
+        <small id="help" class="form-text text-muted">One mnemonic sentence per line.</small>
+
       </div>
       <% if url_path.include? "byron" %>
         <div class="form-group">
@@ -63,9 +48,9 @@
 
       <button type="submit" class="btn btn-success">Create</button>
       <% if url_path.include? "byron" %>
-      (or <a href="/byron-wallets-create-many-from-mnemonics">Create many using explicit mnemonics</a>)
+      (or <a href="/byron-wallets-create-many">Create many using random mnemonics</a>)
       <% else %>
-      (or <a href="/wallets-create-many-from-mnemonics">Create many using explicit mnemonics</a>)
+      (or <a href="/wallets-create-many">Create many using random mnemonics</a>)
       <% end %>
     </form>
   </div>

@@ -143,6 +143,25 @@ post "/wallets-create-from-pub-key" do
   redirect "/wallets/#{wal['id']}"
 end
 
+get "/wallets-create-many-from-mnemonics" do
+  erb :form_create_many_from_mnemonics
+end
+
+post "/wallets-create-many-from-mnemonics" do
+  pass = params[:pass]
+  name = params[:wal_name]
+  pool_gap = params[:pool_gap].to_i
+  mnemonics_array = params[:mnemonics].split("\n").map{|a| a.strip}
+  mnemonics_array.each_with_index do |m,i|
+    wal = @cw.shelley.wallets.create({mnemonic_sentence: m.split,
+                                      passphrase: pass,
+                                      name: "#{name} #{i + 1}",
+                                      address_pool_gap: pool_gap})
+    handle_api_err wal, session
+  end
+  redirect "/wallets"
+end
+
 get "/wallets-create-many" do
   erb :form_create_many
 end
@@ -407,6 +426,25 @@ post "/byron-wallets-create" do
   handle_api_err wal, session
 
   redirect "/byron-wallets/#{wal['id']}"
+end
+
+get "/byron-wallets-create-many-from-mnemonics" do
+  erb :form_create_many_from_mnemonics
+end
+
+post "/byron-wallets-create-many-from-mnemonics" do
+  pass = params[:pass]
+  name = params[:wal_name]
+  style = params[:style]
+  mnemonics_array = params[:mnemonics].split("\n").map{|a| a.strip}
+  mnemonics_array.each_with_index do |m,i|
+    wal = @cw.byron.wallets.create({name: "#{name} (#{style}) #{i + 1}",
+                                    style: style,
+                                    passphrase: pass,
+                                    mnemonic_sentence: m.split})
+    handle_api_err wal, session
+  end
+  redirect "/byron-wallets"
 end
 
 get "/byron-wallets-create-many" do
