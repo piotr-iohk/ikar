@@ -139,28 +139,31 @@
                        , Epoch: <%= wal['tip']['epoch_number'] %>
                        , Slot: <%= wal['tip']['slot_number'] %>)
          </small><br/>
+         <% if discovery %>
          <small>
            <b>Address discovery:</b> <%= discovery %>
-        </small><br/>
+         </small>
+         <% end %>
+     <br/>
          <%# Display this only for Shelley wallets %>
          <% unless url_path.include? "byron"
              active_delegation = wal['delegation']['active']
              next_delegation = wal['delegation']['next']
          %>
              <small><b>Delegation active:</b><br/>
-               &nbsp;&nbsp;<b>Status:</b> <%= active_delegation['status']%>
+               &nbsp;&nbsp;<b>Status:</b> <%= render_deleg_status active_delegation['status']%>
                <%= active_delegation['status'] == "delegating" ? "<br/>&nbsp;&nbsp;<b>Target:</b> #{active_delegation['target']}" : ""%>
              </small><br/>
              <% if next_delegation
                  next_delegation.each do |n|
              %>
                <small><b>Delegation next:</b> <br/>
-                 &nbsp;&nbsp;<b>Status:</b> <%= n['status']%><br/>
+                 &nbsp;&nbsp;<b>Status:</b> <%= render_deleg_status n['status']%><br/>
                  &nbsp;&nbsp;<b>Target:</b> <%= n['target']%><br/>
                  &nbsp;&nbsp;<b>Changes at:</b><br/>
                  &nbsp;&nbsp;&nbsp;&nbsp;<b>Epoch start time:</b> <%= n['changes_at']['epoch_start_time']%><br/>
                  &nbsp;&nbsp;&nbsp;&nbsp;<b>Epoch number:</b> <%= n['changes_at']['epoch_number']%>
-               </small><br/>
+               </small><br/><br/>
              <%  end
                end %>
          <% end %>

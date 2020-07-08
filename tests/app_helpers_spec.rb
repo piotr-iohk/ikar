@@ -14,6 +14,13 @@ describe Helpers::App do
     expect{ bits_from_word_count "haha" }.to raise_error "Non-supported no of words haha!"
   end
 
+  it "render_deleg_status" do 
+    expect(render_deleg_status("delegating")).to include "delegating"
+    expect(render_deleg_status("delegating")).to include "bg-primary"
+    expect(render_deleg_status("not_delegating")).to include "not_delegating"
+    expect(render_deleg_status("not_delegating")).to include "bg-warning"
+  end
+
   it "render_wal_status" do
     progress = "4444"
     wal = {'state' => {'progress' => {'quantity' => progress}}}

@@ -52,6 +52,15 @@ module Helpers
     module_function :os, :separator
 
     # units
+    def render_deleg_status(status)
+      case status
+      when "not_delegating" then cl = "bg-warning"
+      when "delegating" then cl = "bg-primary"
+      else cl = "bg-danger"
+      end
+      "<div class=\"d-inline p-2 #{cl} text-white\">#{status}</div>"
+    end
+
     def render_wal_status(status, wal)
       case status
       when "not_responding" then cl = "bg-danger"
