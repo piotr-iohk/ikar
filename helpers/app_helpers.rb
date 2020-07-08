@@ -54,7 +54,7 @@ module Helpers
     # units
     def render_deleg_status(status)
       case status
-      when "not_delegating" then cl = "bg-warning"
+      when "not_delegating" then cl = "bg-secondary"
       when "delegating" then cl = "bg-primary"
       else cl = "bg-danger"
       end

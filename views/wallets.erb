@@ -65,7 +65,6 @@ wallets.each do |wal|
         active_delegation = wal['delegation']['active']
         next_delegation = wal['delegation']['next']
     %>
-      <b>Delegation:</b></br>
       <small><b>Delegation active:</b><br/>
         &nbsp;&nbsp;<b>Status:</b> <%= render_deleg_status active_delegation['status']%>
         <%= active_delegation['status'] == "delegating" ? "<br/>&nbsp;&nbsp;<b>Target:</b> #{active_delegation['target']}" : ""%>
