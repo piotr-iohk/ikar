@@ -90,8 +90,18 @@ end
         <div class="d-flex w-100 justify-content-between">
           <h5 class="mb-1"><%= "#{i + 1}: #{s['id']}" %></h5>
         </div>
+        <% if s['retirement'] %>
+          <small>
+            <%= render_danger "Retirement:" %>
+            (epoch: <%= s['retirement']['epoch_number'] %> , <%= s['retirement']['epoch_start_time'] %>)
+          </small><br/>
+        <% end %>
+        <% if s['margin'] %>
         <small><b>Margin:</b> <%= s['margin']['quantity'] %>%</small><br/>
+        <% end %>
+        <% if s['margin'] %>
         <small><b>Cost:</b> <%= s['cost']['quantity'] %> lovelace</small><br/>
+        <% end %>
 
         <%# Jormungandr: %>
         <% if s['saturation'] %>
@@ -138,8 +148,6 @@ end
             </small><br/>
           <% end %>
         <%# end %>
-
-
         <% end %>
 
         <% if s['metadata'] %>

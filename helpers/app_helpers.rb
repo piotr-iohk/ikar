@@ -52,6 +52,10 @@ module Helpers
     module_function :os, :separator
 
     # units
+    def render_danger(text)
+      "<div class=\"d-inline p-2 bg-danger text-white\">#{text}</div>"
+    end
+
     def render_deleg_status(status)
       case status
       when "not_delegating" then cl = "bg-secondary"
