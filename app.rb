@@ -330,6 +330,17 @@ end
 
 # BYRON WALLETS
 
+get "/byron-wallets/:wal_id/bulk-address-import" do
+  erb :form_byron_wallet_address_bulk_import, { :locals => { :wid => params[:wal_id] } }
+end
+
+post "/byron-wallets/:wal_id/bulk-address-import" do
+  addresses = params[:addresses].split("\n").map{|a| a.strip}
+  r = @cw.byron.addresses.bulk_import params[:wal_id], addresses
+  handle_api_err r, session
+  redirect "/byron-wallets/#{params[:wal_id]}"
+end
+
 get "/byron-wallets/:wal_id/address-import" do
   erb :form_byron_wallet_address_import, { :locals => { :wid => params[:wal_id] } }
 end

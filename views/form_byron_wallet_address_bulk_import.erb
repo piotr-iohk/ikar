@@ -1,0 +1,20 @@
+<%
+ep = "/byron-wallets/#{wid}/bulk-address-import"
+%>
+<div class="list-group">
+  <div class="list-group-item">
+    <small><a href="<%= "/byron-wallets/#{wid}" %>">go back to wallet</a></small>
+  </div>
+
+  <div class="list-group-item">
+    <form action="<%= ep %>" method="POST">
+      <div class="form-group controls">
+        <label for="addresses">Addresses</label>
+        <textarea class="form-control" name="addresses" rows="6"></textarea>
+        <small id="help" class="form-text text-muted">One address per line.</small>
+
+      </div>
+      <button type="submit" class="btn btn-success">Import address</button>
+    </form>
+  </div>
+</div>
