@@ -232,6 +232,16 @@ get "/wallets-migration-fee/:wal_id" do
 end
 
 # TRANSACTIONS SHELLEY
+get "/rewards" do
+  wid = params[:wid]
+  min_withdrawal = params[:minWithdrawal]
+  r = @cw.shelley.transactions.list(wid, {minWithdrawal: min_withdrawal})
+  handle_api_err r, session
+  # w = @cw.shelley.wallets.get wid
+  # handle_api_err w, session
+
+  erb :rewards, { :locals => { :wid => wid, :transactions => r } }
+end
 
 post "/tx-fee-to-address" do
   wid_src = params[:wid_src]

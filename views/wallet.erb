@@ -43,6 +43,7 @@
                <a class="dropdown-item" href="/tx-between-wallets?wid=<%= id %>">Between my wallets</a>
                <a class="dropdown-item" href="/tx-to-address?wid=<%= id %>">To address</a>
                <a class="dropdown-item" href="/tx-fee-to-address?wid=<%= id %>">Payment fees</a>
+               <a class="dropdown-item" href="/rewards?wid=<%= id %>&minWithdrawal=10000000">Rewards history</a>
              </div>
            </div>
            <div>
@@ -283,27 +284,27 @@
            <div class="list-group-item">
              Txs in ledger:<br/>
              <% txs_inledger.each do |tx| %>
-                <small><b>ID: </b><a href="<%= (url_path.include? "byron") ? "/byron-wallets" : "/wallets" %><%= "/#{id}/txs/#{tx['id']}" %>"><%= tx['id']%></a></small><br/>
-                <% if tx['inserted_at']%>
-                    <small><b>Inserted at: </b></small><br/>
-                    <small>&nbsp;&nbsp;<b>Time: </b><%= tx['inserted_at']['time'] %></small><br/>
-                    <small>&nbsp;&nbsp;<b>(Block: </b><%= tx['inserted_at']['block']['height']['quantity'] %>, </small>
-                    <small>&nbsp;&nbsp;<b>Epoch: </b><%= tx['inserted_at']['block']['epoch_number'] %>, </small>
-                    <small>&nbsp;&nbsp;<b>Slot: </b><%= tx['inserted_at']['block']['slot_number'] %>)</small><br/>
-                <% end %>
-                <% if tx['pending_since']%>
-                    <small><b>Pending since: </b></small><br/>
-                    <small>&nbsp;&nbsp;<b>Time: </b><%= tx['pending_since']['time'] %></small><br/>
-                    <small>&nbsp;&nbsp;<b>(Block: </b><%= tx['pending_since']['block']['height']['quantity'] %>, </small>
-                    <small>&nbsp;&nbsp;<b>Epoch: </b><%= tx['pending_since']['block']['epoch_number'] %>, </small>
-                    <small>&nbsp;&nbsp;<b>Slot: </b><%= tx['pending_since']['block']['slot_number'] %>)</small><br/>
-                <% end %>
-                <small><b>Status: </b><%= tx['status'] %></small><br/>
-                <small><b>Amount: </b><%= tx['amount']['quantity'] if tx['amount'] %></small><br/>
-                <small><b>Direction: </b><%= tx['direction'] %></small><br/>
-                <small><b>Depth: </b><%= "#{tx['depth']['quantity']} blocks" if tx['depth'] %></small><br/>
+             <small><b>ID: </b><a href="<%= (url_path.include? "byron") ? "/byron-wallets" : "/wallets" %><%= "/#{id}/txs/#{tx['id']}" %>"><%= tx['id']%></a></small><br/>
+             <% if tx['inserted_at']%>
+                 <small><b>Inserted at: </b></small><br/>
+                 <small>&nbsp;&nbsp;<b>Time: </b><%= tx['inserted_at']['time'] %></small><br/>
+                 <small>&nbsp;&nbsp;<b>(Block: </b><%= tx['inserted_at']['block']['height']['quantity'] %>, </small>
+                 <small>&nbsp;&nbsp;<b>Epoch: </b><%= tx['inserted_at']['block']['epoch_number'] %>, </small>
+                 <small>&nbsp;&nbsp;<b>Slot: </b><%= tx['inserted_at']['block']['slot_number'] %>)</small><br/>
+             <% end %>
+             <% if tx['pending_since']%>
+                 <small><b>Pending since: </b></small><br/>
+                 <small>&nbsp;&nbsp;<b>Time: </b><%= tx['pending_since']['time'] %></small><br/>
+                 <small>&nbsp;&nbsp;<b>(Block: </b><%= tx['pending_since']['block']['height']['quantity'] %>, </small>
+                 <small>&nbsp;&nbsp;<b>Epoch: </b><%= tx['pending_since']['block']['epoch_number'] %>, </small>
+                 <small>&nbsp;&nbsp;<b>Slot: </b><%= tx['pending_since']['block']['slot_number'] %>)</small><br/>
+             <% end %>
+             <small><b>Status: </b><%= tx['status'] %></small><br/>
+             <small><b>Amount: </b><%= tx['amount']['quantity'] if tx['amount'] %></small><br/>
+             <small><b>Direction: </b><%= tx['direction'] %></small><br/>
+             <small><b>Depth: </b><%= "#{tx['depth']['quantity']} blocks" if tx['depth'] %></small><br/>
 
-                <small>---</small><br/>
+             <small>---</small><br/>
              <% end %>
            </div>
          </div>
