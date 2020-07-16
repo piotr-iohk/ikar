@@ -232,6 +232,16 @@ get "/wallets-migration-fee/:wal_id" do
 end
 
 # TRANSACTIONS SHELLEY
+get "/rewards" do
+  wid = params[:wid]
+  min_withdrawal = params[:minWithdrawal]
+  r = @cw.shelley.transactions.list(wid, {minWithdrawal: min_withdrawal})
+  handle_api_err r, session
+  # w = @cw.shelley.wallets.get wid
+  # handle_api_err w, session
+
+  erb :rewards, { :locals => { :wid => wid, :transactions => r } }
+end
 
 post "/tx-fee-to-address" do
   wid_src = params[:wid_src]
@@ -319,6 +329,17 @@ get "/wallets/:wal_id/txs/:tx_id" do
 end
 
 # BYRON WALLETS
+
+get "/byron-wallets/:wal_id/bulk-address-import" do
+  erb :form_byron_wallet_address_bulk_import, { :locals => { :wid => params[:wal_id] } }
+end
+
+post "/byron-wallets/:wal_id/bulk-address-import" do
+  addresses = params[:addresses].split("\n").map{|a| a.strip}
+  r = @cw.byron.addresses.bulk_import params[:wal_id], addresses
+  handle_api_err r, session
+  redirect "/byron-wallets/#{params[:wal_id]}"
+end
 
 get "/byron-wallets/:wal_id/address-import" do
   erb :form_byron_wallet_address_import, { :locals => { :wid => params[:wal_id] } }

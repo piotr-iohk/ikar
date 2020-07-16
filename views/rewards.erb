@@ -1,0 +1,40 @@
+<%
+params['minWithdrawal'] ||= 1000000000
+min = params['minWithdrawal']
+%>
+<div class="list-group">
+  <div class="list-group-item">
+     <form action="/rewards" method="GET" >
+       <div class="form-row">
+         <div class="col-2">
+           <div class="form-group">
+             <input type="text" class="form-control" name="minWithdrawal" id="minWithdrawal" placeholder="Minimum withdrawal"
+                value="<%= min %>">
+             <small id="help" class="form-text text-muted">
+               Minimum rewards withdrawn
+             </small>
+           </div>
+         </div>
+         <div class="col">
+           <div class="form-group">
+             <button type="submit" class="btn btn-success">Refresh</button>
+             <input type="hidden" name="wid" value="<%= wid %>"/>
+           </div>
+         </div>
+       </div>
+     </form>
+  </div>
+  <div class="list-group-item">
+    <% transactions.each do |tx|  %>
+        <small><b>ID: </b><a href="/wallets/<%= wid %>/txs/<%= tx['id'] %>">
+          <%= tx['id']%></a>
+        </small><br/>
+        <small><b>Withdrawals: </b><%= tx['withdrawals'].size %></small><br/>
+        <% tx['withdrawals'].each do |out| %>
+            <small>&nbsp;&nbsp;<b>Amount: </b><%= out['amount']['quantity'] %></small><br/>
+            <small>&nbsp;&nbsp;<b>Stake Address: </b><%= out['stake_address'] %></small><br/>
+            <b>---</b> <br/>
+          <% end %>
+    <% end %>
+  </div>
+</div>

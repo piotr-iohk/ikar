@@ -62,6 +62,19 @@
       <% else%>
         <small>&nbsp;&nbsp;<b>No Outputs! </b></small><br/>
       <% end %>
+      <% if tx['withdrawals'] %>
+        <div class="list-group-item">
+          <small><b>Withdrawals: </b><%= tx['withdrawals'].size %></small><br/>
+          <% tx['withdrawals'].each do |out| %>
+              <small>&nbsp;&nbsp;<b>Amount: </b><%= out['amount']['quantity'] %></small><br/>
+              <small>&nbsp;&nbsp;<b>Stake Address: </b><%= out['stake_address'] %></small><br/>
+              <b>---</b> <br/>
+            <% end %>
+        </div>
+
+      <% else%>
+        <small>&nbsp;&nbsp;<b>No Withdrawals! </b></small><br/>
+      <% end %>
       <small><a href="#" onClick="showIt('tx_json')">raw tx.json</a></small><br/>
       <div class="list-group-item"  >
         <small id="tx_json" style="display:none">
