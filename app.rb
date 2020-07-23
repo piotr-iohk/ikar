@@ -247,8 +247,13 @@ post "/tx-fee-to-address" do
   wid_src = params[:wid_src]
   amount = params[:amount]
   address = params[:address]
+  if params[:withdrawRewards]
+    q = {withdrawRewards: true}
+  else
+    q = {}
+  end
 
-  r = @cw.shelley.transactions.payment_fees(wid_src, {address => amount})
+  r = @cw.shelley.transactions.payment_fees(wid_src, {address => amount}, q)
   handle_api_err r, session
 
   erb :show_tx_fee, { :locals => { :tx_fee => r, :wallet_id => wid_src} }
