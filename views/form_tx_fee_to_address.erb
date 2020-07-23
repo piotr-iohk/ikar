@@ -29,6 +29,12 @@ wid = params[:wid] if params[:wid]
         <input type="text" class="form-control" name="address" id="address" placeholder="Address" value="">
 
       </div>
+      <% unless (url_path.include? "byron") %>
+        <div class="form-group form-check">
+          <input type="checkbox" class="form-check-input" id="withdrawRewards" name="withdrawRewards">
+          <label class="form-check-label" for="withdrawRewards">Use rewards in transaction</label>
+        </div>
+      <% end %>
 
       <button type="submit" class="btn btn-success">Tx fee</button>
     </form>

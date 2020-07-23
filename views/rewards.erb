@@ -1,5 +1,5 @@
 <%
-params['minWithdrawal'] ||= 1000000000
+params['minWithdrawal'] ||= 1
 min = params['minWithdrawal']
 %>
 <div class="list-group">
@@ -29,12 +29,22 @@ min = params['minWithdrawal']
         <small><b>ID: </b><a href="/wallets/<%= wid %>/txs/<%= tx['id'] %>">
           <%= tx['id']%></a>
         </small><br/>
+        <% if tx['inserted_at']%>
+            <small><b>Inserted at: </b></small><br/>
+            <small>&nbsp;&nbsp;<b>Time: </b><%= tx['inserted_at']['time'] %></small>
+            <small>&nbsp;&nbsp;<b>(Block: </b><%= tx['inserted_at']['block']['height']['quantity'] %>, </small>
+            <small>&nbsp;&nbsp;<b>Epoch: </b><%= tx['inserted_at']['block']['epoch_number'] %>, </small>
+            <small>&nbsp;&nbsp;<b>Slot: </b><%= tx['inserted_at']['block']['slot_number'] %>)</small><br/>
+        <% end %>
+        <% if tx['withdrawals']%>
         <small><b>Withdrawals: </b><%= tx['withdrawals'].size %></small><br/>
         <% tx['withdrawals'].each do |out| %>
             <small>&nbsp;&nbsp;<b>Amount: </b><%= out['amount']['quantity'] %></small><br/>
             <small>&nbsp;&nbsp;<b>Stake Address: </b><%= out['stake_address'] %></small><br/>
             <b>---</b> <br/>
           <% end %>
+        <% end %>
+
     <% end %>
   </div>
 </div>
