@@ -34,5 +34,14 @@
     <small><b>Minimum utxo value: </b>
       <%="#{p['minimum_utxo_value']['quantity']} #{p['minimum_utxo_value']['unit']}" %>
     </small><br/>
+    <% if p['hardfork_at'] %>
+      <small><b>Hardfork start time: </b>
+        <%="#{p['hardfork_at']['epoch_start_time']}" %>
+      </small><br/>
+      <small><b>Hardfork epoch num: </b>
+        <%="#{p['hardfork_at']['epoch_number']}" %>
+      </small><br/>
+    <% end %>
+
   </div>
 </div>
