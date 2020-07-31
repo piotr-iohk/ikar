@@ -12,7 +12,7 @@ GEM
       rack-test (>= 0.6.3)
       regexp_parser (~> 1.5)
       xpath (~> 3.2)
-    cardano_wallet (0.1.7)
+    cardano_wallet (0.1.8)
       httparty (~> 0.18.0)
     chartkick (3.3.1)
     codecov (0.1.16)
@@ -80,7 +80,7 @@ PLATFORMS
 DEPENDENCIES
   bip_mnemonic (~> 0.0.4)
   capybara
-  cardano_wallet (~> 0.1.7)
+  cardano_wallet (~> 0.1.8)
   chartkick (~> 3.3.1)
   codecov
   docopt (~> 0.6.1)
