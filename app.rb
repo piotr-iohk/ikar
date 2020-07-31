@@ -243,25 +243,28 @@ get "/rewards" do
   erb :rewards, { :locals => { :wid => wid, :transactions => r } }
 end
 
+get "/tx-fee-to-address" do
+  wallets = @cw.shelley.wallets.list
+  erb :form_tx_fee_to_address, { :locals => { :wallets => wallets } }
+end
+
 post "/tx-fee-to-address" do
   wid_src = params[:wid_src]
   amount = params[:amount]
   address = params[:address]
-  if params[:withdrawRewards]
-    q = {withdrawRewards: true}
+  case params[:withdrawal]
+  when ''
+    w = nil
+  when 'self'
+    w = 'self'
   else
-    q = {}
+    w = params[:withdrawal].split
   end
 
-  r = @cw.shelley.transactions.payment_fees(wid_src, {address => amount}, q)
+  r = @cw.shelley.transactions.payment_fees(wid_src, {address => amount}, w)
   handle_api_err r, session
 
   erb :show_tx_fee, { :locals => { :tx_fee => r, :wallet_id => wid_src} }
-end
-
-get "/tx-fee-to-address" do
-  wallets = @cw.shelley.wallets.list
-  erb :form_tx_fee_to_address, { :locals => { :wallets => wallets } }
 end
 
 get "/tx-to-address" do
@@ -274,16 +277,19 @@ post "/tx-to-address" do
   pass = params[:pass]
   amount = params[:amount]
   address = params[:address]
-  if params[:withdrawRewards]
-    q = {withdrawRewards: true}
+  case params[:withdrawal]
+  when ''
+    w = nil
+  when 'self'
+    w = 'self'
   else
-    q = {}
+    w = params[:withdrawal].split
   end
 
   r = @cw.shelley.transactions.create(wid_src,
                                       pass,
                                       {address => amount},
-                                      q)
+                                      w)
   handle_api_err r, session
 
   redirect "/wallets/#{wid_src}/txs/#{r['id']}"
@@ -299,10 +305,13 @@ post "/tx-between-wallets" do
   wid_dst = params[:wid_dst]
   pass = params[:pass]
   amount = params[:amount]
-  if params[:withdrawRewards]
-    q = {withdrawRewards: true}
+  case params[:withdrawal]
+  when ''
+    w = nil
+  when 'self'
+    w = 'self'
   else
-    q = {}
+    w = params[:withdrawal].split
   end
 
   address_dst = @cw.shelley.addresses.list(wid_dst,
@@ -311,7 +320,7 @@ post "/tx-between-wallets" do
   r = @cw.shelley.transactions.create(wid_src,
                                       pass,
                                       {address_dst => amount},
-                                      q)
+                                      w)
   handle_api_err r, session
 
   redirect "/wallets/#{wid_src}/txs/#{r['id']}"
