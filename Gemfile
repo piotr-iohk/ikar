@@ -5,7 +5,7 @@ gem 'sys-proctable', '~> 1.2.3'
 gem 'docopt', '~> 0.6.1'
 gem 'bip_mnemonic', '~> 0.0.4'
 gem 'sinatra', '~> 2.0.8.1'
-gem 'chartkick', '~> 3.3.1'
+gem 'chartkick', '~> 3.4.0'
 
 group :development, :test do
   gem 'rspec'
