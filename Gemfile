@@ -11,5 +11,5 @@ group :development, :test do
   gem 'rspec'
   gem 'capybara'
   gem 'simplecov', require: false
-  gem 'codecov', require: false
+  gem 'codecov', '~> 0.2.8', require: false
 end

@@ -15,10 +15,9 @@ GEM
     cardano_wallet (0.1.8)
       httparty (~> 0.18.0)
     chartkick (3.4.0)
-    codecov (0.1.16)
+    codecov (0.2.8)
       json
       simplecov
-      url
     diff-lcs (1.3)
     docile (1.3.2)
     docopt (0.6.1)
@@ -26,7 +25,7 @@ GEM
     httparty (0.18.1)
       mime-types (~> 3.0)
       multi_xml (>= 0.5.2)
-    json (2.3.0)
+    json (2.3.1)
     mime-types (3.3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2020.0512)
@@ -70,7 +69,6 @@ GEM
     sys-proctable (1.2.3)
       ffi
     tilt (2.0.10)
-    url (0.3.2)
     xpath (3.2.0)
       nokogiri (~> 1.8)
 
@@ -82,7 +80,7 @@ DEPENDENCIES
   capybara
   cardano_wallet (~> 0.1.8)
   chartkick (~> 3.4.0)
-  codecov
+  codecov (~> 0.2.8)
   docopt (~> 0.6.1)
   rspec
   simplecov
