@@ -75,6 +75,14 @@
       <% else%>
         <small>&nbsp;&nbsp;<b>No Withdrawals! </b></small><br/>
       <% end %>
+      <% if tx['metadata'] %>
+        <div class="list-group-item">
+          <small><b>Metadata: </b></small><br/>
+          <small><code><%= tx['metadata'] %></code></small>
+        </div>
+      <% else%>
+        <small>&nbsp;&nbsp;<b>No Metadata! </b></small><br/>
+      <% end %>
       <small><a href="#" onClick="showIt('tx_json')">raw tx.json</a></small><br/>
       <div class="list-group-item"  >
         <small id="tx_json" style="display:none">

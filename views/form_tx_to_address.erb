@@ -29,15 +29,8 @@ wid = params[:wid] if params[:wid]
 
       </div>
       <% unless (url_path.include? "byron") %>
-        <div class="form-group">
-          <label class="form-check-label" for="withdrawal">Use rewards in transaction</label>
-          <input type="text" class="form-control" class="form-check-input" id="withdrawal"
-                name="withdrawal"
-                placeholder="self or mnemonics">
-          <small id="help" class="form-text text-muted">Use: 'self' for self withdrawal or mnemonic sentence for external one.</small>
-        </div>
+        <%= render_tx_withdraw_and_metadata_form %>
       <% end %>
-
 
       <button type="submit" class="btn btn-success">Send Tx</button>
       <%

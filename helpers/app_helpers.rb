@@ -52,6 +52,37 @@ module Helpers
     module_function :os, :separator
 
     # units
+    def render_tx_withdraw_and_metadata_form
+      %q{
+        <div class="form-group">
+          <label class="form-check-label" for="withdrawal">Use rewards in transaction</label>
+          <input type="text" class="form-control" class="form-check-input" id="withdrawal"
+                name="withdrawal"
+                placeholder="self or mnemonics">
+          <small id="help" class="form-text text-muted">Use: 'self' for self withdrawal or mnemonic sentence for external one.</small>
+        </div>
+
+        <div class="form-group">
+          <label class="form-check-label" for="metadata">Attach metadata</label>
+          <textarea class="form-control" name="metadata" id="metadata" rows="4"></textarea>
+          <small id="help" class="form-text text-muted">
+            <details>
+              <summary>Examplary metadata</summary>
+                <code>
+                   {
+                    "0": "cardano",
+                    "1": 14,
+                    "2": {"hex": "11111"},
+                    "3": [1,2,4],
+                    "4": [["k1", "v1"], ["k2", "v2"]]
+                    }
+                </code>
+            </details>
+          </small>
+        </div>
+       }
+    end
+
     def render_danger(text)
       "<div class=\"d-inline p-2 bg-danger text-white\">#{text}</div>"
     end

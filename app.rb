@@ -261,7 +261,15 @@ post "/tx-fee-to-address" do
     w = params[:withdrawal].split
   end
 
-  r = @cw.shelley.transactions.payment_fees(wid_src, {address => amount}, w)
+  case params[:metadata]
+  when ''
+    m = nil
+  else
+    m = YAML.load(params[:metadata])
+  end
+
+
+  r = @cw.shelley.transactions.payment_fees(wid_src, {address => amount}, w, m)
   handle_api_err r, session
 
   erb :show_tx_fee, { :locals => { :tx_fee => r, :wallet_id => wid_src} }
@@ -286,10 +294,17 @@ post "/tx-to-address" do
     w = params[:withdrawal].split
   end
 
+  case params[:metadata]
+  when ''
+    m = nil
+  else
+    m = YAML.load(params[:metadata])
+  end
+
   r = @cw.shelley.transactions.create(wid_src,
                                       pass,
                                       {address => amount},
-                                      w)
+                                      w, m)
   handle_api_err r, session
 
   redirect "/wallets/#{wid_src}/txs/#{r['id']}"
@@ -314,13 +329,20 @@ post "/tx-between-wallets" do
     w = params[:withdrawal].split
   end
 
+  case params[:metadata]
+  when ''
+    m = nil
+  else
+    m = YAML.load(params[:metadata])
+  end
+
   address_dst = @cw.shelley.addresses.list(wid_dst,
                                           {state: "unused"}).
                                           sample['id']
   r = @cw.shelley.transactions.create(wid_src,
                                       pass,
                                       {address_dst => amount},
-                                      w)
+                                      w, m)
   handle_api_err r, session
 
   redirect "/wallets/#{wid_src}/txs/#{r['id']}"
