@@ -52,6 +52,42 @@ module Helpers
     module_function :os, :separator
 
     # units
+    def render_tx_on_wallet_page(url_path, tx, id)
+      r = %Q{
+
+        <small><b>ID: </b><a href='#{(url_path.include? "byron") ? "/byron-wallets" : "/wallets"}/#{id}/txs/#{tx['id']}'>#{tx['id']}</a></small><br/>
+      }
+
+      if tx['inserted_at']
+        r += %Q{
+          <small><b>Inserted at: </b></small><br/>
+          <small>&nbsp;&nbsp;<b>Time: </b>#{tx['inserted_at']['time']}</small><br/>
+          <small>&nbsp;&nbsp;<b>(Block: </b>#{tx['inserted_at']['block']['height']['quantity']}, </small>
+          <small>&nbsp;&nbsp;<b>Epoch: </b>#{tx['inserted_at']['block']['epoch_number']}, </small>
+          <small>&nbsp;&nbsp;<b>Slot: </b>#{tx['inserted_at']['block']['slot_number']})</small><br/>
+        }
+      end
+      if tx['pending_since']
+        r += %Q{
+          <small><b>Pending since: </b></small><br/>
+          <small>&nbsp;&nbsp;<b>Time: </b>#{tx['pending_since']['time']}</small><br/>
+          <small>&nbsp;&nbsp;<b>(Block: </b>#{tx['pending_since']['block']['height']['quantity']}, </small>
+          <small>&nbsp;&nbsp;<b>Epoch: </b>#{tx['pending_since']['block']['epoch_number']}, </small>
+          <small>&nbsp;&nbsp;<b>Slot: </b>#{tx['pending_since']['block']['slot_number']})</small><br/>
+        }
+      end
+      r += %Q{
+          <small><b>Status: </b>#{tx['status']}</small><br/>
+          <small><b>Amount: </b>#{tx['amount']['quantity'] if tx['amount']}</small><br/>
+          <small><b>Direction: </b>#{tx['direction']}</small><br/>
+          <small><b>Depth: </b> #{tx['depth']['quantity'].to_s + " blocks" if tx['depth']} </small><br/>
+          #{"<span class='badge badge-info'>has metadata</span><br/>" if tx['metadata']}
+          #{"<span class='badge badge-primary'>has withdrawal</span><br/>" if (tx['withdrawals'].size > 0)}
+          <small>---</small><br/>
+        }
+      r
+    end
+
     def render_tx_withdraw_and_metadata_form
       %q{
         <div class="form-group">
@@ -72,7 +108,7 @@ module Helpers
                    {
                     "0": "cardano",
                     "1": 14,
-                    "2": {"hex": "11111"},
+                    "2": "0x2512a00e9653fe49a44a5886202e24d77eeb998f",
                     "3": [1,2,4],
                     "4": [["k1", "v1"], ["k2", "v2"]]
                     }
