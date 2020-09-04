@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
-gem 'cardano_wallet', '~> 0.1.8'
+gem 'cardano_wallet', '~> 0.1.9'
+# gem 'cardano_wallet', path: "../cardano_wallet"
 gem 'sys-proctable', '~> 1.2.3'
 gem 'docopt', '~> 0.6.1'
 gem 'bip_mnemonic', '~> 0.0.4'
