@@ -37,12 +37,8 @@
       <% unless url_path.include? "byron" %>
           <div class="form-group">
             <label for="pool_gap">Address pool gap</label>
-            <select class="form-control" name="pool_gap" id="pool_gap">
-              <% 10.upto 100 do |i| %>
-              <option <%= i == 20 ? "selected" : "" %> <%= "value=\"#{i}\">#{i}" %></option>
-
-              <% end %>
-            </select>
+            <input type="text" class="form-control" name="pool_gap" id="pool_gap"
+                   placeholder="Address pool gap" value="20">
           </div>
       <% end %>
 
