@@ -171,6 +171,11 @@
            <% end %>
          <% end %>
 
+         <% if wal['address_pool_gap'] %>
+         <small>
+           <b>Address pool gap:</b> <%= wal['address_pool_gap'] %>
+         </small><br/>
+         <% end %>
            <%
            # unless url_path.include? "byron"
               if addrs
