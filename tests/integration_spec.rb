@@ -50,27 +50,33 @@ describe 'Using App', type: :feature do
     end
   end
 
-  describe "Network" do
+  describe "Misc" do
     before(:each) do
       connect
     end
 
     it "I can check /network/information" do
-      click_link "Network"
+      click_link "Misc"
       click_link "Network Information"
       expect(page).to have_text "Network information"
     end
 
     it "I can check /network/clock" do
-      click_link "Network"
+      click_link "Misc"
       click_link "Network Clock"
       expect(page).to have_text "Network clock"
     end
 
     it "I can check /network/parameters" do
-      click_link "Network"
+      click_link "Misc"
       click_link "Network Parameters"
       expect(page).to have_text "Network parameters"
+    end
+
+    it "I can check /inspect-address" do
+      click_link "Misc"
+      click_link "Inspect Address"
+      expect(page).to have_text "Inspect Address"
     end
   end
 
