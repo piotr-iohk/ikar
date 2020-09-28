@@ -1,345 +1,77 @@
 #!/usr/bin/ruby
 require 'docopt'
-require 'yaml'
-require 'bip_mnemonic'
+require 'cardano_wallet'
 
-require_relative './models/wallet_backend.rb'
-require_relative './models/jormungandr.rb'
 
-def from_new_2_new (new_id1, new_id2, same_addr, max_tx_spend = CONFIG[:max_tx_spend].to_f)
-  w1 = NewWalletBackend.new CONFIG[:port_new], new_id1
-  w2 = NewWalletBackend.new CONFIG[:port_new], new_id2
-
-  amt = [*1..w1.wallet_balance*max_tx_spend].sample 
-  puts "Amt = #{amt}"
-  a2 = w2.addresses_unused.sample['id'] unless same_addr
-  a2 = w2.addresses[0]['id'] if same_addr
-  puts "Addr = #{a2}"
-  tx2_id = w1.create_transaction(amt, a2, CONFIG[:pass])
-  puts "From new 2 new (#{w1.wid} -> #{w2.wid} ) "
-  pp tx2_id
-  puts "-------------"
-end
-
-def new_and_new (new_id1, new_id2, same_args)
-  while 1 do
-    from_new_2_new new_id1, new_id2, same_args
-    from_new_2_new new_id2, new_id1, same_args
-    sleep_me CONFIG[:max_sleep] unless CONFIG[:max_sleep] == 0
-  end
-end
-
-def sleep_me max_s
-  s = [*1..max_s].sample
-  puts "sleep #{s}"
-  sleep s
-end
-
-def display_stats_wallet (wal_id, type = :shelley, moreStats = false)
-  w = NewWalletBackend.new CONFIG[:port_new], wal_id
-  wal = w.wallet if type == :shelley
-  wal = w.byron_wallet if type == :byron
-  id = wal['id']
-  status = wal['state']['status']
-
-  puts wal['name']
-  puts " ID: #{id}"
-  puts " Status: #{status}"
-  puts "    Progress: #{wal['state']['progress']['quantity']}%" if status == "syncing"
-  puts " Tip:"
-  puts "    Height: #{wal['tip']['height']['quantity']} block"
-  puts "    Epoch: #{wal['tip']['epoch_number']}"
-  puts "    Slot: #{wal['tip']['slot_number']}"
-  
-  total = wal['balance']['total']['quantity']
-  available = wal['balance']['available']['quantity']
-  rewards = wal['balance']['reward']['quantity']
-  puts " Balance:"
-  puts "    Total: " + total.to_s
-  puts "    Available: " + available.to_s
-  puts "    Rewards: " + rewards.to_s
-  # puts "    Total - Available: #{total.to_i - available.to_i}" 
-  puts " Delegation: "
-  deleg_status = wal['delegation']['status']
-  puts "    Status: #{deleg_status}"
-  puts "    Target: #{wal['delegation']['target']}" if deleg_status == "delegating"
-  
-  if moreStats
-    if (type == :shelley)
-      # addresses available only for shelley
-      addresses = w.addresses
-      used = addresses.select{ |a| a['state'] == "used" }
-      unused = addresses.select{ |a| a['state'] == "unused" }
-      puts " Addresses: " + addresses.size.to_s
-      puts "    Address poll gap: " + wal['address_pool_gap'].to_s
-      puts "    Used: " + used.size.to_s
-      puts "    Unused: " + unused.size.to_s
-    end
-    txs = w.transactions(id) if type == :shelley
-    txs = w.byron_transactions(id) if type == :byron          
-    puts " Transactions: " + txs.size.to_s
-    puts "  Status:"
-    tx_pending = txs.select{ |t| t['status'] == "pending" }
-    puts "   Pending: " + tx_pending.size.to_s
-    puts "   Sum of pending amounts: #{tx_pending.map{|tx| tx['amount']['quantity'].to_i}.sum}"
-    puts "   InLedger: " + txs.select{ |t| t['status'] == "in_ledger" }.size.to_s
-    puts "  Direction:"
-    puts "   Incoming: " + txs.select{ |t| t['direction'] == "incoming" }.size.to_s
-    puts "   Outgoing: " + txs.select{ |t| t['direction'] == "outgoing" }.size.to_s
-  end  
-  puts
-end
-            
 doc = <<DOCOPT
 Wallet test aid
 
 Usage:
-  #{__FILE__} [--conf=<co>] stats (new|old) [full] [<wid>]
-  #{__FILE__} [--conf=<co>] stats stake-pools
-  #{__FILE__} [--conf=<co>] stats jorm [stake] [logs]
-  #{__FILE__} [--conf=<co>] create (new|old) <name>
-  #{__FILE__} [--conf=<co>] create-many (new|old) <number>
-  #{__FILE__} [--conf=<co>] del (new|old) <wid>
-  #{__FILE__} [--conf=<co>] del-all (new|old)
-  #{__FILE__} [--conf=<co>] test [same_addr] <wid1> <wid2> 
-  #{__FILE__} [--conf=<co>] tx <wid1> <wid2>
-  #{__FILE__} [--conf=<co>] join-sp <sp_id> <wid>  
-  #{__FILE__} [--conf=<co>] quit-sp <sp_id> <wid>  
-  #{__FILE__} config read [--conf=<co>]
-  #{__FILE__} config gen [--conf=<co>] [--max-sleep=<sec>] [--max-tx-spend=<t>] [--port-new=<port>] [--pass=<pass>] [--port-jorm=<port>] 
-  #{__FILE__} -h | --help
+  #{__FILE__} byron2byron --port=<port> <wid1> <wid2>
+
 
 Args:
-  stats (new|old)        Stats for new wallet (Shelley) or old wallet (Byron)
-  stats stake-pools      List stake pools via wallet backend
-  stats jorm             Stats for Jörmungandr node
-  test [same_addr]       Run txs back and forth between 2 wallets <wid1> <wid2>
-                         if same_addr provided uses the same address all the time, 
-                         otherwise always picks some unused one
-  tx                     Run 1 tx between 2 wallets <wid1> <wid2>
-  create (new|old)       Create new wallet (Shelley) or old wallet (Byron)
-  create-many (new|old)  Create many wallets (Shelley or Byron)
-  del (new|old)          Delete new wallet (Shelley) or old wallet (Byron)
-  del-all (new|old)      Delete all new wallets (Shelley) or old wallets (Byron)
-  join-sp <sp_id> <wid>  Join stake-pool identified by stake-pool id <sp_id> 
-                         with your wallet identified by wallet id <wid>
-  quit-sp <sp_id> <wid>  Quit stake-pool identified by stake-pool id <sp_id> 
-                         with your wallet identified by wallet id <wid>
-  config                 Read or gen config file
-  
+  byron2byron   Run txs back and forth between 2 Byron wallets <wid1> <wid2>
+
+
 Options:
-  -h --help           Show this screen. 
-  --conf=<co>         Path to config file [default: ./config.yml]
-  --max-sleep=<sec>   Max sleep between two txs when testing [default: 0]
-  --max-tx-spend=<t>  Max tx spend between two txs when testing [default: 0.00001]
-  --port-new=<port>   New wallet's server port [default: 8090]
-  --pass=<pass>       Password for wallets [default: Secure Passphrase]
-  --port-jorm=<port>  Jormungandr node api port [default: 8080]
-             
+  -h --help     Show this screen.
+
+
 DOCOPT
 
+##
+# Generate n Byron addresses for wallet wid
+def gen_byron_addrs(wid, passphrase, n)
+  addresses = []
+  puts "Generating #{n} Byron addresses..."
+  1.upto n do
+    addresses << @byron.addresses.create(wid, {passphrase: passphrase})['id']
+  end
+  addresses
+end
+
+##
+# Generate amt of lovelace to send (between 1..501k ADA in lovelace)
+def gen_amt
+  max = [10, 100, 1000, 10000, 100000, 200000, 300000, 400000, 500000].sample
+  amt_ada = [*1..max].sample
+  rndm = 1 + ([*1..1000000].sample.to_f / 1000000)
+  amt = amt_ada * 1000000 * rndm
+  amt.to_i
+end
+
+##
+# send multi address tx from byron wallet to addresses
+def send_byron(wsrc, passphrase, addresses)
+  addr_amt = Hash[ *addresses.collect { |v| [ v, gen_amt ] }.flatten ]
+  puts @byron.transactions.create(wsrc, passphrase, addr_amt)
+  puts "-----"
+end
+
 begin
-  require 'pp'
+  # require 'pp'
+
   args = Docopt::docopt(doc)
-  # pp args
-  @config_file = args['--conf']
-  
-  default_config = {
-      # :port_old => args['--port-old'],
-      :port_new => args['--port-new'],
-      :pass => args['--pass'],      
-      :port_jorm => args['--port-jorm'],
-      :max_tx_spend => args['--max-tx-spend'].to_f, 
-      :max_sleep => args['--max-sleep'].to_i
-  }
-  if File.exists? @config_file
-    CONFIG = YAML.load_file @config_file
-  else
-    puts "Config file #{@config_file} does not exist. Using default values."
-    CONFIG = default_config
-  end
-  
-  if args['join-sp']
-    w = NewWalletBackend.new CONFIG[:port_new]
-    pp w.join_stake_pool args['<sp_id>'], CONFIG[:pass], args['<wid>']
-  end
-  
-  if args['quit-sp']
-    w = NewWalletBackend.new CONFIG[:port_new]
-    pp w.quit_stake_pool args['<sp_id>'], CONFIG[:pass], args['<wid>']
-  end
-  
-  if args['create']
-    w = NewWalletBackend.new CONFIG[:port_new]
-    if args['new']
-      mnemonics15 = BipMnemonic.to_mnemonic(bits: 164, language: 'english').split 
-      p mnemonics15
-      puts "-------------------"
-      pp w.create_wallet mnemonics15, CONFIG[:pass], args['<name>']
-    end 
-    if args['old']
-      mnemonics12 = BipMnemonic.to_mnemonic(bits: 128, language: 'english').split
-      p mnemonics12
-      puts "-------------------"
-      pp w.create_byron_wallet "random", mnemonics12, CONFIG[:pass], args['<name>']    
-    end 
-  end
-  
-  if args['create-many']
-    w = NewWalletBackend.new CONFIG[:port_new]
-    how_many = args['<number>'].to_i
-    if args['new']    
-      1.upto how_many do |i|
-        mnemonics15 = BipMnemonic.to_mnemonic(bits: 164, language: 'english').split 
-        p mnemonics15
-        puts "-------------------"
-        pp w.create_wallet mnemonics15, CONFIG[:pass], "Shelley #{i}"
-      end
-    end 
-    
-    if args['old']
-      1.upto how_many do |i|
-        mnemonics12 = BipMnemonic.to_mnemonic(bits: 128, language: 'english').split
-        p mnemonics12
-        puts "-------------------"
-        pp w.create_byron_wallet "random", mnemonics12, CONFIG[:pass], "Byron #{i}" 
-      end   
-    end 
-  end
-  
-  if args['del']
-    w = NewWalletBackend.new CONFIG[:port_new]
-    w.delete(args['<wid>']) if args['new']
-    w.byron_delete(args['<wid>']) if args['old']
-    puts "#{args['<wid>']} deleted."   
-  end
-  
-  if args['del-all']
-    w = NewWalletBackend.new CONFIG[:port_new]
-    w.wallets_ids.map {|id| w.delete(id)} if args['new']
-    w.byron_wallets_ids.map {|id| w.byron_delete(id)} if args['old']
-    puts "All wallets deleted."   
-  end
-  
-  if args['stats']
-    if args ['stake-pools']
-      w = NewWalletBackend.new CONFIG[:port_new]
-      pools = w.get_stake_pools
-      pools.each do |s|
-        puts "#{s['id']}"
-        puts " Stake: #{s['metrics']['controlled_stake']['quantity']}"
-        puts " Produced blocks: #{s['metrics']['produced_blocks']['quantity']}"
-        puts " Performance: #{s['apparent_performance']}"
-        puts
-      end
-      puts "Total number of stake pools: #{pools.size}"
-    end
-    
-    if args['jorm']
-      jorm = Jormungandr.new CONFIG[:port_jorm]
-      puts "Jormungandr node stats:"
-      puts "---"
-      jorm.get_node_stats.each do |k,v|
-        puts "#{k} = #{v}"
-      end
-      puts 
-      puts "Settings:"
-      puts "---"
-      jorm.get_settings.each do |k,v|
-        if k == "fees"
-          puts "fees: "
-          v.each do |kf, vf|
-            puts "  #{kf} = #{vf}"
-          end
-        else
-          puts "#{k} = #{v}"
-        end
-      end
-      
-      if args['stake']
-        puts
-        puts "Stake: "
-        puts "---"  
-        pp jorm.get_stake      
-      end
-      
-      if args['logs']  
-        puts
-        puts "Message logs: "
-        puts "---" 
-        pp jorm.get_message_logs
-        puts
-        puts "Leader logs: "
-        puts "---" 
-        pp jorm.get_leaders_logs
-      end
-      
-    end
-    
-    if args['new']
-      if args['<wid>']
-        # for single wallet
-        display_stats_wallet args['<wid>'], :shelley, args['full']
-      else
-        #  for all wallets
-        w = NewWalletBackend.new CONFIG[:port_new]
-        w.wallets.each do |wal|
-          display_stats_wallet wal['id'], :shelley, args['full']
-        end
-      end   
-    end
-    
-    if args['old']
-      if args['<wid>']
-        # for single wallet
-        display_stats_wallet args['<wid>'], :byron, args['full']
-      else
-        #  for all wallets
-        w = NewWalletBackend.new CONFIG[:port_new]
-        w.byron_wallets.each do |wal|
-          display_stats_wallet wal['id'], :byron, args['full']
-        end
-      end   
-    end
-        
-  end
-  
-  if args['test']
+  @cw = CardanoWallet.new({ port: args['--port'].to_i })
+  @byron = @cw.byron
+
+  ##
+  # Send transactions between two byron wallets
+  if args['byron2byron']
     wid1 = args['<wid1>']
     wid2 = args['<wid2>']
-    new_and_new wid1, wid2, args['same_addr'] 
-  end
-  
-  if args['tx']
-    wid1 = args['<wid1>']
-    wid2 = args['<wid2>']
-    from_new_2_new wid1, wid2, args['same_addr']
-  end
-  
-  if args['config']
-    if args['read']
-      if File.exists? @config_file
-        c = YAML.load_file(@config_file)
-        c.each do |k,v|
-          puts "#{k} => #{v}"
-        end
-      else
-        puts "#{@config_file} does not exist. Try 'config gen'."
-      end
-    end
-    
-    if args['gen']
-      isOnDisk = File.exists? @config_file
-      puts "Regenerating #{@config_file}." if isOnDisk
-    
-      f = File.new(@config_file, "w")
-      f.write(default_config.to_yaml)
-      f.close
-      puts "#{@config_file} re-generated." if isOnDisk
-      puts "#{@config_file} generated." unless isOnDisk
+
+    while 1 do
+      passphrase = "Secure Passphrase"
+      addresses = gen_byron_addrs(wid2, passphrase, [*1..50].sample)
+      5.times{ send_byron(wid1, passphrase, addresses) }
+      # sleep 2
+      addresses = gen_byron_addrs(wid1, passphrase, [*1..50].sample)
+      5.times{ send_byron(wid2, passphrase, addresses) }
     end
   end
- 
+
 rescue Docopt::Exit => e
   puts e.message
 end
