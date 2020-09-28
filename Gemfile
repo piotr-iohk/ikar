@@ -7,6 +7,7 @@ gem 'docopt', '~> 0.6.1'
 gem 'bip_mnemonic', '~> 0.0.4'
 gem 'sinatra', '~> 2.0.8.1'
 gem 'chartkick', '~> 3.4.0'
+gem 'json2table', '~> 1.0.7'
 
 group :development, :test do
   gem 'rspec'

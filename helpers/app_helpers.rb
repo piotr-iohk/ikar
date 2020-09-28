@@ -9,6 +9,15 @@ module Helpers
       end
     end
 
+    def json2table(json_string)
+      table_options = {
+          table_style: "border: 1px solid black; max-width: 600px;",
+          table_class: "table table-striped table-hover table-condensed table-bordered",
+          table_attributes: "border=1"
+          }
+      Json2table::get_html_table(json_string, table_options)
+    end
+
     def handle_api_err(r, session)
       unless r
         session[:error] = "It seems I cannot make a connection to wallet..."
@@ -52,6 +61,7 @@ module Helpers
     module_function :os, :separator
 
     # units
+
     def render_tx_on_wallet_page(url_path, tx, id)
       r = %Q{
 
@@ -179,6 +189,15 @@ module Helpers
       r = "<div class=\"d-inline p-2 #{cl} text-white\">#{status}</div>"
       r += ", Progress: #{wal['state']['progress']['quantity']}%" if status == "syncing"
       r
+    end
+
+    def general_status(status)
+      case status
+      when "syncing" then cl = "warning"
+      when "ready" then cl = "success"
+      else cl = "danger"
+      end
+      %Q{ <span class="badge badge-#{cl}"> #{status} </span>}
     end
 
     def prepare_mnemonics(mn)

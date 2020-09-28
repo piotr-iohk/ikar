@@ -7,15 +7,8 @@
      <small><a href="/network-clock">refresh</a></small>
   </div>
   <div class="list-group-item">
-    <small><b>Status: </b><%= n['status'] %> </small><br/>
-    <%
-      if (n['status'] == "available")
-    %>
-    <small>&nbsp;&nbsp;<b>Offset: </b>
-      <%= "#{n['offset']['quantity']} #{n['offset']['unit']}" %>
-    </small><br/>
-    <%
-      end
-    %>
+    <small>
+    <%= json2table(n.to_s) %>
+    </small>
   </div>
 </div>

@@ -3,6 +3,7 @@ require 'bip_mnemonic'
 require 'chartkick'
 require 'cardano_wallet'
 require 'sys/proctable'
+require 'json2table'
 
 require_relative 'helpers/app_helpers'
 require_relative 'helpers/discovery_helpers'

@@ -4,30 +4,16 @@
 
 <div class="list-group">
   <div class="list-group-item">
-     Network information (from wallet backend)
+     Network information
      <small><a href="/network-info">refresh</a></small>
   </div>
-
   <div class="list-group-item">
-    <% if n['network_tip'] %>
-    <small><b>Network tip: </b></small><br/>
-    <small>&nbsp;&nbsp;<b>Epoch: </b><%= n['network_tip']['epoch_number'] %></small><br/>
-    <small>&nbsp;&nbsp;<b>Slot: </b><%= n['network_tip']['slot_number'] %></small><br/>
-    <small>&nbsp;&nbsp;<b>Absloute Slot: </b><%= n['network_tip']['absolute_slot_number'] %></small><br/>
-    <% end %>
-    <small><b>Node tip: </b></small><br/>
-    <small>&nbsp;&nbsp;<b>Epoch: </b><%= n['node_tip']['epoch_number'] %></small><br/>
-    <small>&nbsp;&nbsp;<b>Slot: </b><%= n['node_tip']['slot_number'] %></small><br/>
-    <small>&nbsp;&nbsp;<b>Absolute Slot: </b><%= n['node_tip']['absolute_slot_number'] %></small><br/>
-    <small>&nbsp;&nbsp;<b>Height: </b><%= "#{n['node_tip']['height']['quantity']} block" %></small><br/>
-    <small>
-    <b>Status:</b> <%= n['sync_progress']['status'] %>
+    <b>Status:</b> <%= general_status(n['sync_progress']['status']) %>
                    <%= n['sync_progress']['status'] == "syncing" ? ", Progress: #{n['sync_progress']['progress']['quantity']}%" : ""%>
-    </small><br/>
-    <% if n['next_epoch'] %>
-    <small><b>Next epoch: </b></small><br/>
-    <small>&nbsp;&nbsp;<b>Epoch start time: </b><%= n['next_epoch']['epoch_start_time'] %></small><br/>
-    <small>&nbsp;&nbsp;<b>Epoch number: </b><%= n['next_epoch']['epoch_number'] %></small><br/>
-    <% end %>
+    <br/>
+    <br/>
+    <small>
+    <%= json2table(n.to_s) %>
+    </small>
   </div>
 </div>

@@ -3,45 +3,12 @@
 %>
 <div class="list-group">
   <div class="list-group-item">
-     Network parameters (from wallet backend)
+     Network parameters
      <small><a href="/network-params">refresh</a></small>
   </div>
   <div class="list-group-item">
-    <small><b>Slot length: </b>
-      <%= "#{p['slot_length']['quantity']} #{p['slot_length']['unit']}" %>
-    </small><br/>
-    <small><b>Epoch stability: </b>
-      <%= "#{p['epoch_stability']['quantity']} #{p['epoch_stability']['unit']}" %>
-    </small><br/>
-    <small><b>Epoch length: </b>
-      <%= "#{p['epoch_length']['quantity']} #{p['epoch_length']['unit']}" %>
-    </small><br/>
-    <small><b>Active slot coefficient: </b>
-      <%= "#{p['active_slot_coefficient']['quantity']} #{p['active_slot_coefficient']['unit']}" %>
-    </small><br/>
-    <small><b>Genesis block hash: </b>
-      <%= p['genesis_block_hash'] %>
-    </small><br/>
-    <small><b>Blockchain start time: </b>
-      <%= p['blockchain_start_time'] %>
-    </small><br/>
-    <small><b>Decentralization level: </b>
-      <%= "#{p['decentralization_level']['quantity']} #{p['decentralization_level']['unit']}" %>
-    </small><br/>
-    <small><b>Desired pool number: </b>
-      <%= p['desired_pool_number'] %>
-    </small><br/>
-    <small><b>Minimum utxo value: </b>
-      <%="#{p['minimum_utxo_value']['quantity']} #{p['minimum_utxo_value']['unit']}" %>
-    </small><br/>
-    <% if p['hardfork_at'] %>
-      <small><b>Hardfork start time: </b>
-        <%="#{p['hardfork_at']['epoch_start_time']}" %>
-      </small><br/>
-      <small><b>Hardfork epoch num: </b>
-        <%="#{p['hardfork_at']['epoch_number']}" %>
-      </small><br/>
-    <% end %>
-
+    <small>
+    <%= json2table(p.to_s) %>
+    </small>
   </div>
 </div>
