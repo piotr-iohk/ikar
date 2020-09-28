@@ -1,0 +1,28 @@
+
+<div class="list-group">
+
+  <div class="list-group-item">
+    <form action="/inspect-address-now" method="GET">
+      <div class="form-group">
+        <label for="addr_id">Address</label>
+        <input type="text" class="form-control" name="addr_id" id="addr_id"
+            placeholder="Name" value="<%= id %>">
+        <small id="help" class="form-text text-muted">Paste or type address.</small>
+      </div>
+
+      <button type="submit" class="btn btn-success">Inspect Address</button>
+    </form>
+  </div>
+
+  <% if address_details %>
+  <div class="list-group-item"  >
+    <!-- <small id="address_details"> -->
+      <code>
+        <%= address_details.to_s.gsub("\",","\",<br/>").
+                                 gsub("{","{<br/>").
+                                 gsub("}",",<br/>}") %>
+      <code>
+    <!-- </small> -->
+  </div>
+  <% end %>
+</div>

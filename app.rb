@@ -54,6 +54,17 @@ get "/discovery" do
   erb :discovery, { :locals => { :wallet_servers => wallet_servers } }
 end
 
+# UTILS
+get "/inspect-address" do
+  erb :form_inspect_address, { :locals => { :address_details => nil, :id => nil } }
+end
+
+get "/inspect-address-now" do
+  address_details = @cw.misc.utils.addresses(params[:addr_id])
+  erb :form_inspect_address, { :locals => { :address_details => address_details,
+                                            :id => params[:addr_id]} }
+end
+
 # SHELLEY WALLETS
 
 get "/wallets" do
