@@ -22,10 +22,12 @@ helpers Helpers::Discovery
 
 
 before do
-  session[:opt] ||= {port: 8090}
-  @cw = CardanoWallet.new session[:opt]
-  session[:opt] = @cw.opt
+  @timeout = 600
+  session[:opt] ||= {port: 8090, timeout: @timeout}
+  @cw ||= CardanoWallet.new session[:opt]
+  session[:opt] ||= @cw.opt
   session[:platform] ||= os
+  puts session[:opt]
 end
 
 get "/" do
@@ -37,7 +39,8 @@ post "/connect" do
     @cw = CardanoWallet.new({ port: params[:wallet_port].to_i,
                               protocol: params[:protocol],
                               cacert: params[:cacert],
-                              pem: params[:pem] })
+                              pem: params[:pem],
+                              timeout: @timeout })
   rescue
     session[:error] = "Failed to initialize CardanoWallet! (Hint: Make sure Cacert and Pem point to real files)."
   end
