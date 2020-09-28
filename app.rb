@@ -22,10 +22,12 @@ helpers Helpers::Discovery
 
 
 before do
-  session[:opt] ||= {port: 8090}
-  @cw = CardanoWallet.new session[:opt]
-  session[:opt] = @cw.opt
+  @timeout = 600
+  session[:opt] ||= {port: 8090, timeout: @timeout}
+  @cw ||= CardanoWallet.new session[:opt]
+  session[:opt] ||= @cw.opt
   session[:platform] ||= os
+  puts session[:opt]
 end
 
 get "/" do
@@ -37,7 +39,8 @@ post "/connect" do
     @cw = CardanoWallet.new({ port: params[:wallet_port].to_i,
                               protocol: params[:protocol],
                               cacert: params[:cacert],
-                              pem: params[:pem] })
+                              pem: params[:pem],
+                              timeout: @timeout })
   rescue
     session[:error] = "Failed to initialize CardanoWallet! (Hint: Make sure Cacert and Pem point to real files)."
   end
@@ -49,6 +52,17 @@ end
 get "/discovery" do
   wallet_servers = Sys::ProcTable.ps.select{|p| p.cmdline.include?("cardano-wallet") if p.cmdline}
   erb :discovery, { :locals => { :wallet_servers => wallet_servers } }
+end
+
+# UTILS
+get "/inspect-address" do
+  erb :form_inspect_address, { :locals => { :address_details => nil, :id => nil } }
+end
+
+get "/inspect-address-now" do
+  address_details = @cw.misc.utils.addresses(params[:addr_id])
+  erb :form_inspect_address, { :locals => { :address_details => address_details,
+                                            :id => params[:addr_id]} }
 end
 
 # SHELLEY WALLETS
