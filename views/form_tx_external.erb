@@ -1,0 +1,23 @@
+<div class="list-group">
+  <div class="list-group-item">
+     Submit External Transaction
+  </div>
+  <div class="list-group-item">
+    <form action="/submit-external-tx" method="POST">
+      <div class="form-group">
+        <textarea class="form-control" name="blob" id="blob" rows="3"><%= blob if blob %></textarea>
+        <small id="help" class="form-text text-muted">Binary blob.</small>
+      </div>
+
+      <button type="submit" class="btn btn-success">Submit</button>
+    </form>
+  </div>
+
+  <% if tx %>
+  <div class="list-group-item"  >
+    <small id="address_details">
+        <%= json2table(tx.to_s) %>
+    </small>
+  </div>
+  <% end %>
+</div>

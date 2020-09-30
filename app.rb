@@ -55,7 +55,27 @@ get "/discovery" do
   erb :discovery, { :locals => { :wallet_servers => wallet_servers } }
 end
 
-# UTILS
+# MISC
+
+# MISC
+get "/network-params" do
+  r = @cw.misc.network.parameters
+  handle_api_err r, session
+  erb :network_params, :locals => { :network_params => r }
+end
+
+get "/network-info" do
+  r = @cw.misc.network.information
+  handle_api_err r, session
+  erb :network_info, :locals => { :network_info => r }
+end
+
+get "/network-clock" do
+  r = @cw.misc.network.clock
+  handle_api_err r, session
+  erb :network_clock, :locals => { :network_clock => r }
+end
+
 get "/inspect-address" do
   erb :form_inspect_address, { :locals => { :address_details => nil, :id => nil } }
 end
@@ -64,6 +84,16 @@ get "/inspect-address-now" do
   address_details = @cw.misc.utils.addresses(params[:addr_id])
   erb :form_inspect_address, { :locals => { :address_details => address_details,
                                             :id => params[:addr_id]} }
+end
+
+get "/submit-external-tx" do
+  erb :form_tx_external, { :locals => { :tx => nil, :blob => nil } }
+end
+
+post "/submit-external-tx" do
+  tx = @cw.misc.proxy.submit_external_transaction(params['blob'].strip)
+  # handle_api_err tx, session
+  erb :form_tx_external, { :locals => { :tx => tx, :blob => params['blob'] } }
 end
 
 # SHELLEY WALLETS
@@ -710,26 +740,6 @@ get "/stake-pools-fee/:wal_id" do
   erb :show_delegation_fee, { :locals => { :delegation_fee => r,
                                            :wallet_id => wid} }
 end
-
-# MISC
-get "/network-params" do
-  r = @cw.misc.network.parameters
-  handle_api_err r, session
-  erb :network_params, :locals => { :network_params => r }
-end
-
-get "/network-info" do
-  r = @cw.misc.network.information
-  handle_api_err r, session
-  erb :network_info, :locals => { :network_info => r }
-end
-
-get "/network-clock" do
-  r = @cw.misc.network.clock
-  handle_api_err r, session
-  erb :network_clock, :locals => { :network_clock => r }
-end
-
 
 # JORMUNGANDR
 
