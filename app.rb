@@ -55,9 +55,23 @@ get "/discovery" do
   erb :discovery, { :locals => { :wallet_servers => wallet_servers } }
 end
 
-# MISC
 
 # MISC
+get "/settings" do
+  settings = @cw.misc.settings.get
+  erb :form_settings, { :locals => { :settings => settings,
+                                     :pool_strategy => nil } }
+end
+
+post "/settings" do
+  set = { "pool_metadata_source" => params['pool_strategy'] }
+  r = @cw.misc.settings.update(set)
+  handle_api_err r, session
+  settings = @cw.misc.settings.get
+  erb :form_settings, { :locals => { :settings => settings,
+                                     :pool_strategy => params['pool_strategy'] } }
+end
+
 get "/network-params" do
   r = @cw.misc.network.parameters
   handle_api_err r, session
