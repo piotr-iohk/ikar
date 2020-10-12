@@ -17,16 +17,16 @@
       <% if tx['inserted_at']%>
           <small><b>Inserted at: </b></small><br/>
           <small>&nbsp;&nbsp;<b>Time: </b><%= tx['inserted_at']['time'] %></small><br/>
-          <small>&nbsp;&nbsp;<b>(Block: </b><%= tx['inserted_at']['block']['height']['quantity'] %>, </small>
-          <small>&nbsp;&nbsp;<b>Epoch: </b><%= tx['inserted_at']['block']['epoch_number'] %>, </small>
-          <small>&nbsp;&nbsp;<b>Slot: </b><%= tx['inserted_at']['block']['slot_number'] %>)</small><br/>
+          <small>&nbsp;&nbsp;<b>(Block: </b><%= tx['inserted_at']['height']['quantity'] %>, </small>
+          <small>&nbsp;&nbsp;<b>Epoch: </b><%= tx['inserted_at']['epoch_number'] %>, </small>
+          <small>&nbsp;&nbsp;<b>Slot: </b><%= tx['inserted_at']['slot_number'] %>)</small><br/>
       <% end %>
       <% if tx['pending_since']%>
           <small><b>Pending since: </b></small><br/>
           <small>&nbsp;&nbsp;<b>Time: </b><%= tx['pending_since']['time'] %></small><br/>
-          <small>&nbsp;&nbsp;<b>(Block: </b><%= tx['pending_since']['block']['height']['quantity'] %>, </small>
-          <small>&nbsp;&nbsp;<b>Epoch: </b><%= tx['pending_since']['block']['epoch_number'] %>, </small>
-          <small>&nbsp;&nbsp;<b>Slot: </b><%= tx['pending_since']['block']['slot_number'] %>)</small><br/>
+          <small>&nbsp;&nbsp;<b>(Block: </b><%= tx['pending_since']['height']['quantity'] %>, </small>
+          <small>&nbsp;&nbsp;<b>Epoch: </b><%= tx['pending_since']['epoch_number'] %>, </small>
+          <small>&nbsp;&nbsp;<b>Slot: </b><%= tx['pending_since']['slot_number'] %>)</small><br/>
       <% end %>
       <small><b>Status: </b><%= tx['status'] %></small><br/>
       <small><b>Amount: </b><%= tx['amount']['quantity'] %> <%= "(sent amount + fee)" if tx['direction'] == "outgoing" %></small><br/>
