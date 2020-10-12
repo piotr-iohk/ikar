@@ -1,0 +1,50 @@
+<%
+  ep = "/wallets"
+  wid = params[:wid] if params[:wid]
+%>
+<div class="list-group">
+  <div class="list-group-item">
+     Coin Selection - random
+     | <small><a href="<%= "#{ep}/#{wid}" %>">
+             go back to wallet
+           </a></small>
+  </div>
+  <div class="list-group-item">
+    <form action="/coin-selection/random" method="POST">
+      <div class="form-group">
+        <textarea class="form-control" name="addr_amt" id="addr_amt" rows="5"><%= addr_amt if addr_amt %></textarea>
+        <small id="help" class="form-text text-muted">
+
+          <details>
+            <summary><i>address:amount</i> per line.</summary>
+            <code>
+37btjrVyb4KF6KtvXYUxDHqjAwfKAuDzP71UEuG6vh87rjstvB8o1Muu6KaeGAF8xZro63Zc5VAYNnQtcci4vT8jhLuNtwku9x1YgS18LHFAhxxTi8:1000000
+<br/>2cWKMJemoBakujqtRy1FT978A3dLJcc1vXKzGTxxhsShkRL8YDUreEje2GqaC3en5TtCc:1000000
+<br/>addr1qrvc39e0lampjjpg0z65z0pccjvpg502c738s3kyam755rhl0dw5r75vk42mv3ykq8vyjeaanvpytg79xqzymqy5acmqjdm7lg:1000000
+            </code>
+          </details>
+
+        </small>
+      </div>
+      <input type="hidden" name="wid" value="<%= wid %>"/>
+      <button type="submit" class="btn btn-success">Verify</button>
+    </form>
+  </div>
+
+  <% if session[:error] %>
+        <div class="alert alert-danger" role="alert">
+          <%= session[:error]%>
+        </div>
+  <%
+        session.delete :error
+     end
+  %>
+
+  <% if coin_selection %>
+  <div class="list-group-item"  >
+    <small id="coin_selection">
+        <%= json2table(coin_selection.to_s) %>
+    </small>
+  </div>
+  <% end %>
+</div>

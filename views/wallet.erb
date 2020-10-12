@@ -67,8 +67,15 @@
                <a class="dropdown-item" href="/stake-pools-fee/<%= wal['id'] %>" >Delegation fees</a>
              </div>
            </div>
-
+           <div>
+             <a class="nav-link dropdown-toggle"
+               data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Coin Selection</a>
+             <div class="dropdown-menu">
+               <a class="dropdown-item" href="/coin-selection/random?wid=<%= wal['id'] %>">Random</a>
+             </div>
+           </div>
            <a class="nav-link" href="/wallets/<%= wal['id']%>/utxo">UTxO</a>
+
            <!-- <a class="nav-link" href="#" onClick="showIt('utxo_show')">UTxO</a>   -->
          </nav>
     <% else %>

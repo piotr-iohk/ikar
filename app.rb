@@ -112,6 +112,24 @@ end
 
 # SHELLEY WALLETS
 
+get "/coin-selection/random" do
+  erb :form_coin_selection, { :locals => { :addr_amt => nil,
+                                           :coin_selection => nil } }
+end
+
+post "/coin-selection/random" do
+  begin
+    a = params[:addr_amt].gsub("\n", ":").split(":").map{|a| a.strip}
+    address_amount = Hash[*a]
+    # address_amount = params[:addr_amt].split("\n").map{|a| a.split(":")}.collect{|a| {a.first => a.last}}
+    coin_selection = @cw.shelley.coin_selections.random(params[:wid], address_amount)
+  rescue ArgumentError
+    session[:error] = "Make sure the input is in the form of address:amount per line."
+  end
+  erb :form_coin_selection, { :locals => { :addr_amt => params[:addr_amt],
+                                           :coin_selection => coin_selection } }
+end
+
 get "/wallets" do
   wallets = @cw.shelley.wallets.list
   handle_api_err wallets, session
