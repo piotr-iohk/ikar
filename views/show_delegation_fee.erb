@@ -5,16 +5,31 @@
 <div class="list-group">
   <div class="list-group-item">
      Delegation fees
-     <small><a href="/stake-pools-fee/<%= wallet_id %>">refresh</a></small>
-     | <small><a href="/wallets/<%= wallet_id %>">go back to wallet</a></small>
+     | <small><a href="/wallets<%= "/#{wid}" if wid %>">
+             go back to wallet<%= "s" unless wid %>
+           </a></small>
   </div>
   <div class="list-group-item">
-    <small>
-      <b>Estimated min: </b> <%= "#{df['estimated_min']['quantity']} #{df['estimated_min']['unit']}" %>
-    </small>
-    <br/>
-    <small>
-      <b>Estimated max: </b> <%= "#{df['estimated_max']['quantity']} #{df['estimated_max']['unit']}" %>
+    <form action="/stake-pools-fee?wid=<%= wid %>" method="GET">
+      <div class="form-row">
+        <div class="col">
+          <select class="form-control" name="wid" id="wid">
+            <% wallets.each do |w| %>
+            <option <%= wid == w['id'] ? "selected" : "" %> value="<%= w['id'] %>">
+              <%= "#{w['name']} [id: #{w['id']}, balance available: #{w['balance']['available']['quantity']}]" %>
+            </option>
+            <% end %>
+          </select>
+        </div>
+        <div class="col">
+          <button type="submit" class="btn btn-success">Refresh</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="list-group-item">
+    <small id="df">
+        <%= json2table(df.to_s) if wid %>
     </small>
   </div>
 </div>

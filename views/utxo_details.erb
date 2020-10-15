@@ -1,24 +1,41 @@
 <%
-  # utxo = utxo
-  # wal = wal
   url_path = request.env['PATH_INFO'].to_s
-%>
-<!-- <script src="https://www.gstatic.com/charts/loader.js"></script> -->
-<script src="https://code.highcharts.com/highcharts.js"></script>
+  wid = params[:wid] if params[:wid]
 
+  byron_ep = "/byron-wallets"
+  shelley_ep = "/wallets"
+%>
+<script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartkick/2.3.0/chartkick.min.js" type="text/javascript"></script>
 
 <div class="list-group">
     <div class="list-group-item">
-      <small><a href="<%= (url_path.include? "byron") ? "/byron-wallets/" : "/wallets/" %><%= wal['id'] %>/utxo">refresh</a></small>
-    | <small><a href="<%= (url_path.include? "byron") ? "/byron-wallets/" : "/wallets/" %><%= wal['id'] %>">go back to wallet</a></small>
+    UTxO distribution
+    | <small><a href="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>/<%= wal['id'] %>">go back to wallet</a></small>
     </div>
-
     <div class="list-group-item">
-      <div class="card">
-          <div class="card-body">
-              <%= column_chart utxo['distribution'].sort, title: "#{wal['name']} UTxO distribution" %>
+        <form action="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>-utxo" method="GET">
+          <div class="form-row">
+            <div class="col">
+              <select class="form-control" name="wid" id="wid">
+                <% wallets.each do |w| %>
+                <option <%= wid == w['id'] ? "selected" : "" %> value="<%= w['id'] %>">
+                  <%= "#{w['name']} [id: #{w['id']}, balance available: #{w['balance']['available']['quantity']}]" %>
+                </option>
+                <% end %>
+              </select>
+            </div>
+            <div class="col">
+              <button type="submit" class="btn btn-success">Refresh</button>
+            </div>
           </div>
+        </form>
       </div>
-    </div>
+      <div class="list-group-item">
+        <div class="card">
+            <div class="card-body">
+                <%= column_chart utxo['distribution'].sort, title: "#{wal['name']} UTxO distribution" %>
+            </div>
+        </div>
+      </div>
 </div>

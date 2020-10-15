@@ -7,6 +7,12 @@ quit_ep = "/stake-pools-quit"
 %>
 <div class="list-group">
   <div class="list-group-item">
+     <%= (url_path.include? "join") ? "Join" : "Quit" %> Stake Pool
+     | <small><a href="/wallets<%= "/#{wid}" if wid %>">
+             go back to wallet<%= "s" unless wid %>
+           </a></small>
+  </div>
+  <div class="list-group-item">
     <form action="<%= (url_path.include? "join") ? join_ep : quit_ep %>" method="POST">
       <div class="form-group">
         <label for="wid">Wallet</label>
