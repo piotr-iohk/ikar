@@ -15,7 +15,16 @@ module Helpers
           table_class: "table table-striped table-hover table-condensed table-bordered",
           table_attributes: "border=1"
           }
-      Json2table::get_html_table(json_string, table_options)
+      r = Json2table::get_html_table(json_string, table_options)
+      r += %Q{
+        <details>
+          <summary>JSON</summary>
+            <code>
+              #{JSON.parse json_string.to_json}
+            </code>
+        </details>
+      }
+      r
     end
 
     def handle_api_err(r, session)

@@ -71,7 +71,7 @@
              <a class="nav-link dropdown-toggle"
                data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Coin Selection</a>
              <div class="dropdown-menu">
-               <a class="dropdown-item" href="/coin-selection/random?wid=<%= wal['id'] %>">Random</a>
+               <a class="dropdown-item" href="/wallets/coin-selection/random?wid=<%= wal['id'] %>">Random</a>
              </div>
            </div>
            <a class="nav-link" href="/wallets/<%= wal['id']%>/utxo">UTxO</a>
@@ -121,6 +121,13 @@
               <a class="dropdown-item" href="/byron-wallets/<%= id %>/address">Generate</a>
               <a class="dropdown-item" href="/byron-wallets/<%= id %>/address-import">Import</a>
               <a class="dropdown-item" href="/byron-wallets/<%= id %>/bulk-address-import">Bulk Import</a>
+            </div>
+          </div>
+          <div>
+            <a class="nav-link dropdown-toggle"
+              data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Coin Selection</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="/byron-wallets/coin-selection/random?wid=<%= wal['id'] %>">Random</a>
             </div>
           </div>
           <a class="nav-link" href="/byron-wallets/<%= id %>/utxo">UTxO</a>
