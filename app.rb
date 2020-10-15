@@ -112,22 +112,27 @@ end
 
 # SHELLEY WALLETS
 
-get "/coin-selection/random" do
+get "/wallets/coin-selection/random" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
   erb :form_coin_selection, { :locals => { :addr_amt => nil,
-                                           :coin_selection => nil } }
+                                           :coin_selection => nil,
+                                           :wallets => wallets } }
 end
 
-post "/coin-selection/random" do
+post "/wallets/coin-selection/random" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
   begin
-    a = params[:addr_amt].gsub("\n", ":").split(":").map{|a| a.strip}
-    address_amount = Hash[*a]
-    # address_amount = params[:addr_amt].split("\n").map{|a| a.split(":")}.collect{|a| {a.first => a.last}}
+    address_amount = params[:addr_amt].split("\n").map{|a| a.strip.split(":")}.collect{|a| {a.first.strip => a.last.strip}}
+    puts address_amount
     coin_selection = @cw.shelley.coin_selections.random(params[:wid], address_amount)
   rescue ArgumentError
     session[:error] = "Make sure the input is in the form of address:amount per line."
   end
   erb :form_coin_selection, { :locals => { :addr_amt => params[:addr_amt],
-                                           :coin_selection => coin_selection } }
+                                           :coin_selection => coin_selection,
+                                           :wallets => wallets } }
 end
 
 get "/wallets" do
@@ -346,7 +351,7 @@ post "/tx-fee-to-address" do
   end
 
 
-  r = @cw.shelley.transactions.payment_fees(wid_src, {address => amount}, w, m)
+  r = @cw.shelley.transactions.payment_fees(wid_src, [{address => amount}], w, m)
   handle_api_err r, session
 
   erb :show_tx_fee, { :locals => { :tx_fee => r, :wallet_id => wid_src} }
@@ -380,7 +385,7 @@ post "/tx-to-address" do
 
   r = @cw.shelley.transactions.create(wid_src,
                                       pass,
-                                      {address => amount},
+                                      [{address => amount}],
                                       w, m)
   handle_api_err r, session
 
@@ -418,7 +423,7 @@ post "/tx-between-wallets" do
                                           sample['id']
   r = @cw.shelley.transactions.create(wid_src,
                                       pass,
-                                      {address_dst => amount},
+                                      [{address_dst => amount}],
                                       w, m)
   handle_api_err r, session
 
@@ -442,6 +447,29 @@ get "/wallets/:wal_id/txs/:tx_id" do
 end
 
 # BYRON WALLETS
+
+get "/byron-wallets/coin-selection/random" do
+  wallets = @cw.byron.wallets.list
+  handle_api_err wallets, session
+  erb :form_coin_selection, { :locals => { :addr_amt => nil,
+                                           :coin_selection => nil,
+                                           :wallets => wallets } }
+end
+
+post "/byron-wallets/coin-selection/random" do
+  wallets = @cw.byron.wallets.list
+  handle_api_err wallets, session
+  begin
+    address_amount = params[:addr_amt].split("\n").map{|a| a.strip.split(":")}.collect{|a| {a.first.strip => a.last.strip}}
+    puts address_amount
+    coin_selection = @cw.byron.coin_selections.random(params[:wid], address_amount)
+  rescue ArgumentError
+    session[:error] = "Make sure the input is in the form of address:amount per line."
+  end
+  erb :form_coin_selection, { :locals => { :addr_amt => params[:addr_amt],
+                                           :coin_selection => coin_selection,
+                                           :wallets => wallets } }
+end
 
 get "/byron-wallets/:wal_id/bulk-address-import" do
   erb :form_byron_wallet_address_bulk_import, { :locals => { :wid => params[:wal_id] } }
@@ -670,7 +698,7 @@ post "/byron-tx-fee-to-address" do
   amount = params[:amount]
   address = params[:address]
 
-  r = @cw.byron.transactions.payment_fees(wid_src, {address => amount})
+  r = @cw.byron.transactions.payment_fees(wid_src, [{address => amount}])
   handle_api_err r, session
 
   erb :show_tx_fee, { :locals => { :tx_fee => r, :wallet_id => wid_src} }
@@ -687,7 +715,7 @@ post "/byron-tx-to-address" do
   amount = params[:amount]
   address = params[:address]
 
-  r = @cw.byron.transactions.create(wid_src, pass, {address => amount})
+  r = @cw.byron.transactions.create(wid_src, pass, [{address => amount}])
   handle_api_err r, session
 
   redirect "/byron-wallets/#{wid_src}/txs/#{r['id']}"
