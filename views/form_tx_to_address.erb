@@ -7,6 +7,12 @@ wid = params[:wid] if params[:wid]
 %>
 <div class="list-group">
   <div class="list-group-item">
+    Transaction
+    | <small><a href="<%= (url_path.include? "byron") ? "/byron-wallets/#{wid}" : "/wallets/#{wid}" %>">
+        go back to wallet
+      </a></small>
+  </div>
+  <div class="list-group-item">
     <form action="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>" method="POST">
       <div class="form-group">
         <label for="wid_src">Source Wallet</label>

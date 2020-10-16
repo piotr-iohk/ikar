@@ -16,13 +16,11 @@ shelley_ep = "/wallets/#{wallet_id}"
          </a>
        </small>
   </div>
-  <div class="list-group-item">
-    <small>
-      <b>Estimated min: </b> <%= "#{tx_fee['estimated_min']['quantity']} #{tx_fee['estimated_min']['unit']}" %>
-    </small>
-    <br/>
-    <small>
-      <b>Estimated max: </b> <%= "#{tx_fee['estimated_max']['quantity']} #{tx_fee['estimated_max']['unit']}" %>
+  <% if tx_fee %>
+  <div class="list-group-item"  >
+    <small id="coin_selection">
+        <%= json2table(tx_fee.to_s) %>
     </small>
   </div>
+  <% end %>
 </div>

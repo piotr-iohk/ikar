@@ -28,7 +28,7 @@ before do
   @cw ||= CardanoWallet.new session[:opt]
   session[:opt] ||= @cw.opt
   session[:platform] ||= os
-  puts session[:opt]
+  # puts session[:opt]
 end
 
 get "/" do
@@ -280,10 +280,14 @@ post "/wallets-delete-all" do
   redirect "/wallets"
 end
 
-get "/wallets/:wal_id/utxo" do
-  utxo = @cw.shelley.wallets.utxo params[:wal_id]
-  wal = @cw.shelley.wallets.get params[:wal_id]
-  erb :utxo_details, { :locals => { :wal => wal, :utxo => utxo } }
+get "/wallets-utxo" do
+  utxo = @cw.shelley.wallets.utxo params[:wid]
+  wal = @cw.shelley.wallets.get params[:wid]
+  wallets = @cw.shelley.wallets.list
+
+  erb :utxo_details, { :locals => { :wal => wal,
+                                    :utxo => utxo,
+                                    :wallets => wallets } }
 end
 
 get "/wallets-migrate" do
@@ -304,13 +308,14 @@ post "/wallets-migrate" do
   erb :show_migrated, { :locals => { transactions: r, wid_src: wid_src} }
 end
 
-get "/wallets-migration-fee/:wal_id" do
-  wid = params[:wal_id]
-
+get "/wallets-migration-fee" do
+  wid = params[:wid]
+  wallets = @cw.shelley.wallets.list
   r = @cw.shelley.migrations.cost wid
-  handle_api_err(r, session)
 
-  erb :show_migration_fee, { :locals => { :migration_fee => r, :wallet_id => wid} }
+  erb :show_migration_fee, { :locals => { :migration_fee => r,
+                                          :wid => wid,
+                                          :wallets => wallets } }
 end
 
 # TRANSACTIONS SHELLEY
@@ -530,12 +535,16 @@ post "/byron-wallets/:wal_id/update-pass" do
   redirect "/byron-wallets/#{params[:wal_id]}"
 end
 
-get "/byron-wallets/:wal_id/utxo" do
-  utxo = @cw.byron.wallets.utxo params[:wal_id]
-  wal = @cw.byron.wallets.get params[:wal_id]
+get "/byron-wallets-utxo" do
+  utxo = @cw.byron.wallets.utxo params[:wid]
+  wal = @cw.byron.wallets.get params[:wid]
+  wallets = @cw.byron.wallets.list
+
   handle_api_err utxo, session
   handle_api_err wal, session
-  erb :utxo_details, { :locals => { :wal => wal, :utxo => utxo } }
+  erb :utxo_details, { :locals => { :wal => wal,
+                                    :utxo => utxo,
+                                    :wallets => wallets } }
 end
 
 get "/byron-wallets" do
@@ -663,13 +672,14 @@ post "/byron-wallets-migrate" do
   erb :show_migrated, { :locals => { transactions: r, wid_src: wid_src} }
 end
 
-get "/byron-wallets-migration-fee/:wal_id" do
-  wid = params[:wal_id]
-
+get "/byron-wallets-migration-fee" do
+  wid = params[:wid]
+  wallets = @cw.byron.wallets.list
   r = @cw.byron.migrations.cost wid
-  handle_api_err(r, session)
 
-  erb :show_migration_fee, { :locals => { :migration_fee => r, :wallet_id => wid} }
+  erb :show_migration_fee, { :locals => { :migration_fee => r,
+                                          :wid => wid,
+                                          :wallets => wallets } }
 end
 
 # TRANSACTIONS BYRON
@@ -791,14 +801,14 @@ post "/stake-pools-quit" do
   redirect "/wallets/#{w_id}/txs/#{r['id']}"
 end
 
-get "/stake-pools-fee/:wal_id" do
-  wid = params['wal_id']
-  r = @cw.shelley.stake_pools.delegation_fees wid
-  pp r
-  handle_api_err r, session
+get "/stake-pools-fee" do
+  wid = params['wid']
+  r = @cw.shelley.stake_pools.delegation_fees wid if wid
+  wallets = @cw.shelley.wallets.list
 
   erb :show_delegation_fee, { :locals => { :delegation_fee => r,
-                                           :wallet_id => wid} }
+                                           :wid => wid,
+                                           :wallets => wallets } }
 end
 
 # JORMUNGANDR

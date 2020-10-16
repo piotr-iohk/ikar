@@ -147,7 +147,7 @@ describe 'Using App', type: :feature do
     it "I can see Migration cost" do
       create_byron_wallet "random"
       click_link "Migrations"
-      click_link "Calculate cost"
+      find(:xpath, "//a[contains(@href,'migration-fee')]").click
       expect(page).to have_text "nothing_to_migrate"
     end
 
