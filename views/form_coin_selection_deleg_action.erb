@@ -1,0 +1,65 @@
+<%
+  url_path = request.env['PATH_INFO'].to_s
+  wid = params[:wid] if params[:wid]
+  byron_ep = "/byron-wallets"
+  shelley_ep = "/wallets"
+%>
+
+<div class="list-group">
+  <div class="list-group-item">
+     Coin Selection - delegation action
+     | <small><a href="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>/<%= wid %>">
+             go back to wallet
+           </a></small>
+  </div>
+  <div class="list-group-item">
+    <form action="/wallets/coin-selection/delegation" method="POST">
+      <div class="form-group">
+        <label for="wid">Source Wallet</label>
+        <select class="form-control" name="wid" id="wid">
+          <% wallets.each do |w| %>
+          <option <%= wid == w['id'] ? "selected" : "" %> value="<%= w['id'] %>">
+            <%= "#{w['name']} [id: #{w['id']}, balance available: #{w['balance']['available']['quantity']}]" %>
+          </option>
+          <% end %>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="deleg_action">Delegation action</label>
+        <textarea class="form-control" name="deleg_action" id="deleg_action" rows="5"><%= deleg_action if deleg_action %></textarea>
+        <small id="help" class="form-text text-muted">
+
+          <details>
+            <summary>Join or Quit action.</summary>
+            <code>
+              Join:<br/><br/>
+{ "action": "join", "pool": "pool_id" }
+<br/><br/>Quit:<br/><br/>
+{ "action": "quit" }
+            </code>
+          </details>
+
+        </small>
+      </div>
+
+      <button type="submit" class="btn btn-success">Verify</button>
+    </form>
+  </div>
+
+  <% if session[:error] %>
+        <div class="alert alert-danger" role="alert">
+          <%= session[:error]%>
+        </div>
+  <%
+        session.delete :error
+     end
+  %>
+
+  <% if coin_selection %>
+  <div class="list-group-item"  >
+    <small id="coin_selection">
+        <%= json2table(coin_selection.to_s) %>
+    </small>
+  </div>
+  <% end %>
+</div>

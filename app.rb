@@ -112,6 +112,29 @@ end
 
 # SHELLEY WALLETS
 
+get "/wallets/coin-selection/delegation" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  erb :form_coin_selection_deleg_action, { :locals => { :deleg_action => nil,
+                                                        :coin_selection => nil,
+                                                        :wallets => wallets } }
+end
+
+post "/wallets/coin-selection/delegation" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  begin
+    deleg_action = JSON.parse params[:deleg_action]
+    coin_selection = @cw.shelley.coin_selections.random_deleg(params[:wid], deleg_action)
+    # handle_api_err coin_selection, session
+  rescue
+    session[:error] = "Make sure the 'action' has correct JSON format."
+  end
+  erb :form_coin_selection_deleg_action, { :locals => { :deleg_action => params[:deleg_action],
+                                                        :coin_selection => coin_selection,
+                                                        :wallets => wallets } }
+end
+
 get "/wallets/coin-selection/random" do
   wallets = @cw.shelley.wallets.list
   handle_api_err wallets, session
@@ -125,7 +148,6 @@ post "/wallets/coin-selection/random" do
   handle_api_err wallets, session
   begin
     address_amount = params[:addr_amt].split("\n").map{|a| a.strip.split(":")}.collect{|a| {a.first.strip => a.last.strip}}
-    puts address_amount
     coin_selection = @cw.shelley.coin_selections.random(params[:wid], address_amount)
   rescue ArgumentError
     session[:error] = "Make sure the input is in the form of address:amount per line."
