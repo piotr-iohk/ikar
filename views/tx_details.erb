@@ -3,30 +3,41 @@
 
 %>
 
-<script src="../../../../lib.js" type="text/javascript"></script>
 <div class="list-group">
 
     <div class="list-group-item">
       <small><a href="<%= (url_path.include? "byron") ? "/byron-wallets" : "/wallets" %><%= "/#{wid}/txs/#{tx['id']}" %>">refresh</a></small>
       | <small><a href="<%= (url_path.include? "byron") ? "/byron-wallets" : "/wallets" %><%= "/#{wid}/forget-tx/#{tx['id']}" %>">forget</a></small>
       | <small><a href="<%= (url_path.include? "byron") ? "/byron-wallets" : "/wallets" %><%= "/#{wid}" %>">go to wallet</a></small><br/>
-      <div class="alert alert-<%= tx['status'] == "pending" ? "warning" : "success" %>" role="alert">
-        Transaction is <%= tx['status'] %>.
-      </div>
+    </div>
+    <div class="list-group-item">
+      <%= show_tx_badges(tx) %>
       <small><b>ID: </b><%= tx['id'] %></small><br/>
       <% if tx['inserted_at']%>
           <small><b>Inserted at: </b></small><br/>
           <small>&nbsp;&nbsp;<b>Time: </b><%= tx['inserted_at']['time'] %></small><br/>
           <small>&nbsp;&nbsp;<b>(Block: </b><%= tx['inserted_at']['height']['quantity'] %>, </small>
           <small>&nbsp;&nbsp;<b>Epoch: </b><%= tx['inserted_at']['epoch_number'] %>, </small>
-          <small>&nbsp;&nbsp;<b>Slot: </b><%= tx['inserted_at']['slot_number'] %>)</small><br/>
+          <small>&nbsp;&nbsp;<b>Slot: </b><%= tx['inserted_at']['slot_number'] %>, </small>
+          <small>&nbsp;&nbsp;<b>Absolute Slot: </b><%= tx['inserted_at']['absolute_slot_number'] %>)</small>
+          <br/>
       <% end %>
       <% if tx['pending_since']%>
           <small><b>Pending since: </b></small><br/>
           <small>&nbsp;&nbsp;<b>Time: </b><%= tx['pending_since']['time'] %></small><br/>
           <small>&nbsp;&nbsp;<b>(Block: </b><%= tx['pending_since']['height']['quantity'] %>, </small>
           <small>&nbsp;&nbsp;<b>Epoch: </b><%= tx['pending_since']['epoch_number'] %>, </small>
-          <small>&nbsp;&nbsp;<b>Slot: </b><%= tx['pending_since']['slot_number'] %>)</small><br/>
+          <small>&nbsp;&nbsp;<b>Slot: </b><%= tx['pending_since']['slot_number'] %>, </small>
+          <small>&nbsp;&nbsp;<b>Absolute Slot: </b><%= tx['pending_since']['absolute_slot_number'] %>)</small>
+          <br/>
+      <% end %>
+      <% if tx['expires_at']%>
+          <small><b>Expires at: </b></small><br/>
+          <small>&nbsp;&nbsp;<b>Time: </b><%= tx['expires_at']['time'] %></small><br/>
+          <small>&nbsp;&nbsp;<b>(Epoch: </b><%= tx['expires_at']['epoch_number'] %>, </small>
+          <small>&nbsp;&nbsp;<b>Slot: </b><%= tx['expires_at']['slot_number'] %>, </small>
+          <small>&nbsp;&nbsp;<b>Absolute Slot: </b><%= tx['expires_at']['absolute_slot_number'] %>)</small>
+          <br/>
       <% end %>
       <small><b>Status: </b><%= tx['status'] %></small><br/>
       <small><b>Amount: </b><%= tx['amount']['quantity'] %> <%= "(sent amount + fee)" if tx['direction'] == "outgoing" %></small><br/>
@@ -75,21 +86,24 @@
       <% else%>
         <small>&nbsp;&nbsp;<b>No Withdrawals! </b></small><br/>
       <% end %>
+      <div class="list-group-item">
       <% if tx['metadata'] %>
-        <div class="list-group-item">
           <small><b>Metadata: </b></small><br/>
           <small><code><%= tx['metadata'] %></code></small>
-        </div>
       <% else%>
-        <small>&nbsp;&nbsp;<b>No Metadata! </b></small><br/>
+        <small><b>No Metadata! </b></small><br/>
       <% end %>
-      <small><a href="#" onClick="showIt('tx_json')">raw tx.json</a></small><br/>
-      <div class="list-group-item"  >
-        <small id="tx_json" style="display:none">
-            <%= tx %>
-        </small>
       </div>
-  </div>
+
+    </div>
+    <div class="list-group-item" >
+      <details>
+        <summary>Table view</summary>
+        <small>
+        <%= response2table(tx) %>
+        </small>
+      </details>
+    </div>
 
 
 </div>

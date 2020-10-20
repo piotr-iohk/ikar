@@ -35,7 +35,7 @@ wid = params[:wid] if params[:wid]
 
       </div>
       <% unless (url_path.include? "byron") %>
-        <%= render_tx_withdraw_and_metadata_form %>
+        <%= render_tx_shelley_form_part %>
       <% end %>
 
       <button type="submit" class="btn btn-success">Send Tx</button>
