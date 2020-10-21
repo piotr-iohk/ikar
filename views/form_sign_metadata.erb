@@ -1,0 +1,115 @@
+
+<div class="list-group">
+  <div class="list-group-item">
+     Sign metadata
+  </div>
+  <div class="list-group-item">
+    <form action="/sign-metadata" method="POST">
+      <div class="form-group">
+        <label for="wid">Wallet</label>
+        <select class="form-control" name="wid" id="wid">
+          <% wallets.each do |w| %>
+          <option <%= wid == w['id'] ? "selected" : "" %> value="<%= w['id'] %>">
+            <%= "#{w['name']} [id: #{w['id']}, balance available: #{w['balance']['available']['quantity']}]" %>
+          </option>
+          <% end %>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="role">Role</label>
+        <select class="form-control" name="role" id="role">
+          <option <%= "selected" if role == "utxo_external" %> value="utxo_external">utxo_external</option>
+          <option <%= "selected" if role == "utxo_internal" %> value="utxo_internal">utxo_internal</option>
+          <option <%= "selected" if role == "mutable_account" %> value="mutable_account">mutable_account</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="index">Index</label>
+        <input type="text" class="form-control" name="index" id="index"
+            placeholder="" value="<%= index %>">
+        <small id="help" class="form-text text-muted">Example: 1852H. An individual segment within a derivation path.</small>
+      </div>
+
+      <div class="form-group">
+        <label for="pass">Passphrase</label>
+        <input type="text" class="form-control" name="pass" id="pass"
+            placeholder="Secure Passphrase" value="Secure Passphrase">
+      </div>
+
+      <div class="form-group">
+        <label class="form-check-label" for="metadata">Metadata</label>
+        <textarea class="form-control" name="metadata" id="metadata" rows="4"></textarea>
+        <small id="help" class="form-text text-muted">
+          <details>
+            <summary>Examplary metadata</summary>
+              <code>
+              {
+                 "0":{
+                    "string":"cardano"
+                 },
+                 "1":{
+                    "int":14
+                 },
+                 "2":{
+                    "bytes":"2512a00e9653fe49a44a5886202e24d77eeb998f"
+                 },
+                 "3":{
+                    "list":[
+                       {
+                          "int":14
+                       },
+                       {
+                          "int":42
+                       },
+                       {
+                          "string":"1337"
+                       }
+                    ]
+                 },
+                 "4":{
+                    "map":[
+                       {
+                          "k":{
+                             "string":"key"
+                          },
+                          "v":{
+                             "string":"value"
+                          }
+                       },
+                       {
+                          "k":{
+                             "int":14
+                          },
+                          "v":{
+                             "int":42
+                          }
+                       }
+                    ]
+                 }
+              }
+              </code>
+          </details>
+        </small>
+      </div>
+
+      <button type="submit" class="btn btn-success">Sign Metadata</button>
+    </form>
+  </div>
+
+  <% if session[:error] %>
+        <div class="alert alert-danger" role="alert">
+          <%= session[:error]%>
+        </div>
+  <%
+        session.delete :error
+     end
+  %>
+  
+  <% if signed_metadata %>
+  <div class="list-group-item"  >
+    <small id="signed_metadata">
+        <%= json2table(signed_metadata.to_s) %>
+    </small>
+  </div>
+  <% end %>
+</div>

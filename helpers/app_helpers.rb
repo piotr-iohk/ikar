@@ -27,9 +27,20 @@ module Helpers
       r
     end
 
+    def parse_metadata(metadata)
+      begin
+        metadata == '' ? nil : YAML.load(metadata)
+      rescue
+        session[:error] = "Make sure metadata is a valid JSON. "
+        redirect "/"
+      end
+    end
+
     def handle_api_err(r, session)
       unless r
-        session[:error] = "It seems I cannot make a connection to wallet..."
+        session[:error] = %Q{ Got nothing from the wallet, either I cannot
+                               connect or the request was somewhat wrong...
+                            }
         redirect "/"
       end
       unless [200, 201, 202, 204].include? r.code

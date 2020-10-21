@@ -57,6 +57,48 @@ end
 
 
 # MISC
+
+get "/sign-metadata" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  params[:wid] ? wid = params[:wid] : wid = wallets.first['id']
+  erb :form_sign_metadata, { :locals => { :wallets => wallets,
+                                          :wid => wid,
+                                          :role => params[:role],
+                                          :index => params[:index],
+                                          :pass => params[:pass],
+                                          :metadata => params[:metadata],
+                                          :signed_metadata => nil
+                                        } }
+end
+
+post "/sign-metadata" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  m = parse_metadata(params[:metadata])
+
+  begin
+    signed_metadata = @cw.misc.utils.sign_metadata(params[:wid],
+                                                   params[:role],
+                                                   params[:index],
+                                                   params[:pass],
+                                                   m
+                                                  )
+  rescue
+    session[:error] = "Make sure parameters are valid. "
+    redirect "/sign-metadata"
+  end
+  handle_api_err signed_metadata, session
+  erb :form_sign_metadata, { :locals => { :wallets => wallets,
+                                          :wid => params[:wid],
+                                          :role => params[:role],
+                                          :index => params[:index],
+                                          :pass => params[:pass],
+                                          :metadata => m,
+                                          :signed_metadata => signed_metadata
+                                        } }
+end
+
 get "/settings" do
   settings = @cw.misc.settings.get
   erb :form_settings, { :locals => { :settings => settings,
@@ -370,13 +412,7 @@ post "/tx-fee-to-address" do
     w = params[:withdrawal].split
   end
 
-  case params[:metadata]
-  when ''
-    m = nil
-  else
-    m = YAML.load(params[:metadata])
-  end
-
+  m = parse_metadata(params[:metadata])
 
   r = @cw.shelley.transactions.payment_fees(wid_src, [{address => amount}], w, m)
   handle_api_err r, session
@@ -403,12 +439,7 @@ post "/tx-to-address" do
     w = params[:withdrawal].split
   end
 
-  case params[:metadata]
-  when ''
-    m = nil
-  else
-    m = YAML.load(params[:metadata])
-  end
+  m = parse_metadata(params[:metadata])
 
   r = @cw.shelley.transactions.create(wid_src,
                                       pass,
@@ -438,12 +469,7 @@ post "/tx-between-wallets" do
     w = params[:withdrawal].split
   end
 
-  case params[:metadata]
-  when ''
-    m = nil
-  else
-    m = YAML.load(params[:metadata])
-  end
+  m = parse_metadata(params[:metadata])
 
   address_dst = @cw.shelley.addresses.list(wid_dst,
                                           {state: "unused"}).
