@@ -9,21 +9,70 @@ module Helpers
       end
     end
 
-    def json2table(json_string)
-      table_options = {
-          table_style: "border: 1px solid black; max-width: 600px;",
-          table_class: "table table-striped table-hover table-condensed table-bordered",
-          table_attributes: "border=1"
-          }
-      r = Json2table::get_html_table(json_string, table_options)
-      r += %Q{
+    def generate_curl(response)
+      uri = response.request.last_uri
+      body = response.request.options[:body]
+      headers = response.request.options[:headers]
+      method = response.request.http_method.to_s.split('::').last.upcase
+      headers_curled = ""
+      if headers
+        headers.each do |k,v|
+          headers_curled += "<br/>-H \"#{k}: #{v}\" \\"
+        end
+      end
+      curl = %Q{
+                  curl -X #{method} #{uri} \\
+                  #{"<br/>-d '" + body + "' \\" if body}
+                  #{headers_curled}
+                }
+      curl = curl.strip.delete_suffix!("\\")
+      %Q{
         <details>
-          <summary>JSON</summary>
+          <summary>curl</summary>
             <code>
-              #{JSON.parse json_string.to_json}
+              #{curl}
+            </code>
+        </details>
+       }
+    end
+
+    def generate_raw_response(resp_json)
+      %Q{
+        <details>
+          <summary>Response</summary>
+            <code>
+              #{JSON.parse resp_json}
             </code>
         </details>
       }
+    end
+
+    def response2table(response)
+      unless response
+        session[:error] = %Q{ Got nothing from the wallet, either I cannot
+                               connect or the request was somewhat wrong...
+                            }
+        redirect "/"
+      end
+
+      code = response.code
+      r = ''
+
+      case code
+      when 500, 501 then
+        r += render_danger(response.to_s)
+        r += generate_curl(response)
+      else
+        table_options = {
+            table_style: "border: 1px solid black; max-width: 600px;",
+            table_class: "table table-striped table-hover table-condensed table-bordered",
+            table_attributes: "border=1"
+            }
+
+        r += Json2table::get_html_table(response.to_s, table_options)
+        r += generate_curl(response)
+        r += generate_raw_response(response.to_json)
+      end
       r
     end
 
@@ -47,12 +96,14 @@ module Helpers
         uri = r.request.last_uri
         body = r.request.options[:body]
         method = r.request.http_method.to_s.split('::').last.upcase
-        msg_about_request  = "Whoops! I did:<br/>#{method} #{uri}"
-        msg_about_body     = "<br/>Body: <code>#{body}</code>" if body
-        msg_about_response = "<br/><br/>The response was:<br/>
-                              Code = #{r.code},<br/>
-                              Message = #{r.to_s}"
-        session[:error] = msg_about_request + msg_about_body.to_s + msg_about_response
+        session[:error] = %Q{
+                  Whoops! I did:<br/>#{method} #{uri}
+                  #{"<br/>Body: <code>" + body + "</code>" if body}
+                  <br/>#{generate_curl(r)}
+                  <br/><br/>The response was:<br/>
+                  Code = #{r.code},<br/>
+                  Message = #{r.to_s}
+         }
         redirect "/"
       end
     end

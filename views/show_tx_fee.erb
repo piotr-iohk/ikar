@@ -19,7 +19,7 @@ shelley_ep = "/wallets/#{wallet_id}"
   <% if tx_fee %>
   <div class="list-group-item"  >
     <small id="coin_selection">
-        <%= json2table(tx_fee.to_s) %>
+        <%= response2table(tx_fee) %>
     </small>
   </div>
   <% end %>

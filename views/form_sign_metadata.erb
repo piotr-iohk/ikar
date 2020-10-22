@@ -104,11 +104,11 @@
         session.delete :error
      end
   %>
-  
+
   <% if signed_metadata %>
   <div class="list-group-item"  >
     <small id="signed_metadata">
-        <%= json2table(signed_metadata.to_s) %>
+        <%= response2table(signed_metadata) %>
     </small>
   </div>
   <% end %>
