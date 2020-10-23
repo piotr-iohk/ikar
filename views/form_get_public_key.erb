@@ -1,0 +1,61 @@
+
+<div class="list-group">
+  <div class="list-group-item">
+     Get public key
+     | <small><a href="/wallets/<%= wid %>">
+             go back to wallet
+           </a></small>
+  </div>
+  <div class="list-group-item">
+    <form action="/get-pub-key" method="POST">
+      <div class="form-group">
+        <label for="wid">Wallet</label>
+        <select class="form-control" name="wid" id="wid">
+          <% wallets.each do |w| %>
+          <option <%= wid == w['id'] ? "selected" : "" %> value="<%= w['id'] %>">
+            <%= "#{w['name']} [id: #{w['id']}, balance available: #{w['balance']['available']['quantity']}]" %>
+          </option>
+          <% end %>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="role">Role</label>
+        <select class="form-control" name="role" id="role">
+          <option <%= "selected" if role == "utxo_external" %> value="utxo_external">utxo_external</option>
+          <option <%= "selected" if role == "utxo_internal" %> value="utxo_internal">utxo_internal</option>
+          <option <%= "selected" if role == "mutable_account" %> value="mutable_account">mutable_account</option>
+          <option <%= "selected" if role == "multisig_script" %> value="multisig_script">multisig_script</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="index">Index</label>
+        <input type="text" class="form-control" name="index" id="index"
+            placeholder="" value="<%= index %>">
+        <small id="help" class="form-text text-muted">Example: 1852H. An individual segment within a derivation path.</small>
+      </div>
+
+
+
+      <button type="submit" class="btn btn-success">Get public key</button>
+    </form>
+  </div>
+
+  <% if session[:error] %>
+        <div class="alert alert-danger" role="alert">
+          <%= session[:error]%>
+        </div>
+  <%
+        session.delete :error
+     end
+  %>
+
+  <% if pub_key %>
+  <div class="list-group-item"  >
+    <small id="signed_metadata">
+      Response:<br/>
+        <%= pub_key %>
+        <br/><br/><%= generate_curl(pub_key) %>
+    </small>
+  </div>
+  <% end %>
+</div>

@@ -58,6 +58,39 @@ end
 
 # MISC
 
+get "/get-pub-key" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  params[:wid] ? wid = params[:wid] : wid = wallets.first['id']
+  erb :form_get_public_key, { :locals => { :wallets => wallets,
+                                          :wid => wid,
+                                          :role => params[:role],
+                                          :index => params[:index],
+                                          :pub_key => nil
+                                        } }
+end
+
+post "/get-pub-key" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+
+  begin
+    pub_key = @cw.shelley.keys.get_public_key(params[:wid],
+                                            params[:role],
+                                            params[:index])
+  rescue
+    session[:error] = "Make sure parameters are valid. "
+    redirect "/get-pub-key"
+  end
+  handle_api_err pub_key, session
+  erb :form_get_public_key, { :locals => { :wallets => wallets,
+                                          :wid => params[:wid],
+                                          :role => params[:role],
+                                          :index => params[:index],
+                                          :pub_key => pub_key
+                                        } }
+end
+
 get "/sign-metadata" do
   wallets = @cw.shelley.wallets.list
   handle_api_err wallets, session
@@ -78,7 +111,7 @@ post "/sign-metadata" do
   m = parse_metadata(params[:metadata])
 
   begin
-    signed_metadata = @cw.misc.utils.sign_metadata(params[:wid],
+    signed_metadata = @cw.shelley.keys.sign_metadata(params[:wid],
                                                    params[:role],
                                                    params[:index],
                                                    params[:pass],
