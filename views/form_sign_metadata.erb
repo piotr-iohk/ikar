@@ -21,6 +21,7 @@
           <option <%= "selected" if role == "utxo_external" %> value="utxo_external">utxo_external</option>
           <option <%= "selected" if role == "utxo_internal" %> value="utxo_internal">utxo_internal</option>
           <option <%= "selected" if role == "mutable_account" %> value="mutable_account">mutable_account</option>
+          <option <%= "selected" if role == "multisig_script" %> value="multisig_script">multisig_script</option>
         </select>
       </div>
       <div class="form-group">
@@ -38,7 +39,7 @@
 
       <div class="form-group">
         <label class="form-check-label" for="metadata">Metadata</label>
-        <textarea class="form-control" name="metadata" id="metadata" rows="4"></textarea>
+        <textarea class="form-control" name="metadata" id="metadata" rows="4"><%= metadata.to_json if metadata %></textarea>
         <small id="help" class="form-text text-muted">
           <details>
             <summary>Examplary metadata</summary>
@@ -108,7 +109,9 @@
   <% if signed_metadata %>
   <div class="list-group-item"  >
     <small id="signed_metadata">
-        <%= response2table(signed_metadata) %>
+      Response (force encoded to UTF-8):<br/>
+        <%= signed_metadata.force_encoding(Encoding::UTF_8) %>
+        <br/><br/><%= generate_curl(signed_metadata) %>
     </small>
   </div>
   <% end %>
