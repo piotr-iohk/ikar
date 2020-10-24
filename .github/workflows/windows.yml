@@ -62,13 +62,14 @@ jobs:
         run: |
           wget https://github.com/pmq20/ruby-packer/releases/download/windows-x64/rubyc.exe
           dir
-          rubyc -v
+          copy rubyc.exe C:\strawberry\c\bin\rubyc.exe
+          rubyc.exe -v
 
       - name: Build executable
         run: |
           dir
           mkdir bin
-          rubyc app.rb -o bin\ikar.exe
+          rubyc.exe app.rb -o bin\ikar.exe
 
       - name: 📎 Upload Artifact
         uses: actions/upload-artifact@v1
