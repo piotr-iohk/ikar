@@ -1,0 +1,61 @@
+name: MacOS
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+    tags: [ "*" ]
+jobs:
+  make:
+    strategy:
+      matrix:
+        os: [macos-10.15]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: "Install dependencies"
+        run: |
+          brew upgrade
+          brew install squashfs
+      - name: "Check dependencies"
+        run: |
+          sw_vers
+          uname -a
+          uname -p
+          uname -m
+          sysctl -n machdep.cpu.brand_string
+          which mksquashfs
+          mksquashfs -version
+
+      - name: Set up Ruby
+      # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
+      # change this to (see https://github.com/ruby/setup-ruby#versioning):
+      # uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
+        with:
+          ruby-version: 2.6
+
+      - name: Get ruby-packer
+        run: |
+          wget https://github.com/pmq20/ruby-packer/releases/download/darwin-x64/rubyc
+          chmod +x ./rubyc
+          ./rubyc -v
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Build executable
+        run: |
+          pwd
+          ls
+          mkdir bin
+          ./rubyc app.rb -o bin/ikar
+          chmod +x bin/ikar
+
+      - name: 📎 Upload Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: linux-exe
+          path: bin
