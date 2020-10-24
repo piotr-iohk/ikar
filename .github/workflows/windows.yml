@@ -14,8 +14,6 @@ jobs:
             vs: 2019
       fail-fast: false
     runs-on: ${{ matrix.os }}
-    env:
-      ENCLOSE_IO_RUBYC_ADDTIONAL_ARGS: --tmpdir=C:\rubyc_tmp
     steps:
       - uses: ilammy/setup-nasm@v1
       - uses: actions/checkout@v2
@@ -62,13 +60,14 @@ jobs:
           wget https://github.com/pmq20/ruby-packer/releases/download/windows-x64/rubyc.exe
           dir
           copy rubyc.exe C:\strawberry\c\bin\rubyc.exe
+          del rubyc.exe
           rubyc.exe -v
 
       - name: Build executable
         run: |
           dir
           mkdir bin
-          rubyc.exe app.rb -o bin\ikar.exe
+          rubyc.exe app.rb -o bin\ikar.exe --tmpdir=C:\rubyc_tmp
 
       - name: 📎 Upload Artifact
         uses: actions/upload-artifact@v1
