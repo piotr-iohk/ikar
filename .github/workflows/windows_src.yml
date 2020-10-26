@@ -1,0 +1,86 @@
+name: WindowsSrc
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+    tags: [ "*" ]
+jobs:
+  make:
+    strategy:
+      matrix:
+        include:
+          - os: windows-2019
+            vs: 2019
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: ilammy/setup-nasm@v1
+      - uses: actions/checkout@v2
+
+      - name: "Install libraries"
+        run: |
+          choco install --no-progress squashfs
+          choco install wget
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.1
+
+      - name: "Install dependencies"
+        run: bundle install
+
+      - name: "Set up Perl"
+        run: |
+          choco install strawberryperl
+          echo "##[add-path]C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin"
+
+      - name: "Inspect Windows Environment"
+        run: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio\${{ matrix.vs }}\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+          echo on
+          wmic OS get OSArchitecture
+          echo %PROCESSOR_ARCHITECTURE%
+          set
+          systeminfo
+          where perl
+          perl -V
+          where nmake
+          where mksquashfs
+          nmake -v
+          mksquashfs -version
+          where ruby
+          ruby -v
+          where bundle
+          bundle -v
+        shell: cmd
+
+      - name: Get ruby-packer
+        run: |
+          cd ..
+          git clone https://github.com/piotr-iohk/ruby-packer.git
+          cd ruby-packer
+          git checkout eace347a34c704695a409d0fde62674973e568a0
+          bundle install
+          cd ..\ikar
+
+      - name: Build executable
+        run: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio\${{ matrix.vs }}\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+          mkdir bin
+          dir
+          ruby ..\ruby-packer\bin\rubyc app.rb -o bin\ikar.exe
+        shell: cmd
+
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: my-artifact
+          path: D:/a/ikar/_temp/rubyc
+
+      - name: 📎 Upload Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ matrix.os }}-exe
+          path: bin
