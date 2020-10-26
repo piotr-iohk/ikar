@@ -275,7 +275,11 @@ module Helpers
     end
 
     def render_danger(text)
-      "<div class=\"d-inline p-2 bg-danger text-white\">#{text}</div>"
+      "<span class='badge badge-danger'>#{text}</span>"
+    end
+
+    def render_success(text)
+      "<span class='badge badge-success'>#{text}</span>"
     end
 
     def render_deleg_status(status)

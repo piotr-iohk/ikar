@@ -522,6 +522,7 @@ get "/wallets/:wal_id/forget-tx/:tx_to_forget_id" do
   txid = params[:tx_to_forget_id]
   r = @cw.shelley.transactions.forget(id, txid)
   handle_api_err r, session
+  session[:tx_forgotten] = "Transaction #{id} was forgotten."
   redirect "/wallets/#{id}"
 end
 
@@ -777,6 +778,7 @@ get "/byron-wallets/:wal_id/forget-tx/:tx_to_forget_id" do
   txid = params[:tx_to_forget_id]
   r = @cw.byron.transactions.forget id, txid
   handle_api_err r, session
+  session[:tx_forgotten] = "Transaction #{id} was forgotten."
   redirect "/byron-wallets/#{id}"
 end
 

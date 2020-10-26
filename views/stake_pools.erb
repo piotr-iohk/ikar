@@ -91,8 +91,8 @@ end
           <h5 class="mb-1"><%= "#{i + 1}: #{s['id']}" %></h5>
         </div>
         <% if s['retirement'] %>
+        <%= render_danger "Retirement:" %>
           <small>
-            <%= render_danger "Retirement:" %>
             (epoch: <%= s['retirement']['epoch_number'] %> , <%= s['retirement']['epoch_start_time'] %>)
           </small><br/>
         <% end %>

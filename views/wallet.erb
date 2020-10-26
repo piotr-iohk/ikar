@@ -146,6 +146,12 @@
 
      <div class="row" style="margin-top:20px; margin-left:10px;">
        <div class="col-4">
+         <% if session[:tx_forgotten] %>
+         <%= render_success(session[:tx_forgotten]) + "<br/>" %>
+         <%
+               session.delete :tx_forgotten
+            end
+         %>
          <div class="d-flex w-100 justify-content-between">
            <h5 class="mb-1">
              <a href="/<%= (url_path.include? "byron") ? "byron-wallets" : "wallets" %>/<%= id %>"><%= name %></a>
@@ -218,6 +224,7 @@
            <%
               if txs
                 txs_pending = txs.select{ |t| t['status'] == "pending" }
+                txs_expired = txs.select{ |t| t['status'] == "expired" }
                 txs_inledger = txs.select{ |t| t['status'] == "in_ledger" }
                 txs_in = txs.select{ |t| t['direction'] == "incoming" }
                 txs_out = txs.select{ |t| t['direction'] == "outgoing" }
@@ -226,6 +233,7 @@
                  &nbsp;&nbsp;<a href="#" onClick="showIt('txs')" >Total:</a> <span id="txs_total"><%= txs.size %></span> <br/>
                  &nbsp;&nbsp;&nbsp;&nbsp;Status: <br/>
                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('txs_pending')" >Pending:</a>  <span id="txs_pending_size"><%= txs_pending.size %></span> <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('txs_expired')" >Expired:</a>  <span id="txs_expired_size"><%= txs_expired.size %></span> <br/>
                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('txs_inledger')" >InLedger:</a>  <span id="txs_inledger_size"><%= txs_inledger.size %></span> <br/>
                  &nbsp;&nbsp;&nbsp;&nbsp;Direction: <br/>
                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('txs_in')" >Incoming:</a>  <span id="txs_in_size"><%= txs_in.size %></span> <br/>
@@ -266,6 +274,14 @@
            <div class="list-group-item">
              Txs pending:<br/>
              <% txs_pending.each do |tx| %>
+                <%= render_tx_on_wallet_page(url_path, tx, id) %>
+             <% end %>
+           </div>
+         </div>
+         <div class="col displ_details" style="display:none" id="txs_expired">
+           <div class="list-group-item">
+             Txs expired:<br/>
+             <% txs_expired.each do |tx| %>
                 <%= render_tx_on_wallet_page(url_path, tx, id) %>
              <% end %>
            </div>
