@@ -87,7 +87,7 @@ DEPENDENCIES
   rspec
   simplecov
   sinatra (~> 2.0.8.1)
-  sys-proctable (~> 1.2.3)
+  sys-proctable (~> 1.2.6)
 
 BUNDLED WITH
    2.1.4
