@@ -61,7 +61,7 @@ jobs:
           cd ..
           git clone https://github.com/piotr-iohk/ruby-packer.git
           cd ruby-packer
-          git checkout a3691e19534b766a0132ee0806c771d89a757558
+          git checkout 042747dee4eae8e57d84099f776561c88b0dd48c
           bundle install
           cd ..\ikar
 
