@@ -132,13 +132,43 @@ module Helpers
     module_function :os, :separator
 
     # units
+    def has_metadata_badge
+      "<span class='badge badge-info'>has metadata</span><br/>"
+    end
+
+    def has_withdrawal_badge
+      "<span class='badge badge-primary'>has withdrawal</span><br/>"
+    end
+
+    def show_tx_badges(tx)
+      case tx['status']
+      when "pending" then alert = "warning"
+      when "in_ledger" then alert = "success"
+      when "expired" then alert = "danger"
+      end
+
+      r = %Q{ <div class='row'>
+                <div>&nbsp;&nbsp;&nbsp;
+                  <span class='badge badge-#{alert}'>#{tx['status']}</span>
+                </div>
+             }
+      if tx['metadata']
+        r += %Q{<div>&nbsp;#{has_metadata_badge}</div>}
+      end
+      if (tx['withdrawals'].size > 0)
+        r += %Q{<div>&nbsp;#{has_withdrawal_badge}</div>}
+      end
+      r += %Q{</div>}
+
+      r
+    end
 
     def render_tx_on_wallet_page(url_path, tx, id)
       r = %Q{
 
         <small><b>ID: </b><a href='#{(url_path.include? "byron") ? "/byron-wallets" : "/wallets"}/#{id}/txs/#{tx['id']}'>#{tx['id']}</a></small><br/>
+        #{show_tx_badges(tx)}
       }
-
       if tx['inserted_at']
         r += %Q{
           <small><b>Inserted at: </b></small><br/>
@@ -162,15 +192,14 @@ module Helpers
           <small><b>Amount: </b>#{tx['amount']['quantity'] if tx['amount']}</small><br/>
           <small><b>Direction: </b>#{tx['direction']}</small><br/>
           <small><b>Depth: </b> #{tx['depth']['quantity'].to_s + " blocks" if tx['depth']} </small><br/>
-          #{"<span class='badge badge-info'>has metadata</span><br/>" if tx['metadata']}
-          #{"<span class='badge badge-primary'>has withdrawal</span><br/>" if (tx['withdrawals'].size > 0)}
           <small>---</small><br/>
         }
       r
     end
 
-    def render_tx_withdraw_and_metadata_form
+    def render_tx_shelley_form_part
       %q{
+
         <div class="form-group">
           <label class="form-check-label" for="withdrawal">Use rewards in transaction</label>
           <input type="text" class="form-control" class="form-check-input" id="withdrawal"
@@ -234,11 +263,23 @@ module Helpers
             </details>
           </small>
         </div>
+
+        <div class="form-group">
+          <label class="form-check-label" for="ttl">Time-to-live</label>
+          <input type="text" class="form-control" class="form-check-input" id="ttl"
+                name="ttl"
+                placeholder="TTL in seconds">
+          <small id="help" class="form-text text-muted">Transaction TTL in seconds.</small>
+        </div>
        }
     end
 
     def render_danger(text)
-      "<div class=\"d-inline p-2 bg-danger text-white\">#{text}</div>"
+      "<span class='badge badge-danger'>#{text}</span>"
+    end
+
+    def render_success(text)
+      "<span class='badge badge-success'>#{text}</span>"
     end
 
     def render_deleg_status(status)
