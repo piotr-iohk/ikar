@@ -175,6 +175,21 @@ get "/inspect-address-now" do
                                             :id => params[:addr_id]} }
 end
 
+get "/construct-address" do
+  erb :form_construct_address, { :locals => { :script => nil, :address => nil } }
+end
+
+post "/construct-address" do
+  begin
+    script = JSON.parse params[:script]
+    address = @cw.misc.utils.post_address(script)
+  rescue
+    session[:error] = "Make sure the 'script' has correct JSON format."
+  end
+  erb :form_construct_address, { :locals => { :script => params[:script],
+                                              :address => address} }
+end
+
 get "/submit-external-tx" do
   erb :form_tx_external, { :locals => { :tx => nil, :blob => nil } }
 end

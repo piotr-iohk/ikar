@@ -1,0 +1,91 @@
+
+<div class="list-group">
+  <div class="list-group-item">
+     Construct Address
+  </div>
+  <div class="list-group-item">
+    <form action="/construct-address" method="POST">
+      <div class="form-group">
+        <textarea class="form-control" name="script" id="script" rows="6"><%= script %></textarea>
+        <small id="help" class="form-text text-muted">Paste or type script or pub key without chain code.</small>
+        <small>
+        <details>
+          <summary>Examples</summary>
+            <code>
+              Payment pub key:<br/>
+              { "payment": "addr_vk1lqglg77z6kajsdz4739q22c0zm0yhuy567z6xk2vc0z5ucjtkwpschzd2j" }
+              <br/><br/>
+
+              Stake pub key:<br/>
+              { "stake": "stake_vk16apaenn9ut6s40lcw3l8v68xawlrlq20z2966uzcx8jmv2q9uy7qau558d" }
+              <br/><br/>
+
+              Pub keys for delegating address:<br/>
+              {
+                "payment": "addr_vk1lqglg77z6kajsdz4739q22c0zm0yhuy567z6xk2vc0z5ucjtkwpschzd2j",
+                "stake": "stake_vk16apaenn9ut6s40lcw3l8v68xawlrlq20z2966uzcx8jmv2q9uy7qau558d"
+              }
+              <br/><br/>
+
+              Script 'any' for payment address:<br/>
+              {
+                  "payment": {
+                      "any": [
+                          "script_vkh1yf07000d4ml3ywd3d439kmwp07xzgv6p35cwx8h605jfx0dtd4a",
+                          "script_vkh1mwlngj4fcwegw53tdmyemfupen2758xwvudmcz9ap8cnqk7jmh4"
+                          ]
+                      }
+               }
+               <br/><br/>
+
+               Script 'all' for payment address:<br/>
+               {
+                 "payment": {
+                     "all": [
+                         "script_vkh1yf07000d4ml3ywd3d439kmwp07xzgv6p35cwx8h605jfx0dtd4a",
+                         "script_vkh1mwlngj4fcwegw53tdmyemfupen2758xwvudmcz9ap8cnqk7jmh4"
+                         ]
+                     }
+                 }
+                 <br/><br/>
+
+                 Script 'some' for payment address:<br/>
+                 {
+                   "payment": {
+                       "some": {
+                           "from": [
+                               "script_vkh1yf07000d4ml3ywd3d439kmwp07xzgv6p35cwx8h605jfx0dtd4a",
+                               "script_vkh1mwlngj4fcwegw53tdmyemfupen2758xwvudmcz9ap8cnqk7jmh4",
+                               "script_vkh1qw4l62k4203dllrk3dk3sfjpnh3gufhtrtm4qvtrvn4xjp5x5rt"
+                               ],
+                            "at_least": 2
+                            }
+                    }
+                  }
+                  <br/><br/>
+
+
+            </code>
+        </details>
+      </small>
+      </div>
+
+      <button type="submit" class="btn btn-success">Construct Address</button>
+    </form>
+  </div>
+  <% if session[:error] %>
+        <div class="alert alert-danger" role="alert">
+          <%= session[:error]%>
+        </div>
+  <%
+        session.delete :error
+     end
+  %>
+  <% if address %>
+  <div class="list-group-item"  >
+    <small id="address">
+        <%= response2table(address) %>
+    </small>
+  </div>
+  <% end %>
+</div>
