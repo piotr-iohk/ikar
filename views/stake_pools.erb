@@ -83,7 +83,13 @@ end
         | <small><a href="<%= ep %>&sort_by=saturation_jorm">by saturation</a></small>
        <% end %>
      <% end %>
-
+     <br/>
+     <small>
+       <b>Metadata source:</b> <a href="/settings"><%= metadata_source %></a><br/>
+       <b>Last metadata gc:</b>
+       <a href="/stake-pools-maintenance"><%= last_gc['status'].gsub("_", " ") %></a>
+       <%= "on #{last_gc['last_run']}" if last_gc['last_run'] %>
+     </small>
   </div>
   <% sp.each_with_index do |s, i| %>
       <div class="list-group-item">
@@ -151,7 +157,9 @@ end
         <% end %>
 
         <% if s['metadata'] %>
-          <small><b>Metadata:</b></small></br>
+          <small><b>Metadata:</b></small>
+          <%= s['flags'].include?('delisted') ? "#{render_danger("delisted")}" : "#{render_success("ok")}"%>
+         </br>
           <small>&nbsp;&nbsp;<b>Homepage:</b>
           <a href="<%= s['metadata']['homepage']%>" target="_blank"><%= s['metadata']['homepage']%></a>
           </small></br>
@@ -173,8 +181,9 @@ end
             <%= s['metadata']['description']%>
           </small></br>
         <% else %>
-          <small><b style="text-color:red">No metadata.</b></small></br>
+          <small><b>No metadata.</b></small></br>
         <% end %>
+          <small><b>Flags: </b><%= s['flags'] %></small></br>
         <small>
             <a href="/stake-pools-join?sid=<%= s['id']%>">join</a>
           | <a href="/stake-pools-quit">quit</a>

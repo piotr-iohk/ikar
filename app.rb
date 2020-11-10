@@ -857,7 +857,32 @@ end
 get "/stake-pools-list" do
   stake_pools = @cw.shelley.stake_pools.list({stake: params[:stake]})
   handle_api_err stake_pools, session
-  erb :stake_pools, { :locals => {:stake_pools => stake_pools} }
+  view_action = @cw.shelley.stake_pools.view_maintenance_actions
+  handle_api_err view_action, session
+  settings = @cw.misc.settings.get
+  handle_api_err settings, session
+  erb :stake_pools, { :locals => { :stake_pools => stake_pools,
+                                   :last_gc => view_action['gc_stake_pools'],
+                                   :metadata_source => settings['pool_metadata_source']
+                                 } }
+end
+
+get "/stake-pools-maintenance" do
+  last_gc = @cw.shelley.stake_pools.view_maintenance_actions
+  handle_api_err last_gc, session
+  erb :form_maintenance_actions, { :locals => { :action => nil,
+                                                :last_gc => last_gc
+                                 } }
+end
+
+post "/stake-pools-maintenance" do
+  a = @cw.shelley.stake_pools.trigger_maintenance_actions({ maintenance_action: params[:action] })
+  handle_api_err a, session
+  last_gc = @cw.shelley.stake_pools.view_maintenance_actions
+  handle_api_err last_gc, session
+  erb :form_maintenance_actions, { :locals => { :action => params[:action],
+                                                :last_gc => last_gc
+                                 } }
 end
 
 get "/stake-pools-join" do
@@ -873,7 +898,7 @@ get "/stake-pools-join" do
   wallets = @cw.shelley.wallets.list
   handle_api_err wallets, session
   erb :form_join_quit_sp, { :locals => { :wallets => wallets,
-                                         :stake_pools => stake_pools} }
+                                         :stake_pools => stake_pools } }
 end
 
 post "/stake-pools-join" do
