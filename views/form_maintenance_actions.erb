@@ -1,0 +1,33 @@
+
+<div class="list-group">
+  <div class="list-group-item">
+     Stake Pool Maintenance Action
+  </div>
+  <div class="list-group-item">
+    <form action="/stake-pools-maintenance" method="POST">
+      <div class="form-group">
+        <label for="action">Action</label>
+        <select class="form-control" name="action" id="action">
+          <option <%= "selected" if action == "gc_stake_pools" %> value="gc_stake_pools">gc_stake_pools</option>
+        </select>
+        <small id="help" class="form-text text-muted">
+          Applicable only when cardano-wallet uses SMASH.
+          Use <a href="/settings">settings</a> to point to SMASH.
+        </small>
+
+      </div>
+
+      <button type="submit" class="btn btn-success">Enforce</button>
+    </form>
+  </div>
+
+  <% if last_gc %>
+  <div class="list-group-item"  >
+    Last GC Status
+    <small><a href="/stake-pools-maintenance">refresh</a></small>
+    <small id="last_gc">
+        <%= response2table(last_gc) %>
+    </small>
+  </div>
+  <% end %>
+</div>

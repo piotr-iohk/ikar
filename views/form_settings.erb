@@ -10,7 +10,10 @@
         <label for="wid_src">Pool Metadata Source</label>
         <input type="text" class="form-control" name="pool_strategy" id="pool_strategy"
             placeholder="" value="<%= pool_strategy %>">
-        <small id="help" class="form-text text-muted">"direct", "none" or url to SMASH server.</small>
+        <small id="help" class="form-text text-muted">
+          "direct", "none" or url to SMASH server.
+          Use <a href="/stake-pools-maintenance">stake pool maintenance action</a> to enforce metadata GC.
+        </small>
       </div>
 
       <button type="submit" class="btn btn-success">Update</button>
