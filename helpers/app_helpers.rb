@@ -1,5 +1,9 @@
 module Helpers
   module App
+    def version
+      'v2020-11-17'
+    end
+    
     def is_connected?(w)
       begin
         w.misc.network.information

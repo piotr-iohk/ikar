@@ -25,8 +25,8 @@
         <%= erb :form_connect %>
       </div>
       <small>
-        Version: <a id="version" target="_blank" href="https://github.com/piotr-iohk/ikar/releases">
-                  v2020-11-03
+        Version: <a id="version" target="_blank" href="https://github.com/piotr-iohk/ikar/releases/tag/<%= version %>">
+                  <%= version %>
                  </a>
                  <br/>
         Platform: <%= session[:platform] %>
