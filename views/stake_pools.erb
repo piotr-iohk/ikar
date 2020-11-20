@@ -83,16 +83,13 @@ end
         | <small><a href="<%= ep %>&sort_by=saturation_jorm">by saturation</a></small>
        <% end %>
      <% end %>
-     <br/>
+     <small><%= generate_curl(sp) %></small>
      <small>
        <b>Metadata source:</b> <a href="/settings"><%= metadata_source %></a><br/>
        <b>Last metadata gc:</b>
        <a href="/stake-pools-maintenance"><%= last_gc['status'].gsub("_", " ") %></a>
        <%= "on #{last_gc['last_run']}" if last_gc['last_run'] %>
      </small>
-  </div>
-  <div class="list-group-item">
-  <small><%= generate_curl(stake_pools) %></small>
   </div>
   <% sp.each_with_index do |s, i| %>
 

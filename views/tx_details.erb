@@ -94,6 +94,14 @@
         <small><b>No Metadata! </b></small><br/>
       <% end %>
       </div>
+      <div class="list-group-item">
+      <% if tx['deposit'] %>
+          <small><b>Deposit: </b></small>
+          <small><%= tx['deposit']['quantity'] %> <%= tx['deposit']['unit'] %></small>
+      <% else%>
+        <small><b>No Deposits! </b></small><br/>
+      <% end %>
+      </div>
 
     </div>
     <div class="list-group-item" >
