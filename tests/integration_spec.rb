@@ -160,7 +160,7 @@ describe 'Using App', type: :feature do
     it "I can see Transaction screen and no rewards checkbox" do
       create_byron_wallet "random"
       click_link "Transactions"
-      click_link "To address"
+      click_link "To many addresses"
       expect(page).not_to have_text("Use rewards in transaction")
     end
 
@@ -239,7 +239,7 @@ describe 'Using App', type: :feature do
       expect(page).to have_text("Shelley wallets: 1")
       click_link "My Test Wallet"
       click_link "Transactions"
-      click_link "To address"
+      click_link "To single address"
       expect(page).to have_text("Use rewards in transaction")
     end
   end
