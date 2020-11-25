@@ -40,10 +40,10 @@ wid = params[:wid] if params[:wid]
 
       <button type="submit" class="btn btn-success">Send Tx</button>
       <%
-        # No send between wallets for Byron
         unless url_path.include? "byron"
       %>
-        (or <a href="/tx-between-wallets?wid=<%= wid %>">send between wallets</a>)
+        (or <a href="/tx-between-wallets?wid=<%= wid %>">send between wallets</a>
+        / <a href="/tx-to-multi-address?wid=<%= wid %>">to many addresses</a>)
       <% end %>
     </form>
   </div>
