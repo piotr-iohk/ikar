@@ -39,6 +39,8 @@ wid = params[:wid] if params[:wid]
         unless url_path.include? "byron"
       %>
         (or <a href="/tx-fee-to-multi-address?wid=<%= wid %>">to many addresses</a>)
+      <% else %>
+        (or <a href="/byron-tx-fee-to-multi-address?wid=<%= wid %>">to many addresses</a>)
       <% end %>
     </form>
   </div>

@@ -825,12 +825,22 @@ get "/byron-tx-fee-to-address" do
   erb :form_tx_fee_to_address, { :locals => { :wallets => wallets } }
 end
 
+get "/byron-tx-fee-to-multi-address" do
+  wallets = @cw.byron.wallets.list
+  erb :form_tx_fee_to_multi_address, { :locals => { :wallets => wallets } }
+end
+
 post "/byron-tx-fee-to-address" do
   wid_src = params[:wid_src]
-  amount = params[:amount]
-  address = params[:address]
+  if params[:addr_amt]
+    payload = parse_addr_amt(params[:addr_amt])
+  else
+    amount = params[:amount]
+    address = params[:address]
+    payload = [{address => amount}]
+  end
 
-  r = @cw.byron.transactions.payment_fees(wid_src, [{address => amount}])
+  r = @cw.byron.transactions.payment_fees(wid_src, payload)
   handle_api_err r, session
 
   erb :show_tx_fee, { :locals => { :tx_fee => r, :wallet_id => wid_src} }
@@ -841,13 +851,23 @@ get "/byron-tx-to-address" do
   erb :form_tx_to_address, { :locals => { :wallets => wallets } }
 end
 
+get "/byron-tx-to-multi-address" do
+  wallets = @cw.byron.wallets.list
+  erb :form_tx_to_multi_address, { :locals => { :wallets => wallets } }
+end
+
 post "/byron-tx-to-address" do
   wid_src = params[:wid_src]
   pass = params[:pass]
-  amount = params[:amount]
-  address = params[:address]
+  if params[:addr_amt]
+    payload = parse_addr_amt(params[:addr_amt])
+  else
+    amount = params[:amount]
+    address = params[:address]
+    payload = [{address => amount}]
+  end
 
-  r = @cw.byron.transactions.create(wid_src, pass, [{address => amount}])
+  r = @cw.byron.transactions.create(wid_src, pass, payload)
   handle_api_err r, session
 
   redirect "/byron-wallets/#{wid_src}/txs/#{r['id']}"

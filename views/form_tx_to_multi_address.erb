@@ -40,7 +40,9 @@ wid = params[:wid] if params[:wid]
       %>
         (or <a href="/tx-between-wallets?wid=<%= wid %>">send between wallets</a>
         / <a href="/tx-to-address?wid=<%= wid %>">to address</a>)
-      <% end %>
+        <% else %>
+          (or <a href="/byron-tx-to-address?wid=<%= wid %>">to addresses</a>)
+        <% end %>
     </form>
   </div>
 </div>
