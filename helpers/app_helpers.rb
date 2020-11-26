@@ -3,7 +3,7 @@ module Helpers
     def version
       'v2020-11-17'
     end
-    
+
     def is_connected?(w)
       begin
         w.misc.network.information
@@ -78,6 +78,10 @@ module Helpers
         r += generate_raw_response(response.to_json)
       end
       r
+    end
+
+    def parse_addr_amt(addr_amt)
+      addr_amt.split("\n").map{|a| a.strip.split(":")}.collect{|a| {a.first.strip => a.last.strip}}
     end
 
     def parse_metadata(metadata)
@@ -165,6 +169,32 @@ module Helpers
       r += %Q{</div>}
 
       r
+    end
+
+    def render_addr_amt
+      %Q{
+        <div class="form-group">
+          <label for="addr_amt">Address : Amount</label>
+          <textarea class="form-control" name="addr_amt" id="addr_amt" rows="5"></textarea>
+          <small id="help" class="form-text text-muted">
+
+            <details>
+              <summary><i>address:amount</i> per line.</summary>
+              <code>
+                Testnet:<br/><br/>
+  37btjrVyb4KF6KtvXYUxDHqjAwfKAuDzP71UEuG6vh87rjstvB8o1Muu6KaeGAF8xZro63Zc5VAYNnQtcci4vT8jhLuNtwku9x1YgS18LHFAhxxTi8:1000000
+  <br/>2cWKMJemoBakujqtRy1FT978A3dLJcc1vXKzGTxxhsShkRL8YDUreEje2GqaC3en5TtCc:1000000
+  <br/>addr1qrvc39e0lampjjpg0z65z0pccjvpg502c738s3kyam755rhl0dw5r75vk42mv3ykq8vyjeaanvpytg79xqzymqy5acmqjdm7lg:1000000
+  <br/><br/>Mainnet:<br/><br/>
+  addr1q95vgw8r27wtsm7efxulnh6mx6r6fh6q35p4pv6zr4eraef7y5xc6cr99fsj8w0hqksgwv3enatmz9ulpp6zn2kuskaqmqda5n:1000000
+  <br/>addr1qxxkaq0d3c739xf0gdj0jdf0rel7azpqkskn8y6c5fusvue7y5xc6cr99fsj8w0hqksgwv3enatmz9ulpp6zn2kuskaqarfnmd:1000000
+
+              </code>
+            </details>
+
+          </small>
+        </div>
+       }
     end
 
     def render_tx_on_wallet_page(url_path, tx, id)

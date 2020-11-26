@@ -19,11 +19,7 @@ wid = params[:wid] if params[:wid]
         </select>
       </div>
 
-      <div class="form-group">
-        <label for="amount">Amount</label>
-        <input type="text" class="form-control" name="amount" id="amount" placeholder="Amount to send" value="1000000">
-
-      </div>
+      <%= render_addr_amt %>
 
       <div class="form-group">
         <label for="address">Address</label>
@@ -38,9 +34,9 @@ wid = params[:wid] if params[:wid]
       <%
         unless url_path.include? "byron"
       %>
-        (or <a href="/tx-fee-to-multi-address?wid=<%= wid %>">to many addresses</a>)
+        (or <a href="/tx-fee-to-address?wid=<%= wid %>">to address</a>)
       <% else %>
-        (or <a href="/byron-tx-fee-to-multi-address?wid=<%= wid %>">to many addresses</a>)
+        (or <a href="/byron-tx-fee-to-address?wid=<%= wid %>">to address</a>)
       <% end %>
     </form>
   </div>

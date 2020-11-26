@@ -45,7 +45,8 @@ wid = params[:wid] if params[:wid]
       <% end %>
 
       <button type="submit" class="btn btn-success">Send Tx</button>
-      (or <a href="/tx-to-address?wid=<%= wid %>">send to address</a>)
+      (or <a href="/tx-to-address?wid=<%= wid %>">send to address</a>
+      / <a href="/tx-to-multi-address?wid=<%= wid %>">many addresses</a>)
     </form>
   </div>
 </div>

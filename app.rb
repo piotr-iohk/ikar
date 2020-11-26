@@ -447,10 +447,22 @@ get "/tx-fee-to-address" do
   erb :form_tx_fee_to_address, { :locals => { :wallets => wallets } }
 end
 
+get "/tx-fee-to-multi-address" do
+  wallets = @cw.shelley.wallets.list
+  erb :form_tx_fee_to_multi_address, { :locals => { :wallets => wallets } }
+end
+
 post "/tx-fee-to-address" do
   wid_src = params[:wid_src]
-  amount = params[:amount]
-  address = params[:address]
+
+  if params[:addr_amt]
+    payload = parse_addr_amt(params[:addr_amt])
+  else
+    amount = params[:amount]
+    address = params[:address]
+    payload = [{address => amount}]
+  end
+
   case params[:withdrawal]
   when ''
     w = nil
@@ -463,10 +475,15 @@ post "/tx-fee-to-address" do
 
   m = parse_metadata(params[:metadata])
 
-  r = @cw.shelley.transactions.payment_fees(wid_src, [{address => amount}], w, m, ttl)
+  r = @cw.shelley.transactions.payment_fees(wid_src, payload, w, m, ttl)
   handle_api_err r, session
 
   erb :show_tx_fee, { :locals => { :tx_fee => r, :wallet_id => wid_src} }
+end
+
+get "/tx-to-multi-address" do
+  wallets = @cw.shelley.wallets.list
+  erb :form_tx_to_multi_address, { :locals => { :wallets => wallets } }
 end
 
 get "/tx-to-address" do
@@ -477,8 +494,15 @@ end
 post "/tx-to-address" do
   wid_src = params[:wid_src]
   pass = params[:pass]
-  amount = params[:amount]
-  address = params[:address]
+
+  if params[:addr_amt]
+    payload = parse_addr_amt(params[:addr_amt])
+  else
+    amount = params[:amount]
+    address = params[:address]
+    payload = [{address => amount}]
+  end
+
   case params[:withdrawal]
   when ''
     w = nil
@@ -492,7 +516,7 @@ post "/tx-to-address" do
 
   r = @cw.shelley.transactions.create(wid_src,
                                       pass,
-                                      [{address => amount}],
+                                      payload,
                                       w, m, ttl)
   handle_api_err r, session
 
@@ -563,8 +587,7 @@ post "/byron-wallets/coin-selection/random" do
   wallets = @cw.byron.wallets.list
   handle_api_err wallets, session
   begin
-    address_amount = params[:addr_amt].split("\n").map{|a| a.strip.split(":")}.collect{|a| {a.first.strip => a.last.strip}}
-    puts address_amount
+    address_amount = parse_addr_amt(params[:addr_amt])
     coin_selection = @cw.byron.coin_selections.random(params[:wid], address_amount)
   rescue ArgumentError
     session[:error] = "Make sure the input is in the form of address:amount per line."
@@ -802,12 +825,22 @@ get "/byron-tx-fee-to-address" do
   erb :form_tx_fee_to_address, { :locals => { :wallets => wallets } }
 end
 
+get "/byron-tx-fee-to-multi-address" do
+  wallets = @cw.byron.wallets.list
+  erb :form_tx_fee_to_multi_address, { :locals => { :wallets => wallets } }
+end
+
 post "/byron-tx-fee-to-address" do
   wid_src = params[:wid_src]
-  amount = params[:amount]
-  address = params[:address]
+  if params[:addr_amt]
+    payload = parse_addr_amt(params[:addr_amt])
+  else
+    amount = params[:amount]
+    address = params[:address]
+    payload = [{address => amount}]
+  end
 
-  r = @cw.byron.transactions.payment_fees(wid_src, [{address => amount}])
+  r = @cw.byron.transactions.payment_fees(wid_src, payload)
   handle_api_err r, session
 
   erb :show_tx_fee, { :locals => { :tx_fee => r, :wallet_id => wid_src} }
@@ -818,13 +851,23 @@ get "/byron-tx-to-address" do
   erb :form_tx_to_address, { :locals => { :wallets => wallets } }
 end
 
+get "/byron-tx-to-multi-address" do
+  wallets = @cw.byron.wallets.list
+  erb :form_tx_to_multi_address, { :locals => { :wallets => wallets } }
+end
+
 post "/byron-tx-to-address" do
   wid_src = params[:wid_src]
   pass = params[:pass]
-  amount = params[:amount]
-  address = params[:address]
+  if params[:addr_amt]
+    payload = parse_addr_amt(params[:addr_amt])
+  else
+    amount = params[:amount]
+    address = params[:address]
+    payload = [{address => amount}]
+  end
 
-  r = @cw.byron.transactions.create(wid_src, pass, [{address => amount}])
+  r = @cw.byron.transactions.create(wid_src, pass, payload)
   handle_api_err r, session
 
   redirect "/byron-wallets/#{wid_src}/txs/#{r['id']}"
