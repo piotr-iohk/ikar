@@ -1,22 +1,24 @@
-#!/usr/bin/ruby
-require 'docopt'
-require 'cardano_wallet'
-
-
+#!/usr/bin/env ruby
+require "cardano_wallet"
+require "docopt"
 doc = <<DOCOPT
 Wallet test aid
 
 Usage:
   #{__FILE__} byron2byron --port=<port> <wid1> <wid2>
-
+  #{__FILE__} shelley2shelley --port=<port> <wid1> <wid2>
+  #{__FILE__} shelley2byron --port=<port> <shelley_wid> <byron_wid>
+  #{__FILE__} shelley2byron2icarus --port=<port> <shelley1_wid> <shelley2_wid> <byron_wid> <icarus_wid>
 
 Args:
-  byron2byron   Run txs back and forth between 2 Byron wallets <wid1> <wid2>
-
+  byron2byron            Run txs back and forth between 2 Byron wallets <wid1> <wid2>
+  shelley2shelley        Run txs back and forth between 2 Shelley wallets <wid1> <wid2>
+  shelley2byron          Run txs back and forth between 2 wallets <shelley_wid> <byron_wid>
+  shelley2byron2icarus   Run txs back and forth between 4 wallets <shelley1_wid> <shelley2_wid> <byron_wid> <icarus_wid>
 
 Options:
   -h --help     Show this screen.
-
+  --port=NUM   Wallet port [default: 8090]
 
 DOCOPT
 
@@ -32,9 +34,9 @@ def gen_byron_addrs(wid, passphrase, n)
 end
 
 ##
-# Generate amt of lovelace to send (between 1..501k ADA in lovelace)
+# Generate amt of lovelace to send (between 1..11k ADA in lovelace)
 def gen_amt
-  max = [10, 100, 1000, 10000, 100000, 200000, 300000, 400000, 500000].sample
+  max = [10, 100, 1000, 10000].sample
   amt_ada = [*1..max].sample
   rndm = 1 + ([*1..1000000].sample.to_f / 1000000)
   amt = amt_ada * 1000000 * rndm
@@ -44,17 +46,138 @@ end
 ##
 # send multi address tx from byron wallet to addresses
 def send_byron(wsrc, passphrase, addresses)
-  addr_amt = Hash[ *addresses.collect { |v| [ v, gen_amt ] }.flatten ]
-  puts @byron.transactions.create(wsrc, passphrase, addr_amt)
+  addr_amt = addresses.collect { |v| {v => gen_amt } }
+  r = @byron.transactions.create(wsrc, passphrase, addr_amt)
+  puts r
   puts "-----"
+  r
 end
 
-begin
-  # require 'pp'
+##
+# get sequential wallet addresses
+def get_sequential_addresses(wallet, wid, n, filter = nil)
+  addresses = wallet.addresses.list(wid)
+  if filter
+    addresses.select {|a| a['state'] == filter }.map {|a| a['id']}[0..(n-1)]
+  else
+    addresses.map {|a| a['id']}[0..(n-1)]
+  end
+end
 
+##
+# get n icarus wallet addresses
+def get_icarus_addresses(wid, n, filter = nil)
+  get_sequential_addresses(@byron, wid, n, filter)
+end
+
+##
+# get n shelley wallet addresses
+def get_shelley_addresses(wid, n, filter = nil)
+  get_sequential_addresses(@shelley, wid, n, filter)
+end
+
+##
+# send multi address tx from byron shelley to addresses
+def send_shelley(wsrc, passphrase, addresses)
+  addr_amt = addresses.collect { |v| {v => gen_amt } }
+  r = @shelley.transactions.create(wsrc, passphrase, addr_amt)
+  puts r
+  puts "-----"
+  r
+end
+
+def append_failure(filename, r, utxo)
+  uri = r.request.last_uri
+  body = r.request.options[:body]
+  method = r.request.http_method.to_s.split('::').last.upcase
+  open(filename, 'a') { |f|
+    f.puts "FAILURE!!!"
+    f.puts "Time: #{Time.now.strftime("%d/%m/%Y %H:%M:%S")}"
+    f.puts "---------------"
+    f.puts "UTxO: #{utxo}"
+    f.puts ""
+    f.puts "REQUEST: "
+    f.puts "#{method} #{uri}"
+    f.puts "payload: #{body}"
+    f.puts ""
+    f.puts "RESPONSE:"
+    f.puts "#{r}"
+    f.puts "==============="
+  }
+end
+
+
+begin
   args = Docopt::docopt(doc)
+  # pp args
+
   @cw = CardanoWallet.new({ port: args['--port'].to_i })
   @byron = @cw.byron
+  @shelley = @cw.shelley
+
+  ##
+  # Send transactions between 2 shelley, 1 byron and 1 icarus
+  # All transactions are multi-address including mostly addresses
+  # for shelley/byron/icarus
+  if args['shelley2byron2icarus']
+    shelley1_wid = args['<shelley1_wid>']
+    shelley2_wid = args['<shelley2_wid>']
+    byron_wid = args['<byron_wid>']
+    icarus_wid = args['<icarus_wid>']
+
+    while 1 do
+      passphrase = "Secure Passphrase"
+
+      puts "===== TXs from shelley1_wid: #{shelley1_wid} ====="
+      addresses_shelley = get_shelley_addresses(shelley2_wid, [*1..50].sample)
+      addresses_byron = gen_byron_addrs(byron_wid, passphrase, [*1..50].sample)
+      addresses_icarus = get_icarus_addresses(icarus_wid, [*1..50].sample)
+      addresses = addresses_shelley + addresses_byron + addresses_icarus
+      r = send_shelley(shelley1_wid, passphrase, addresses)
+      if r.code == 500
+        utxo_shelley1 = @shelley.wallets.utxo(shelley1_wid)
+        append_failure("shelley2byron2icarus_failures_from_shelley1_wid.txt",
+                      r,
+                      utxo_shelley1)
+      end
+      sleep 1
+      puts "===== TXs from shelley2_wid: #{shelley2_wid} ====="
+      addresses_shelley = get_shelley_addresses(shelley1_wid, [*1..50].sample)
+      addresses_byron = gen_byron_addrs(byron_wid, passphrase, [*1..50].sample)
+      addresses_icarus = get_icarus_addresses(icarus_wid, [*1..50].sample)
+      addresses = addresses_shelley + addresses_byron + addresses_icarus
+      r = send_shelley(shelley2_wid, passphrase, addresses)
+      if r.code == 500
+        utxo_shelley2 = @shelley.wallets.utxo(shelley2_wid)
+        append_failure("shelley2byron2icarus_failures_from_shelley2_wid.txt",
+                      r,
+                      utxo_shelley2)
+      end
+      sleep 1
+      puts "===== TXs from byron: #{byron_wid} ====="
+      addresses_shelley = get_shelley_addresses(shelley1_wid, [*1..50].sample)
+      addresses_icarus = get_icarus_addresses(icarus_wid, [*1..50].sample)
+      addresses = addresses_shelley + addresses_icarus
+
+      r = send_byron(byron_wid, passphrase, addresses)
+      if r.code == 500
+        utxo_byron = @byron.wallets.utxo(byron_wid)
+        append_failure("shelley2byron2icarus_failures_from_byron_wid.txt", r, utxo_byron)
+      end
+      sleep 1
+      puts "===== TXs from icarus: #{icarus_wid} ====="
+      addresses_shelley = get_shelley_addresses(shelley2_wid, [*1..50].sample)
+      addresses_byron = gen_byron_addrs(byron_wid, passphrase, [*1..50].sample)
+
+      addresses = addresses_shelley + addresses_byron
+
+      r = send_byron(icarus_wid, passphrase, addresses)
+      if r.code == 500
+        utxo_icarus= @byron.wallets.utxo(icarus_wid)
+        append_failure("shelley2byron2icarus_failures_from_icarus_wid.txt", r, utxo_icarus)
+      end
+    end
+  end
 
   ##
   # Send transactions between two byron wallets
@@ -69,6 +192,64 @@ begin
       # sleep 2
       addresses = gen_byron_addrs(wid1, passphrase, [*1..50].sample)
       5.times{ send_byron(wid2, passphrase, addresses) }
+    end
+  end
+
+  ##
+  # Send transactions between two shelley wallets
+  if args['shelley2shelley']
+    wid1 = args['<wid1>']
+    wid2 = args['<wid2>']
+
+    while 1 do
+      passphrase = "Secure Passphrase"
+
+      puts "===== TXs from #{wid1} ====="
+      addresses = get_shelley_addresses(wid2, [*1..50].sample)
+      r = send_shelley(wid1, passphrase, addresses)
+      if r.code == 500
+        utxo1 = @shelley.wallets.utxo(wid1)
+        append_failure("shelley2shelley_failures_from_wid1.txt", r, utxo1)
+      end
+
+      sleep 1
+
+      puts "===== TXs from #{wid2} ====="
+      addresses = get_shelley_addresses(wid1, [*1..50].sample)
+      r = send_shelley(wid2, passphrase, addresses)
+      if r.code == 500
+        utxo2 = @shelley.wallets.utxo(wid2)
+        append_failure("shelley2shelley_failures_from_wid2.txt", r, utxo2)
+      end
+    end
+  end
+
+  ##
+  # Send transactions between shelley and byron wallets
+  if args['shelley2byron']
+    shelley_wid = args['<shelley_wid>']
+    byron_wid = args['<byron_wid>']
+
+    while 1 do
+      passphrase = "Secure Passphrase"
+
+      puts "===== TXs from shelley: #{shelley_wid} ====="
+      addresses = gen_byron_addrs(byron_wid, passphrase, [*1..50].sample)
+      r = send_shelley(shelley_wid, passphrase, addresses)
+      if r.code == 500
+        utxo1 = @shelley.wallets.utxo(shelley_wid)
+        append_failure("shelley2byron_failures_from_shelley.txt", r, utxo1)
+      end
+
+      sleep 1
+
+      puts "===== TXs from byron #{byron_wid} ====="
+      addresses = get_shelley_addresses(shelley_wid, [*1..50].sample)
+      r = send_byron(byron_wid, passphrase, addresses)
+      if r.code == 500
+        utxo2 = @byron.wallets.utxo(byron_wid)
+        append_failure("shelley2byron_failures_from_byron.txt", r, utxo2)
+      end
     end
   end
 
