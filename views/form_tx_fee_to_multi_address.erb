@@ -21,11 +21,6 @@ wid = params[:wid] if params[:wid]
 
       <%= render_addr_amt %>
 
-      <div class="form-group">
-        <label for="address">Address</label>
-        <input type="text" class="form-control" name="address" id="address" placeholder="Address" value="">
-
-      </div>
       <% unless (url_path.include? "byron") %>
         <%= render_tx_shelley_form_part %>
       <% end %>
