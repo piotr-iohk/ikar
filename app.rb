@@ -7,7 +7,6 @@ require 'json2table'
 
 require_relative 'helpers/app_helpers'
 require_relative 'helpers/discovery_helpers'
-require_relative './models/jormungandr'
 
 ENV['ICARUS_PORT'] ||= '4444'
 ENV['ICARUS_BIND_ADDR'] ||= '0.0.0.0'
@@ -976,29 +975,4 @@ get "/stake-pools-fee" do
   erb :show_delegation_fee, { :locals => { :delegation_fee => r,
                                            :wid => wid,
                                            :wallets => wallets } }
-end
-
-# JORMUNGANDR
-
-post "/connect-jorm" do
-  session[:jorm_port] = params["jorm_port"]
-  j = Jormungandr.new session[:jorm_port]
-  session[:j_connected] = j.is_connected?
-  redirect "/wallet-jorm-stats"
-end
-
-get "/wallet-jorm-stats" do
-  session[:jorm_port] ||= "8080"
-
-  j = Jormungandr.new session[:jorm_port]
-  session[:j_connected] = j.is_connected?
-
-  my = Hash.new
-  my[:jorm_stats] = j.get_node_stats if j.is_connected?
-  my[:jorm_settings] = j.get_settings if j.is_connected?
-  my[:network_info] = @cw.misc.network.information if is_connected?(@cw)
-  my[:network_params] = @cw.misc.network.parameters if is_connected?(@cw)
-
-  erb :wallet_jorm_stats, :locals => { :my => my }
-
 end
