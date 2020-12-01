@@ -1,0 +1,30 @@
+
+<div class="list-group">
+  <div class="list-group-item">
+     SMASH Health Check
+     <small><a href="/smash-health-check">refresh</a></small>
+  </div>
+  <div class="list-group-item">
+    <form action="/smash-health-check" method="GET">
+      <div class="form-group">
+        <label for="wid_src">URL to SMASH server</label>
+        <input type="text" class="form-control" name="url" id="url"
+            placeholder="" value="<%= params[:url] if params[:url] %>">
+        <small id="help" class="form-text text-muted">
+          URL to SMASH.<br/>
+          If not provided will check health of <a href="/settings"><%= smash %></a>.
+        </small>
+      </div>
+
+      <button type="submit" class="btn btn-success">Check</button>
+    </form>
+  </div>
+
+  <% if health_check %>
+  <div class="list-group-item"  >
+    <small id="settings">
+        <%= response2table(health_check) %>
+    </small>
+  </div>
+  <% end %>
+</div>
