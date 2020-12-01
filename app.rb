@@ -146,6 +146,13 @@ post "/settings" do
                                      :pool_strategy => params['pool_strategy'] } }
 end
 
+get "/smash-health-check" do
+  (params[:url] == '' or params[:url].nil?) ? q = {} : q = {url: params[:url]}
+  health_check = @cw.misc.utils.smash_health(q)
+  smash = @cw.misc.settings.get['pool_metadata_source']
+  erb :form_smash_health_check, { :locals => { :health_check => health_check, :smash => smash } }
+end
+
 get "/network-params" do
   r = @cw.misc.network.parameters
   handle_api_err r, session
