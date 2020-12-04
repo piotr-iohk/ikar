@@ -91,7 +91,11 @@ end
        <%= "on #{last_gc['last_run']}" if last_gc['last_run'] %>
      </small>
   </div>
+  <div class="list-group-item">
+  <small><%= generate_curl(stake_pools) %></small>
+  </div>
   <% sp.each_with_index do |s, i| %>
+
       <div class="list-group-item">
         <div class="d-flex w-100 justify-content-between">
           <h5 class="mb-1"><%= "#{i + 1}: #{s['id']}" %></h5>

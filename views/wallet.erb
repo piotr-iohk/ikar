@@ -242,7 +242,9 @@
                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('txs_out')" >Outgoing:</a>  <span id="txs_out_size"><%= txs_out.size %></span> <br/>
            </small><br/>
            <% end %>
-
+           <small><%= generate_curl(wal, "Wallet curl") %></small>
+           <small><%= generate_curl(addresses, "Addresses curl") if txs %></small>
+           <small><%= generate_curl(txs, "Transactions curl") if addresses %></small>
        </div>
        <div class="col displ_details" style="display:none" id="addr">
          <div class="list-group-item">

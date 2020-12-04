@@ -25,6 +25,8 @@ min = params['minWithdrawal']
      </form>
   </div>
   <div class="list-group-item">
+    <small><%= generate_curl(transactions) %></small>
+    
     <% transactions.each do |tx|  %>
     <%= render_tx_on_wallet_page("/wallets", tx, wid) %>
     <% end %>

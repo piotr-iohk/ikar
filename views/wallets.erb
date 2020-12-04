@@ -23,6 +23,7 @@ shelley_ep = "/wallets"
      <small>
        <a href="<%= (path_info.include? "byron") ? "#{byron_ep}-delete-all" : "#{shelley_ep}-delete-all" %>">delete all</a>
      </small>
+     <small><%= generate_curl(wallets) %></small>
   </div>
 <%
 wallets.each do |wal|
