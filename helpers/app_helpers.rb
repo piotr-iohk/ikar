@@ -13,11 +13,17 @@ module Helpers
       end
     end
 
-    def generate_curl(response)
+    def generate_curl(response, label = 'curl')
       uri = response.request.last_uri
       body = response.request.options[:body]
       headers = response.request.options[:headers]
       method = response.request.http_method.to_s.split('::').last.upcase
+      #certs
+      certs = ""
+      certs += "<br/>--cert #{session[:opt][:pem]} \\" unless session[:opt][:pem] == ''
+      certs += "<br/>--cacert #{session[:opt][:cacert]} \\" unless  session[:opt][:cacert] == ''
+
+      #headers
       headers_curled = ""
       if headers
         headers.each do |k,v|
@@ -27,12 +33,13 @@ module Helpers
       curl = %Q{
                   curl -X #{method} #{uri} \\
                   #{"<br/>-d '" + body + "' \\" if body}
+                  #{certs}
                   #{headers_curled}
                 }
       curl = curl.strip.delete_suffix!("\\")
       %Q{
         <details>
-          <summary>curl</summary>
+          <summary>#{label}</summary>
             <code>
               #{curl}
             </code>
@@ -40,15 +47,22 @@ module Helpers
        }
     end
 
-    def generate_raw_response(resp_json)
+    def generate_raw_response(resp_json, label = "Response")
       %Q{
         <details>
-          <summary>Response</summary>
+          <summary>#{label}</summary>
             <code>
               #{JSON.parse resp_json}
             </code>
         </details>
       }
+    end
+
+    def curl_and_response(res, curl_label = "curl", res_label = "Response")
+      %Q{
+        <small>#{generate_curl(res, curl_label)}</small>
+        <small>#{generate_raw_response(res.to_s, res_label)}</small>
+       }
     end
 
     def response2table(response)
