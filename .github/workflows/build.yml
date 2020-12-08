@@ -42,4 +42,4 @@ jobs:
     env:
       NETWORK: testnet
       WALLET: dev-master-shelley
-      NODE: 1.21.1
+      NODE: 1.23.0
