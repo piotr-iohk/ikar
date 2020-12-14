@@ -87,9 +87,9 @@ module Helpers
             table_attributes: "border=1"
             }
 
-        r += Json2table::get_html_table(response.to_s, table_options)
         r += generate_curl(response)
         r += generate_raw_response(response.to_json)
+        r += Json2table::get_html_table(response.to_s, table_options)
       end
       r
     end
