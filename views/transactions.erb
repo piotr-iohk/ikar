@@ -82,9 +82,8 @@
     </small>
   </div>
   <div class="list-group-item">
-
     <% transactions.each do |tx|  %>
-    <%= render_tx_on_wallet_page("/wallets", tx, params[:wid]) %>
+    <%= render_tx_on_wallet_page( ((url_path.include? "byron") ? byron_ep : shelley_ep), tx, params[:wid]) %>
     <% end %>
   </div>
 </div>
