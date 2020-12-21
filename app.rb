@@ -437,15 +437,17 @@ get "/wallets-migration-fee" do
 end
 
 # TRANSACTIONS SHELLEY
-get "/rewards" do
-  wid = params[:wid]
-  min_withdrawal = params[:minWithdrawal]
-  r = @cw.shelley.transactions.list(wid, {minWithdrawal: min_withdrawal})
+get "/wallets-transactions" do
+  query = toListTransactionsQuery(params)
+  r = @cw.shelley.transactions.list(params[:wid], query)
   handle_api_err r, session
-  # w = @cw.shelley.wallets.get wid
-  # handle_api_err w, session
 
-  erb :rewards, { :locals => { :wid => wid, :transactions => r } }
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+
+  erb :transactions, { :locals => { :wallets => wallets,
+                                    :transactions => r,
+                                    :query => query } }
 end
 
 get "/tx-fee-to-address" do
@@ -810,6 +812,18 @@ get "/byron-wallets-migration-fee" do
 end
 
 # TRANSACTIONS BYRON
+get "/byron-wallets-transactions" do
+  query = toListTransactionsQuery(params)
+  r = @cw.byron.transactions.list(params[:wid], query)
+  handle_api_err r, session
+
+  wallets = @cw.byron.wallets.list
+  handle_api_err wallets, session
+
+  erb :transactions, { :locals => { :wallets => wallets,
+                                    :transactions => r,
+                                    :query => query } }
+end
 
 get "/byron-wallets/:wal_id/txs/:tx_id" do
   wid = params[:wal_id]

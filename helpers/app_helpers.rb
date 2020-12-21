@@ -13,6 +13,23 @@ module Helpers
       end
     end
 
+    def toListTransactionsQuery(params)
+      query = {}
+      if params[:minWithdrawal] != '' && params[:minWithdrawal] != nil
+        query[:minWithdrawal] = params[:minWithdrawal]
+      end
+      if params[:start] != '' && params[:start] != nil
+        query[:start] = params[:start]
+      end
+      if params[:end] != '' && params[:end] != nil
+        query[:end] = params[:end]
+      end
+      if params[:order] != '' && params[:order] != nil
+        query[:order] = params[:order]
+      end
+      query
+    end
+
     def generate_curl(response, label = 'curl')
       uri = response.request.last_uri
       body = response.request.options[:body]

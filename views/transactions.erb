@@ -1,0 +1,90 @@
+<%
+  url_path = request.env['PATH_INFO'].to_s
+  byron_ep = "/byron-wallets"
+  shelley_ep = "/wallets"
+%>
+<div class="list-group">
+  <div class="list-group-item">
+     List transactions
+     | <small><a href="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>/<%= params[:wid] %>">
+             go back to wallet
+           </a></small>
+  </div>
+  <div class="list-group-item">
+     <form action="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>-transactions" method="GET" >
+       <div class="form-row">
+         <div class="form-group">
+           <label for="wid">Wallet</label>
+           <select class="form-control" name="wid" id="wid">
+             <% wallets.each do |w| %>
+             <option <%= params[:wid] == w['id'] ? "selected" : "" %> value="<%= w['id'] %>">
+               <%= "#{w['name']} [id: #{w['id']}, balance available: #{w['balance']['available']['quantity']}" %>
+             </option>
+             <% end %>
+           </select>
+          </div>
+       </div>
+       <div class="form-row">
+         <div class="col-2">
+           <div class="form-group">
+
+             <input type="text" class="form-control" name="start" id="start" placeholder="Start date"
+                value="<%= query[:start] %>">
+             <small id="help" class="form-text text-muted">
+               Start date, e.g. 2012-09-25T10:15:00Z
+             </small>
+
+             <button type="submit" class="btn btn-success">Refresh</button>
+           </div>
+         </div>
+         <div class="col-2">
+           <div class="form-group">
+             <input type="text" class="form-control" name="end" id="end" placeholder="End date"
+                value="<%= query[:end] %>">
+             <small id="help" class="form-text text-muted">
+               End date, e.g. 2020-09-25T10:15:00Z
+             </small>
+           </div>
+         </div>
+         <div class="col-2">
+           <div class="form-group">
+             <select class="form-control" name="order" id="order">
+               <option value="">default</option>
+               <option <%= "selected" if query[:order] == "ascending" %> value="ascending">ascending</option>
+               <option <%= "selected" if query[:order] == "descending" %> value="descending">descending</option>
+             </select>
+
+             <small id="help" class="form-text text-muted">
+               Order
+             </small>
+           </div>
+         </div>
+         <% unless (url_path.include? "byron") %>
+           <div class="col-2">
+             <div class="form-group">
+               <input type="text" class="form-control" name="minWithdrawal" id="minWithdrawal" placeholder="Minimum withdrawal"
+                  value="<%= query[:minWithdrawal] %>">
+               <small id="help" class="form-text text-muted">
+                 Minimum rewards withdrawn
+               </small>
+             </div>
+           </div>
+         <% end %>
+       </div>
+     </form>
+  </div>
+  <div class="list-group-item">
+    <small>
+    Number of txs: <%= transactions.size %><br/>
+    &nbsp;&nbsp;Incoming: <%= transactions.select{ |t| t['direction'] == "incoming" }.size %><br/>
+    &nbsp;&nbsp;Outgoing: <%= transactions.select{ |t| t['direction'] == "outgoing" }.size %><br/>
+    <%= generate_curl(transactions) %>
+    </small>
+  </div>
+  <div class="list-group-item">
+
+    <% transactions.each do |tx|  %>
+    <%= render_tx_on_wallet_page("/wallets", tx, params[:wid]) %>
+    <% end %>
+  </div>
+</div>
