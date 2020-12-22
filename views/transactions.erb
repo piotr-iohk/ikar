@@ -34,7 +34,7 @@
                Start date, e.g. 2012-09-25T10:15:00Z
              </small>
 
-             <button type="submit" class="btn btn-success">Refresh</button>
+             <button type="submit" class="btn btn-success">List</button>
            </div>
          </div>
          <div class="col-2">
@@ -49,7 +49,7 @@
          <div class="col-2">
            <div class="form-group">
              <select class="form-control" name="order" id="order">
-               <option value="">default</option>
+               <option value="">default (descending)</option>
                <option <%= "selected" if query[:order] == "ascending" %> value="ascending">ascending</option>
                <option <%= "selected" if query[:order] == "descending" %> value="descending">descending</option>
              </select>

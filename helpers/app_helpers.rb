@@ -15,17 +15,10 @@ module Helpers
 
     def toListTransactionsQuery(params)
       query = {}
-      if params[:minWithdrawal] != '' && params[:minWithdrawal] != nil
-        query[:minWithdrawal] = params[:minWithdrawal]
-      end
-      if params[:start] != '' && params[:start] != nil
-        query[:start] = params[:start]
-      end
-      if params[:end] != '' && params[:end] != nil
-        query[:end] = params[:end]
-      end
-      if params[:order] != '' && params[:order] != nil
-        query[:order] = params[:order]
+      [:minWithdrawal, :start, :end, :order].each do |label|
+        if params[label] != '' && params[label] != nil
+          query[label] = params[label]
+        end
       end
       query
     end
