@@ -528,7 +528,7 @@ post "/tx-to-address" do
                                       w, m, ttl)
   handle_api_err r, session
 
-  redirect "/wallets/#{wid_src}/txs/#{r['id']}"
+  erb :tx_details, { :locals => { :tx => r, :wid => wid_src }  }
 end
 
 get "/tx-between-wallets" do
@@ -561,7 +561,7 @@ post "/tx-between-wallets" do
                                       w, m, ttl)
   handle_api_err r, session
 
-  redirect "/wallets/#{wid_src}/txs/#{r['id']}"
+  erb :tx_details, { :locals => { :tx => r, :wid => wid_src }  }
 end
 
 get "/wallets/:wal_id/forget-tx/:tx_to_forget_id" do
@@ -890,7 +890,7 @@ post "/byron-tx-to-address" do
   r = @cw.byron.transactions.create(wid_src, pass, payload)
   handle_api_err r, session
 
-  redirect "/byron-wallets/#{wid_src}/txs/#{r['id']}"
+  erb :tx_details, { :locals => { :tx => r, :wid => wid_src }  }
 end
 
 # MNEMONICS
@@ -970,7 +970,8 @@ post "/stake-pools-join" do
   pass = params['pass']
   r = @cw.shelley.stake_pools.join(sp_id, w_id, pass)
   handle_api_err r, session
-  redirect "/wallets/#{w_id}/txs/#{r['id']}"
+
+  erb :tx_details, { :locals => { :tx => r, :wid => w_id }  }
 end
 
 get "/stake-pools-quit" do
@@ -985,7 +986,8 @@ post "/stake-pools-quit" do
   pass = params['pass']
   r = @cw.shelley.stake_pools.quit(w_id, pass)
   handle_api_err r, session
-  redirect "/wallets/#{w_id}/txs/#{r['id']}"
+
+  erb :tx_details, { :locals => { :tx => r, :wid => w_id }  }
 end
 
 get "/stake-pools-fee" do
