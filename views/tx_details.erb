@@ -40,7 +40,9 @@
           <br/>
       <% end %>
       <small><b>Status: </b><%= tx['status'] %></small><br/>
-      <small><b>Amount: </b><%= tx['amount']['quantity'] %> <%= "(sent amount + fee)" if tx['direction'] == "outgoing" %></small><br/>
+      <small><b>Amount: </b><%= tx['amount']['quantity'] %> <%= tx['amount']['unit'] %> <%= "(sent amount + fee)" if tx['direction'] == "outgoing" %></small><br/>
+      <small><b>Fee: </b><%= tx['fee']['quantity'] %> <%= tx['fee']['unit'] %></small><br/>
+      <small><b>Deposit: </b><%= tx['deposit']['quantity'] %> <%= tx['deposit']['unit'] %></small><br/>
       <small><b>Direction: </b><%= tx['direction'] %></small><br/>
 
       <small><b>Depth: </b><%= "#{tx['depth']['quantity']} blocks" if tx['depth'] %></small><br/>
@@ -92,14 +94,6 @@
           <small><code><%= tx['metadata'] %></code></small>
       <% else%>
         <small><b>No Metadata! </b></small><br/>
-      <% end %>
-      </div>
-      <div class="list-group-item">
-      <% if tx['deposit'] %>
-          <small><b>Deposit: </b></small>
-          <small><%= tx['deposit']['quantity'] %> <%= tx['deposit']['unit'] %></small>
-      <% else%>
-        <small><b>No Deposits! </b></small><br/>
       <% end %>
       </div>
 
