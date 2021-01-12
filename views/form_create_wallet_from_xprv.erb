@@ -1,0 +1,26 @@
+
+<div class="list-group">
+  <div class="list-group-item">
+    <form action="/byron-wallets-create-from-xprv" method="POST">
+
+      <div class="form-group">
+        <label for="payload">Byron Wallet Payload</label>
+        <textarea class="form-control" name="payload" id="payload" rows="9">    {
+        "encrypted_root_private_key": "65b0a8a43341078aa25e499457902bed3e7d63a74d6079a563e08f0a7e2854dc918ed1b98c2e262d837276cce3fa8c3825ae5aa0f24535168b597127bd62461b323dba7f9c2beb5dbf24b528b6981e83c2e21a4aa7684746d86b763191aada4f980a05ec790380f10c8d05df95750bdd482870ed294ffc2f6356da69d0287950",
+        "name": "My Old Byron Wallet",
+        "passphrase_hash": "31347c387c317c57434338486c412b6e3834734c426e55427450447a4a59536e6a7742794b4f5662387171534977476f48557a7a773d3d7c497944797147756c6b493733494f4d66544e615034572b7447396b78485a54665870795a572f436733316f3d"
+    }</textarea>
+      </div>
+
+      <button type="submit" class="btn btn-success">Create</button>
+    </form>
+  </div>
+  <% if session[:error] %>
+        <div class="alert alert-danger" role="alert">
+          <%= session[:error]%>
+        </div>
+  <%
+        session.delete :error
+     end
+  %>
+</div>
