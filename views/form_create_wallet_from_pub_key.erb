@@ -1,11 +1,11 @@
 <%
-  # url_path = request.env['PATH_INFO'].to_s
-  # byron_ep = "/byron-wallets-create"
-  # shelley_ep = "/wallets-create"
+  url_path = request.env['PATH_INFO'].to_s
+  byron_ep = "/byron-wallets-create-from-pub-key"
+  shelley_ep = "/wallets-create-from-pub-key"
 %>
 <div class="list-group">
   <div class="list-group-item">
-    <form action="/wallets-create-from-pub-key" method="POST">
+    <form action="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>" method="POST">
 
       <div class="form-group">
         <label for="wal_name">Wallet name</label>

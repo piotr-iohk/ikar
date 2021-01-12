@@ -728,6 +728,42 @@ post "/byron-wallets-create" do
   redirect "/byron-wallets/#{wal['id']}"
 end
 
+get "/byron-wallets-create-from-pub-key" do
+  # 15-word mnemonics
+  erb :form_create_wallet_from_pub_key
+end
+
+post "/byron-wallets-create-from-pub-key" do
+  pub_key = params[:pub_key]
+  name = params[:wal_name]
+  pool_gap = params[:pool_gap].to_i
+  wal = @cw.byron.wallets.create({name: name,
+                                    account_public_key: pub_key,
+                                    address_pool_gap: pool_gap,
+                                    })
+  handle_api_err wal, session
+
+  redirect "/byron-wallets/#{wal['id']}"
+end
+
+get "/byron-wallets-create-from-xprv" do
+  erb :form_create_wallet_from_xprv
+end
+
+post "/byron-wallets-create-from-xprv" do
+  begin
+    payload = JSON.parse(params[:payload].strip)
+    payload[:style] = "random"
+    wal = @cw.byron.wallets.create(payload)
+    handle_api_err wal, session
+  rescue
+    session[:error] = "Make sure the 'payload' has correct JSON format."
+    redirect "/byron-wallets-create-from-xprv"
+  end
+
+  redirect "/byron-wallets/#{wal['id']}"
+end
+
 get "/byron-wallets-create-many-from-mnemonics" do
   erb :form_create_many_from_mnemonics
 end
