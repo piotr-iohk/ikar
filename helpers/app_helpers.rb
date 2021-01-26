@@ -23,6 +23,42 @@ module Helpers
       query
     end
 
+    ##
+    # Prepares payload for tx/fee endpoints based on form params from:
+    # - form_tx_to_address
+    # - form_tx_to_multi_address
+    # - form_tx_fee_to_address
+    # - form_tx_fee_to_multi_address
+    # Common for Byron/Shelley
+    def prepare_payload(params)
+      if params[:addr_amt]
+        payload = parse_addr_amt(params[:addr_amt])
+        if params[:assets] != ''
+          assets = parse_assets(params[:assets])
+          if params[:assets_strategy] == 'assets_first'
+            payload[0][:assets] = assets
+          elsif params[:assets_strategy] == 'assets_each'
+            payload.each{|p| p[:assets] = assets}
+          end
+        end
+      else
+        amount = params[:amount]
+        address = params[:address]
+
+        if params[:assets] == ''
+          payload = [{address => amount}]
+        else
+          assets = parse_assets(params[:assets])
+          payload = [ { "address": address,
+                        "amount": { "quantity": amount.to_i, "unit": "lovelace" },
+                        "assets": assets
+                      }
+                    ]
+        end
+      end
+      payload
+    end
+
     def generate_curl(response, label = 'curl')
       uri = response.request.last_uri
       body = response.request.options[:body]
@@ -105,7 +141,12 @@ module Helpers
     end
 
     def parse_addr_amt(addr_amt)
-      addr_amt.split("\n").map{|a| a.strip.split(":")}.collect{|a| {a.first.strip => a.last.strip}}
+      addr_amt.split("\n").map{|a| a.strip.split(":")}.collect do |a|
+        {:address => a.first.strip,
+         :amount => {:quantity => a.last.strip.to_i,
+                     :unit => "lovelace"}
+        }
+      end
     end
 
     def parse_assets(assets)
@@ -284,10 +325,28 @@ module Helpers
       r
     end
 
-    def render_assets_form_part
+    def render_assets_form_part(multi = nil)
+      radios = %Q{
+        <small>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="assets_strategy" id="assets_first" value="assets_first" checked>
+          <label class="form-check-label" for="assets_first">
+            Add to first address
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="assets_strategy" id="assets_each" value="assets_each">
+          <label class="form-check-label" for="assets_each">
+            Add to each address
+          </label>
+        </div>
+        </small>
+      }
+
       %Q{
         <div class="form-group">
           <label for="assets">Assets</label>
+          #{radios if multi}
           <textarea class="form-control" name="assets" id="assets" rows="3"></textarea>
           <small id="help" class="form-text text-muted">
             <details>

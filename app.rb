@@ -463,23 +463,7 @@ end
 post "/tx-fee-to-address" do
   wid_src = params[:wid_src]
 
-  if params[:addr_amt]
-    payload = parse_addr_amt(params[:addr_amt])
-  else
-    amount = params[:amount]
-    address = params[:address]
-  end
-
-  if params[:assets] == ''
-    payload = [{address => amount}]
-  else
-    assets = parse_assets(params[:assets])
-    payload = [ { "address": address,
-                  "amount": { "quantity": amount.to_i, "unit": "lovelace" },
-                  "assets": assets
-                }
-              ]
-  end
+  payload = prepare_payload(params)
 
   case params[:withdrawal]
   when ''
@@ -513,23 +497,7 @@ post "/tx-to-address" do
   wid_src = params[:wid_src]
   pass = params[:pass]
 
-  if params[:addr_amt]
-    payload = parse_addr_amt(params[:addr_amt])
-  else
-    amount = params[:amount]
-    address = params[:address]
-  end
-
-  if params[:assets] == ''
-    payload = [{address => amount}]
-  else
-    assets = parse_assets(params[:assets])
-    payload = [ { "address": address,
-                  "amount": { "quantity": amount.to_i, "unit": "lovelace" },
-                  "assets": assets
-                }
-              ]
-  end
+  payload = prepare_payload(params)
 
   case params[:withdrawal]
   when ''
@@ -920,23 +888,7 @@ end
 
 post "/byron-tx-fee-to-address" do
   wid_src = params[:wid_src]
-  if params[:addr_amt]
-    payload = parse_addr_amt(params[:addr_amt])
-  else
-    amount = params[:amount]
-    address = params[:address]
-  end
-
-  if params[:assets] == ''
-    payload = [{address => amount}]
-  else
-    assets = parse_assets(params[:assets])
-    payload = [ { "address": address,
-                  "amount": { "quantity": amount.to_i, "unit": "lovelace" },
-                  "assets": assets
-                }
-              ]
-  end
+  payload = prepare_payload(params)
 
   r = @cw.byron.transactions.payment_fees(wid_src, payload)
   handle_api_err r, session
@@ -957,23 +909,8 @@ end
 post "/byron-tx-to-address" do
   wid_src = params[:wid_src]
   pass = params[:pass]
-  if params[:addr_amt]
-    payload = parse_addr_amt(params[:addr_amt])
-  else
-    amount = params[:amount]
-    address = params[:address]
-  end
 
-  if params[:assets] == ''
-    payload = [{address => amount}]
-  else
-    assets = parse_assets(params[:assets])
-    payload = [ { "address": address,
-                  "amount": { "quantity": amount.to_i, "unit": "lovelace" },
-                  "assets": assets
-                }
-              ]
-  end
+  payload = prepare_payload(params)
 
   r = @cw.byron.transactions.create(wid_src, pass, payload)
   handle_api_err r, session

@@ -4,6 +4,22 @@ include Helpers::App
 
 describe Helpers::App do
 
+  it "parse_addr_amt" do
+    addr_amt = "addr1:1\naddr2:2\naddr3:3"
+    res = [{:address=>"addr1", :amount=>{:quantity=>1, :unit=>"lovelace"}},
+           {:address=>"addr2", :amount=>{:quantity=>2, :unit=>"lovelace"}},
+           {:address=>"addr3", :amount=>{:quantity=>3, :unit=>"lovelace"}}]
+    expect(parse_addr_amt(addr_amt)).to eq res
+  end
+
+  it "parse_assets" do
+    assets = "pol1:ass1:1\npol2:ass2:2\npol3:ass3:3"
+    res = [{"asset_name"=>"ass1", "policy_id"=>"pol1", "quantity"=>1},
+           {"asset_name"=>"ass2", "policy_id"=>"pol2", "quantity"=>2},
+           {"asset_name"=>"ass3", "policy_id"=>"pol3", "quantity"=>3}]
+    expect(parse_assets(assets)).to eq res
+  end
+
   it "bits_from_word_count" do
     h = {'9' => 96, '12' => 128, '15' => 164, '18' =>196, '21' => 224, '24' => 256}
     h.each do |k,v|
