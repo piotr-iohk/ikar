@@ -108,6 +108,19 @@ module Helpers
       addr_amt.split("\n").map{|a| a.strip.split(":")}.collect{|a| {a.first.strip => a.last.strip}}
     end
 
+    def parse_assets(assets)
+      begin
+        assets.split("\n").map{|a| a.strip.split(":")}.collect do |a|
+          {"policy_id" => a[0].strip,
+           "asset_name" => a[1].strip,
+           "quantity" => a[2].strip.to_i
+          }
+        end
+      rescue
+        "Could not parse assets. Make sure they are in correct format: policyId:assetName:quantity"
+      end
+    end
+
     def parse_metadata(metadata)
       begin
         metadata == '' ? nil : YAML.load(metadata)
@@ -172,6 +185,14 @@ module Helpers
       "<span class='badge badge-primary'>has withdrawal</span><br/>"
     end
 
+    def has_assets_badge
+      "<span class='badge badge-dark'>has assets</span><br/>"
+    end
+
+    def has_mint_badge
+      "<span class='badge badge-light'>has mint</span><br/>"
+    end
+
     def show_tx_badges(tx)
       case tx['status']
       when "pending" then alert = "warning"
@@ -190,9 +211,96 @@ module Helpers
       if (tx['withdrawals'].size > 0)
         r += %Q{<div>&nbsp;#{has_withdrawal_badge}</div>}
       end
+      if (tx['assets'].size > 0)
+        r += %Q{<div>&nbsp;#{has_assets_badge}</div>}
+      end
+      if (tx['mint'].size > 0)
+        r += %Q{<div>&nbsp;#{has_mint_badge}</div>}
+      end
       r += %Q{</div>}
 
       r
+    end
+
+    def render_assets_outputs(asset_output)
+      if asset_output.nil? || asset_output.size == 0
+        r = %Q{<i>N/A</i>}
+      else
+        r = %Q{<div class="col-4">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Policy ID</th>
+                <th scope="col">Asset name</th>
+                <th scope="col">Quantity</th>
+              </tr>
+            </thead>
+        }
+
+        asset_output.each do |a|
+          r += %Q{
+              <tbody>
+                <tr>
+                  <td>#{a['policy_id']}</th>
+                  <td>#{a['asset_name']}</td>
+                  <td>#{a['quantity']}</td>
+                </tr>
+           }
+        end
+        r += %Q{  </tbody></table></div> }
+      end
+      r
+    end
+    def render_assets(wal)
+      r = %Q{ <div class="col-4" style="margin-left:0px;padding:0px"> <b>Assets:</b> }
+      if wal['assets']['total'].size > 0
+        r += %Q{
+          <small>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Policy ID</th>
+                <th scope="col">Asset name</th>
+                <th scope="col">Total</th>
+                <th scope="col">Available</th>
+              </tr>
+            </thead> }
+        wal['assets']['total'].each do |t|
+          r += %Q{
+              <tbody>
+                <tr>
+                  <td>#{t['policy_id']}</th>
+                  <td>#{t['asset_name']}</td>
+                  <td>#{t['quantity']}</td>
+                  <td>#{wal['assets']['available'].select{|a| a['policy_id'] == t['policy_id'] && a['asset_name'] == t['asset_name']}.first['quantity']}</td>
+                </tr>
+           }
+        end
+        r += %Q{  </tbody></table></small> }
+      else
+      r += %Q{ <i>N/A</i> }
+      end
+      r += %Q{</div>}
+      r
+    end
+
+    def render_assets_form_part
+      %Q{
+        <div class="form-group">
+          <label for="assets">Assets</label>
+          <textarea class="form-control" name="assets" id="assets" rows="3"></textarea>
+          <small id="help" class="form-text text-muted">
+            <details>
+              <summary><i>policyId:assetName:amount</i> per line.</summary>
+              <code>
+  69819f8fdbaa8bd3e6169ddb9ec203820d077755c261cb19f3c6a91f:6164726573746961636f696e:438
+  <br/>4f8d6817100ef16d92d69f30becd77806e1f5ca83cd73739f0374237:7375706572636f696e:55
+  <br/>4f8d6817100ef16d92d69f30becd77806e1f5ca83cd73739f0374237::498
+              </code>
+            </details>
+          </small>
+        </div>
+        }
     end
 
     def render_addr_amt

@@ -468,7 +468,17 @@ post "/tx-fee-to-address" do
   else
     amount = params[:amount]
     address = params[:address]
+  end
+
+  if params[:assets] == ''
     payload = [{address => amount}]
+  else
+    assets = parse_assets(params[:assets])
+    payload = [ { "address": address,
+                  "amount": { "quantity": amount.to_i, "unit": "lovelace" },
+                  "assets": assets
+                }
+              ]
   end
 
   case params[:withdrawal]
@@ -508,7 +518,17 @@ post "/tx-to-address" do
   else
     amount = params[:amount]
     address = params[:address]
+  end
+
+  if params[:assets] == ''
     payload = [{address => amount}]
+  else
+    assets = parse_assets(params[:assets])
+    payload = [ { "address": address,
+                  "amount": { "quantity": amount.to_i, "unit": "lovelace" },
+                  "assets": assets
+                }
+              ]
   end
 
   case params[:withdrawal]
@@ -549,15 +569,27 @@ post "/tx-between-wallets" do
   else
     w = params[:withdrawal].split
   end
+
   m = parse_metadata(params[:metadata])
   params[:ttl] == '' ? ttl = nil : ttl = params[:ttl].to_i
 
   address_dst = @cw.shelley.addresses.list(wid_dst,
                                           {state: "unused"}).
                                           sample['id']
+  if params[:assets] == ''
+    payload = [{address_dst => amount}]
+  else
+    assets = parse_assets(params[:assets])
+    payload = [ { "address": address_dst,
+                  "amount": { "quantity": amount.to_i, "unit": "lovelace" },
+                  "assets": assets
+                }
+              ]
+  end
+
   r = @cw.shelley.transactions.create(wid_src,
                                       pass,
-                                      [{address_dst => amount}],
+                                      payload,
                                       w, m, ttl)
   handle_api_err r, session
 
@@ -893,7 +925,17 @@ post "/byron-tx-fee-to-address" do
   else
     amount = params[:amount]
     address = params[:address]
+  end
+
+  if params[:assets] == ''
     payload = [{address => amount}]
+  else
+    assets = parse_assets(params[:assets])
+    payload = [ { "address": address,
+                  "amount": { "quantity": amount.to_i, "unit": "lovelace" },
+                  "assets": assets
+                }
+              ]
   end
 
   r = @cw.byron.transactions.payment_fees(wid_src, payload)
@@ -920,7 +962,17 @@ post "/byron-tx-to-address" do
   else
     amount = params[:amount]
     address = params[:address]
+  end
+
+  if params[:assets] == ''
     payload = [{address => amount}]
+  else
+    assets = parse_assets(params[:assets])
+    payload = [ { "address": address,
+                  "amount": { "quantity": amount.to_i, "unit": "lovelace" },
+                  "assets": assets
+                }
+              ]
   end
 
   r = @cw.byron.transactions.create(wid_src, pass, payload)

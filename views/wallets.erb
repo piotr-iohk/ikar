@@ -45,6 +45,7 @@ wallets.each do |wal|
                            , Available: <%= wal['balance']['available']['quantity'] if wal['balance'] %>
                            <%= ", Rewards: #{wal['balance']['reward']['quantity']}" if wal['balance']['reward'] %>)
     <br/>
+    <%= render_assets(wal) unless path_info.include? "byron" %>
     <small><b>ID:</b> <%= id %></small><br/>
     <small>
       <b>Status:</b>

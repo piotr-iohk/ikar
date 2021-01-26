@@ -148,7 +148,7 @@
     <% end %>
 
      <div class="row" style="margin-top:20px; margin-left:10px;">
-       <div class="col-4">
+       <div class="col-<%= (url_path.include? "byron") ? "4" : "5" %>">
          <% if session[:tx_forgotten] %>
          <%= render_success(session[:tx_forgotten]) + "<br/>" %>
          <%
@@ -164,6 +164,7 @@
                                 , Available: <%= wal['balance']['available']['quantity'] %>
                                 <%= ", Rewards: #{wal['balance']['reward']['quantity']}" if wal['balance']['reward'] %>)
          <br/>
+          <%= render_assets(wal) unless url_path.include? "byron" %>
          <small><b>ID:</b> <%= id %></small><br/>
          <small>
            <b>Status:</b>
