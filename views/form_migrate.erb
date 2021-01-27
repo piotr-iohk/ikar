@@ -5,25 +5,7 @@
 
   wid = params[:wid] if params[:wid]
 %>
-<!-- <script type="text/javascript">
-  $(document).ready(function() {
-      var wrapper = $(".addresses_container");
-      var add_button = $(".add_form_field");
-      var x = 1;
-      $(add_button).click(function(e) {
-          e.preventDefault();
-          x++;
-          $(wrapper).append('<div class="input-group-prepend"><input type="text" class="form-control" name="dest_addr[]"/><a href="#" class="delete">Delete</a></div>'); //add input box
-      });
 
-      $(wrapper).on("click", ".delete", function(e) {
-          e.preventDefault();
-          $(this).parent('div').remove();
-          x--;
-      })
-  });
-
-</script> -->
 <div class="list-group">
   <div class="list-group-item">
     Migration

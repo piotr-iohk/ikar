@@ -49,7 +49,18 @@
            </div>
            <div>
              <a class="nav-link dropdown-toggle"
-               data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Migrations</a>
+               data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+               Assets
+             </a>
+             <div class="dropdown-menu">
+               <a class="dropdown-item" href="/wallets-get-assets?wid=<%= id %>">List</a>
+             </div>
+           </div>
+           <div>
+             <a class="nav-link dropdown-toggle"
+               data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+               Migrations
+             </a>
              <div class="dropdown-menu">
                <a class="dropdown-item" href="/wallets-migrate?wid=<%= id %>">Migrate</a>
                <a class="dropdown-item" href="/wallets-migration-fee?wid=<%= wal['id'] %>">Fees</a>
@@ -113,6 +124,15 @@
               <a class="dropdown-item" href="/byron-tx-to-multi-address?wid=<%= id %>">To many addresses</a>
               <a class="dropdown-item" href="/byron-tx-fee-to-address?wid=<%= id %>">Fees</a>
               <a class="dropdown-item" href="/byron-wallets-transactions?wid=<%= id %>">List</a>
+            </div>
+          </div>
+          <div>
+            <a class="nav-link dropdown-toggle"
+              data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+              Assets
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="/byron-wallets-get-assets?wid=<%= id %>">List</a>
             </div>
           </div>
           <div>

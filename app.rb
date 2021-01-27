@@ -208,6 +208,53 @@ end
 
 # SHELLEY WALLETS
 
+# get "/wallets-list-assets" do
+#   wallets = @cw.shelley.wallets.list
+#   handle_api_err(wallets, session)
+#
+#   erb :form_assets_list, { :locals => { :wallets => wallets,
+#                                         :listed_assets => nil } }
+# end
+#
+# post "/wallets-list-assets" do
+#   wallets = @cw.shelley.wallets.list
+#   handle_api_err(wallets, session)
+#
+#   listed_assets = @cw.shelley.assets.list(params[:wid])
+#   handle_api_err(listed_assets, session)
+#
+#   erb :form_assets_list, { :locals => { :wallets => wallets,
+#                                         :listed_assets => listed_assets } }
+# end
+
+get "/wallets-get-assets" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err(wallets, session)
+
+  erb :form_assets_get, { :locals => { :wallets => wallets,
+                                       :asset_name => params[:asset_name],
+                                       :policy_id => params[:policy_id],
+                                       :asset => nil } }
+end
+
+post "/wallets-get-assets" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err(wallets, session)
+
+  asset_name = (params[:asset_name] == '') ? nil : params[:asset_name].strip
+  policy_id = (params[:policy_id] == '') ? nil : params[:policy_id].strip
+  begin
+    asset = @cw.shelley.assets.get(params[:wid], policy_id, asset_name)
+  rescue
+    session[:error] = "Make sure policy ID or asset name do not contain spaces."
+  end
+
+  erb :form_assets_get, { :locals => { :wallets => wallets,
+                                       :asset_name => asset_name,
+                                       :policy_id => policy_id,
+                                       :asset => asset } }
+end
+
 get "/wallets/coin-selection/delegation" do
   wallets = @cw.shelley.wallets.list
   handle_api_err wallets, session
@@ -582,6 +629,53 @@ get "/wallets/:wal_id/txs/:tx_id" do
 end
 
 # BYRON WALLETS
+
+# get "/byron-wallets-list-assets" do
+#   wallets = @cw.byron.wallets.list
+#   handle_api_err(wallets, session)
+#
+#   erb :form_assets_list, { :locals => { :wallets => wallets,
+#                                         :listed_assets => nil } }
+# end
+#
+# post "/byron-wallets-list-assets" do
+#   wallets = @cw.byron.wallets.list
+#   handle_api_err(wallets, session)
+#
+#   listed_assets = @cw.byron.assets.list(params[:wid])
+#   handle_api_err(listed_assets, session)
+#
+#   erb :form_assets_list, { :locals => { :wallets => wallets,
+#                                         :listed_assets => listed_assets } }
+# end
+
+get "/byron-wallets-get-assets" do
+  wallets = @cw.byron.wallets.list
+  handle_api_err(wallets, session)
+
+  erb :form_assets_get, { :locals => { :wallets => wallets,
+                                       :asset_name => params[:asset_name],
+                                       :policy_id => params[:policy_id],
+                                       :asset => nil } }
+end
+
+post "/byron-wallets-get-assets" do
+  wallets = @cw.byron.wallets.list
+  handle_api_err(wallets, session)
+
+  asset_name = (params[:asset_name] == '') ? nil : params[:asset_name].strip
+  policy_id = (params[:policy_id] == '') ? nil : params[:policy_id].strip
+  begin
+    asset = @cw.byron.assets.get(params[:wid], policy_id, asset_name)
+  rescue
+    session[:error] = "Make sure policy ID or asset name do not contain spaces."
+  end
+
+  erb :form_assets_get, { :locals => { :wallets => wallets,
+                                       :asset_name => asset_name,
+                                       :policy_id => policy_id,
+                                       :asset => asset } }
+end
 
 get "/byron-wallets/coin-selection/random" do
   wallets = @cw.byron.wallets.list
