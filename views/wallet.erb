@@ -89,10 +89,12 @@
            </div>
            <div>
              <a class="nav-link dropdown-toggle"
-               data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Keys</a>
+               data-toggle="dropdown" href="#" role="button"
+               aria-haspopup="true" aria-expanded="false">Keys</a>
              <div class="dropdown-menu">
-               <a class="dropdown-item" href="/sign-metadata?wid=<%= wal['id'] %>">Sign Metadata</a>
+               <a class="dropdown-item" href="/get-acc-pub-key?wid=<%= wal['id'] %>">Get account public key</a>
                <a class="dropdown-item" href="/get-pub-key?wid=<%= wal['id'] %>">Get public key</a>
+               <a class="dropdown-item" href="/sign-metadata?wid=<%= wal['id'] %>">Sign Metadata</a>
              </div>
            </div>
 

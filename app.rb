@@ -56,6 +56,39 @@ end
 
 
 # MISC
+get "/get-acc-pub-key" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  params[:wid] ? wid = params[:wid] : wid = wallets.first['id']
+  erb :form_get_acc_public_key, { :locals => { :wallets => wallets,
+                                          :wid => wid,
+                                          :index => params[:index],
+                                          :extended => params[:extended],
+                                          :acc_pub_key => nil
+                                        } }
+end
+
+post "/get-acc-pub-key" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  extended = (params[:extended] == "true") ? true : false
+  begin
+    acc_pub_key = @cw.shelley.keys.create_acc_public_key(params[:wid],
+                                            params[:index],
+                                            params[:pass],
+                                            extended)
+  rescue
+    session[:error] = "Make sure parameters are valid. "
+    redirect "/get-pub-key"
+  end
+  handle_api_err acc_pub_key, session
+  erb :form_get_acc_public_key, { :locals => { :wallets => wallets,
+                                          :wid => params[:wid],
+                                          :index => params[:index],
+                                          :extended => params[:extended],
+                                          :acc_pub_key => acc_pub_key
+                                        } }
+end
 
 get "/get-pub-key" do
   wallets = @cw.shelley.wallets.list
