@@ -11,6 +11,8 @@
     <b>Status:</b> <%= general_status(n['sync_progress']['status']) %>
                    <%= n['sync_progress']['status'] == "syncing" ? ", Progress: #{n['sync_progress']['progress']['quantity']}%" : ""%>
     <br/>
+    <b>Node era:</b> <span class='badge badge-primary'><%= n['node_era'] %></span>
+    <br/>
     <br/>
     <small>
     <%= response2table(n) %>
