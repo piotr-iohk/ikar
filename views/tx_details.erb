@@ -41,8 +41,8 @@
       <% end %>
       <small><b>Status: </b><%= tx['status'] %></small><br/>
       <small><b>Amount: </b><%= tx['amount']['quantity'] %> <%= tx['amount']['unit'] %> <%= "(sent amount + fee)" if tx['direction'] == "outgoing" %></small><br/>
-      <small><b>Assets: </b><%= tx['assets'] %> </small><br/>
-      <small><b>Mint: </b><%= tx['mint'] %> </small><br/>
+      <!-- <small><b>Assets: </b> </small><br/> -->
+      <!-- <small><b>Mint: </b> </small><br/> -->
       <small><b>Fee: </b><%= tx['fee']['quantity'] %> <%= tx['fee']['unit'] %></small><br/>
       <small><b>Deposit: </b><%= tx['deposit']['quantity'] %> <%= tx['deposit']['unit'] %></small><br/>
       <small><b>Direction: </b><%= tx['direction'] %></small><br/>

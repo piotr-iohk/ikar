@@ -252,12 +252,12 @@ module Helpers
       if (tx['withdrawals'].size > 0)
         r += %Q{<div>&nbsp;#{has_withdrawal_badge}</div>}
       end
-      if (tx['assets'].size > 0)
-        r += %Q{<div>&nbsp;#{has_assets_badge}</div>}
-      end
-      if (tx['mint'].size > 0)
-        r += %Q{<div>&nbsp;#{has_mint_badge}</div>}
-      end
+      # if (tx['outputs'].any? {|o| o.has_key? "assets"})
+      #   r += %Q{<div>&nbsp;#{has_assets_badge}</div>}
+      # end
+      # if (tx['mint'].size > 0)
+      #   r += %Q{<div>&nbsp;#{has_mint_badge}</div>}
+      # end
       r += %Q{</div>}
 
       r
