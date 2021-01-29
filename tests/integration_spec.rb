@@ -140,7 +140,7 @@ describe 'Using App', type: :feature do
       create_byron_wallet "random"
       click_link "Migrations"
       find(:xpath, "//a[contains(@href,'migration-fee')]").click
-      expect(page).to have_text "nothing_to_migrate"
+      expect(page).to have_text "This endpoint is temporarily disabled"
     end
 
     it "I could Migrate" do

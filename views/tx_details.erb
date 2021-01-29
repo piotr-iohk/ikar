@@ -41,6 +41,8 @@
       <% end %>
       <small><b>Status: </b><%= tx['status'] %></small><br/>
       <small><b>Amount: </b><%= tx['amount']['quantity'] %> <%= tx['amount']['unit'] %> <%= "(sent amount + fee)" if tx['direction'] == "outgoing" %></small><br/>
+      <!-- <small><b>Assets: </b> </small><br/> -->
+      <!-- <small><b>Mint: </b> </small><br/> -->
       <small><b>Fee: </b><%= tx['fee']['quantity'] %> <%= tx['fee']['unit'] %></small><br/>
       <small><b>Deposit: </b><%= tx['deposit']['quantity'] %> <%= tx['deposit']['unit'] %></small><br/>
       <small><b>Direction: </b><%= tx['direction'] %></small><br/>
@@ -56,6 +58,8 @@
               <small>&nbsp;&nbsp;<b>Address: </b><%= i['address'] %></small><br/>
               <small>&nbsp;&nbsp;<b>Id: </b><%= i['id'] %></small><br/>
               <small>&nbsp;&nbsp;<b>Index: </b><%= i['index'] %></small><br/>
+              <small>&nbsp;&nbsp;<b>Assets: </b><%= render_assets_outputs i['assets'] %></small><br/>
+
               <b>---</b><br/>
             <% end %>
         </div>
@@ -68,6 +72,7 @@
           <% tx['outputs'].each do |out| %>
               <small>&nbsp;&nbsp;<b>Amount: </b><%= out['amount']['quantity'] %></small><br/>
               <small>&nbsp;&nbsp;<b>Address: </b><%= out['address'] %></small><br/>
+              <small>&nbsp;&nbsp;<b>Assets: </b><%= render_assets_outputs out['assets'] %></small><br/>
               <b>---</b> <br/>
             <% end %>
         </div>

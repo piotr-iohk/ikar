@@ -1,0 +1,68 @@
+<%
+  url_path = request.env['PATH_INFO'].to_s
+  byron_ep = "/byron-wallets"
+  shelley_ep = "/wallets"
+
+  wid = params[:wid] if params[:wid]
+%>
+
+<div class="list-group">
+  <div class="list-group-item">
+    Assets
+    | <small><a href="<%= (url_path.include? "byron") ? "#{byron_ep}/#{wid}" : "#{shelley_ep}/#{wid}" %>">
+        go back to wallet
+      </a></small>
+  </div>
+  <div class="list-group-item">
+    <form action="<%= (url_path.include? "byron") ? "#{byron_ep}-get-assets" : "#{shelley_ep}-get-assets" %>" method="POST">
+      <div class="form-group">
+        <label for="wid_src">Source Wallet</label>
+        <select class="form-control" name="wid" id="wid">
+          <% wallets.each do |w| %>
+          <option <%= wid == w['id'] ? "selected" : "" %> value="<%= w['id'] %>">
+            <%= "#{w['name']} [id: #{w['id']}, balance available: #{w['balance']['available']['quantity']}]" %>
+          </option>
+          <% end %>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="pass">Policy ID</label>
+        <input type="text" class="form-control" name="policy_id" id="policy_id"
+         placeholder="" value="<%= policy_id %>">
+      </div>
+      <div class="form-group">
+        <label for="pass">Asset Name</label>
+        <input type="text" class="form-control" name="asset_name" id="asset_name"
+         placeholder="" value="<%= asset_name %>">
+      </div>
+
+      <button type="submit" class="btn btn-success">List Assets</button>
+
+    </form>
+  </div>
+
+  <% if session[:error] %>
+        <div class="alert alert-danger" role="alert">
+          <%= session[:error]%>
+        </div>
+  <%
+        session.delete :error
+     end
+  %>
+
+  <% if asset %>
+  <div class="list-group-item"  >
+    <small id="asset">
+        <%= response2table(asset) %>
+        <% if asset.respond_to?(:append)
+            asset.each do |a| %>
+        <%=   "#{a['policy_id']}:#{a['asset_name']}:<br/>" %>
+        <%  end
+           else %>
+        <%=   "#{asset['policy_id']}:#{asset['asset_name']}:<br/>" %>
+        <% end %>
+    </small>
+  </div>
+  <% end %>
+
+</div>

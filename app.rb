@@ -208,6 +208,34 @@ end
 
 # SHELLEY WALLETS
 
+get "/wallets-get-assets" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err(wallets, session)
+
+  erb :form_assets_get, { :locals => { :wallets => wallets,
+                                       :asset_name => params[:asset_name],
+                                       :policy_id => params[:policy_id],
+                                       :asset => nil } }
+end
+
+post "/wallets-get-assets" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err(wallets, session)
+
+  asset_name = (params[:asset_name] == '') ? nil : params[:asset_name].strip
+  policy_id = (params[:policy_id] == '') ? nil : params[:policy_id].strip
+  begin
+    asset = @cw.shelley.assets.get(params[:wid], policy_id, asset_name)
+  rescue
+    session[:error] = "Make sure policy ID or asset name do not contain spaces."
+  end
+
+  erb :form_assets_get, { :locals => { :wallets => wallets,
+                                       :asset_name => asset_name,
+                                       :policy_id => policy_id,
+                                       :asset => asset } }
+end
+
 get "/wallets/coin-selection/delegation" do
   wallets = @cw.shelley.wallets.list
   handle_api_err wallets, session
@@ -463,13 +491,7 @@ end
 post "/tx-fee-to-address" do
   wid_src = params[:wid_src]
 
-  if params[:addr_amt]
-    payload = parse_addr_amt(params[:addr_amt])
-  else
-    amount = params[:amount]
-    address = params[:address]
-    payload = [{address => amount}]
-  end
+  payload = prepare_payload(params)
 
   case params[:withdrawal]
   when ''
@@ -503,13 +525,7 @@ post "/tx-to-address" do
   wid_src = params[:wid_src]
   pass = params[:pass]
 
-  if params[:addr_amt]
-    payload = parse_addr_amt(params[:addr_amt])
-  else
-    amount = params[:amount]
-    address = params[:address]
-    payload = [{address => amount}]
-  end
+  payload = prepare_payload(params)
 
   case params[:withdrawal]
   when ''
@@ -549,15 +565,27 @@ post "/tx-between-wallets" do
   else
     w = params[:withdrawal].split
   end
+
   m = parse_metadata(params[:metadata])
   params[:ttl] == '' ? ttl = nil : ttl = params[:ttl].to_i
 
   address_dst = @cw.shelley.addresses.list(wid_dst,
                                           {state: "unused"}).
                                           sample['id']
+  if params[:assets] == ''
+    payload = [{address_dst => amount}]
+  else
+    assets = parse_assets(params[:assets])
+    payload = [ { "address": address_dst,
+                  "amount": { "quantity": amount.to_i, "unit": "lovelace" },
+                  "assets": assets
+                }
+              ]
+  end
+
   r = @cw.shelley.transactions.create(wid_src,
                                       pass,
-                                      [{address_dst => amount}],
+                                      payload,
                                       w, m, ttl)
   handle_api_err r, session
 
@@ -582,6 +610,34 @@ get "/wallets/:wal_id/txs/:tx_id" do
 end
 
 # BYRON WALLETS
+
+get "/byron-wallets-get-assets" do
+  wallets = @cw.byron.wallets.list
+  handle_api_err(wallets, session)
+
+  erb :form_assets_get, { :locals => { :wallets => wallets,
+                                       :asset_name => params[:asset_name],
+                                       :policy_id => params[:policy_id],
+                                       :asset => nil } }
+end
+
+post "/byron-wallets-get-assets" do
+  wallets = @cw.byron.wallets.list
+  handle_api_err(wallets, session)
+
+  asset_name = (params[:asset_name] == '') ? nil : params[:asset_name].strip
+  policy_id = (params[:policy_id] == '') ? nil : params[:policy_id].strip
+  begin
+    asset = @cw.byron.assets.get(params[:wid], policy_id, asset_name)
+  rescue
+    session[:error] = "Make sure policy ID or asset name do not contain spaces."
+  end
+
+  erb :form_assets_get, { :locals => { :wallets => wallets,
+                                       :asset_name => asset_name,
+                                       :policy_id => policy_id,
+                                       :asset => asset } }
+end
 
 get "/byron-wallets/coin-selection/random" do
   wallets = @cw.byron.wallets.list
@@ -888,13 +944,7 @@ end
 
 post "/byron-tx-fee-to-address" do
   wid_src = params[:wid_src]
-  if params[:addr_amt]
-    payload = parse_addr_amt(params[:addr_amt])
-  else
-    amount = params[:amount]
-    address = params[:address]
-    payload = [{address => amount}]
-  end
+  payload = prepare_payload(params)
 
   r = @cw.byron.transactions.payment_fees(wid_src, payload)
   handle_api_err r, session
@@ -915,13 +965,8 @@ end
 post "/byron-tx-to-address" do
   wid_src = params[:wid_src]
   pass = params[:pass]
-  if params[:addr_amt]
-    payload = parse_addr_amt(params[:addr_amt])
-  else
-    amount = params[:amount]
-    address = params[:address]
-    payload = [{address => amount}]
-  end
+
+  payload = prepare_payload(params)
 
   r = @cw.byron.transactions.create(wid_src, pass, payload)
   handle_api_err r, session

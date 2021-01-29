@@ -28,6 +28,7 @@ wid = params[:wid] if params[:wid]
       </div>
 
       <%= render_addr_amt %>
+      <%= render_assets_form_part(multi = true) %>
 
       <% unless (url_path.include? "byron") %>
         <%= render_tx_shelley_form_part %>
