@@ -208,25 +208,6 @@ end
 
 # SHELLEY WALLETS
 
-# get "/wallets-list-assets" do
-#   wallets = @cw.shelley.wallets.list
-#   handle_api_err(wallets, session)
-#
-#   erb :form_assets_list, { :locals => { :wallets => wallets,
-#                                         :listed_assets => nil } }
-# end
-#
-# post "/wallets-list-assets" do
-#   wallets = @cw.shelley.wallets.list
-#   handle_api_err(wallets, session)
-#
-#   listed_assets = @cw.shelley.assets.list(params[:wid])
-#   handle_api_err(listed_assets, session)
-#
-#   erb :form_assets_list, { :locals => { :wallets => wallets,
-#                                         :listed_assets => listed_assets } }
-# end
-
 get "/wallets-get-assets" do
   wallets = @cw.shelley.wallets.list
   handle_api_err(wallets, session)
@@ -629,25 +610,6 @@ get "/wallets/:wal_id/txs/:tx_id" do
 end
 
 # BYRON WALLETS
-
-# get "/byron-wallets-list-assets" do
-#   wallets = @cw.byron.wallets.list
-#   handle_api_err(wallets, session)
-#
-#   erb :form_assets_list, { :locals => { :wallets => wallets,
-#                                         :listed_assets => nil } }
-# end
-#
-# post "/byron-wallets-list-assets" do
-#   wallets = @cw.byron.wallets.list
-#   handle_api_err(wallets, session)
-#
-#   listed_assets = @cw.byron.assets.list(params[:wid])
-#   handle_api_err(listed_assets, session)
-#
-#   erb :form_assets_list, { :locals => { :wallets => wallets,
-#                                         :listed_assets => listed_assets } }
-# end
 
 get "/byron-wallets-get-assets" do
   wallets = @cw.byron.wallets.list
