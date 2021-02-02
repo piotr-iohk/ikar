@@ -294,7 +294,7 @@ module Helpers
     end
     def render_assets(wal)
       r = %Q{ <div class="col-4" style="margin-left:0px;padding:0px"> <b>Assets:</b> }
-      if wal['assets']['total'].size > 0
+      if (wal['assets'] && wal['assets']['total'].size > 0)
         r += %Q{
           <small>
           <table class="table">
@@ -307,13 +307,14 @@ module Helpers
               </tr>
             </thead> }
         wal['assets']['total'].each do |t|
+          available = wal['assets']['available'].select{|a| a['policy_id'] == t['policy_id'] && a['asset_name'] == t['asset_name']}.first if wal['assets']['available']
           r += %Q{
               <tbody>
                 <tr>
                   <td>#{t['policy_id']}</th>
                   <td>#{t['asset_name']}</td>
                   <td>#{t['quantity']}</td>
-                  <td>#{wal['assets']['available'].select{|a| a['policy_id'] == t['policy_id'] && a['asset_name'] == t['asset_name']}.first['quantity']}</td>
+                  <td>#{available ? available['quantity'] : 0}</td>
                 </tr>
            }
         end
@@ -325,7 +326,32 @@ module Helpers
       r
     end
 
-    def render_assets_form_part(multi = nil)
+    def render_amount_form_part(balance)
+      balance_listed = ""
+      balance.each do |b|
+        balance_listed += "#{b.first.capitalize}: #{b.last['quantity']}<br/>"
+      end
+      %Q{
+        <div class="form-group">
+          <label for="amount">Amount</label>
+          <input type="text" class="form-control" name="amount" id="amount" placeholder="Amount to send" value="1000000">
+          <small id="help" class="form-text text-muted">
+            <details>
+              <summary><i>Available balance 👇</summary>
+              <code>
+                #{balance_listed}
+              </code>
+            </details>
+          </small>
+        </div>
+       }
+    end
+
+    def render_assets_form_part(assets_available, multi = nil)
+      assets_balance = assets_available.collect do |a|
+        "#{a['policy_id']}:#{a['asset_name']}:#{a['quantity']}<br/>"
+      end.join("")
+
       radios = %Q{
         <small>
         <div class="form-check">
@@ -350,11 +376,9 @@ module Helpers
           <textarea class="form-control" name="assets" id="assets" rows="3"></textarea>
           <small id="help" class="form-text text-muted">
             <details>
-              <summary><i>policyId:assetName:amount</i> per line.</summary>
+              <summary><i>policyId:assetName:amount</i> per line. Available assets 👇</summary>
               <code>
-  69819f8fdbaa8bd3e6169ddb9ec203820d077755c261cb19f3c6a91f:6164726573746961636f696e:438
-  <br/>4f8d6817100ef16d92d69f30becd77806e1f5ca83cd73739f0374237:7375706572636f696e:55
-  <br/>4f8d6817100ef16d92d69f30becd77806e1f5ca83cd73739f0374237::498
+                #{assets_balance}
               </code>
             </details>
           </small>
