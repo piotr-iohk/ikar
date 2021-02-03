@@ -186,7 +186,7 @@
                                 , Available: <%= wal['balance']['available']['quantity'] %>
                                 <%= ", Rewards: #{wal['balance']['reward']['quantity']}" if wal['balance']['reward'] %>)
          <br/>
-          <%= render_assets(wal) unless url_path.include? "byron" %>
+          <%= render_assets(wal) %>
          <small><b>ID:</b> <%= id %></small><br/>
          <small>
            <b>Status:</b>

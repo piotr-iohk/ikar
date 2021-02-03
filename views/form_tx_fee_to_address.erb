@@ -22,11 +22,8 @@ wid = params[:wid] if params[:wid]
         <label for="address">Address</label>
         <input type="text" class="form-control" name="address" id="address" placeholder="Address" value="">
       </div>
-      <div class="form-group">
-        <label for="amount">Amount</label>
-        <input type="text" class="form-control" name="amount" id="amount" placeholder="Amount to send" value="1000000">
-      </div>
-      <%= render_assets_form_part %>
+      <%= render_amount_form_part(wallets.select{|w| w['id'] == wid }.first['balance']) %>
+      <%= render_assets_form_part(wallets.select{|w| w['id'] == wid }.first['assets']['available']) %>
 
       <% unless (url_path.include? "byron") %>
         <%= render_tx_shelley_form_part %>

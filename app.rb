@@ -296,6 +296,7 @@ get "/wallets/coin-selection/random" do
   wallets = @cw.shelley.wallets.list
   handle_api_err wallets, session
   erb :form_coin_selection, { :locals => { :addr_amt => nil,
+                                           :assets => nil,
                                            :coin_selection => nil,
                                            :wallets => wallets } }
 end
@@ -303,13 +304,12 @@ end
 post "/wallets/coin-selection/random" do
   wallets = @cw.shelley.wallets.list
   handle_api_err wallets, session
-  begin
-    address_amount = params[:addr_amt].split("\n").map{|a| a.strip.split(":")}.collect{|a| {a.first.strip => a.last.strip}}
-    coin_selection = @cw.shelley.coin_selections.random(params[:wid], address_amount)
-  rescue ArgumentError
-    session[:error] = "Make sure the input is in the form of address:amount per line."
-  end
+
+  payload = prepare_payload(params)
+  coin_selection = @cw.shelley.coin_selections.random(params[:wid], payload)
+
   erb :form_coin_selection, { :locals => { :addr_amt => params[:addr_amt],
+                                           :assets => params[:assets],
                                            :coin_selection => coin_selection,
                                            :wallets => wallets } }
 end
@@ -676,6 +676,7 @@ get "/byron-wallets/coin-selection/random" do
   wallets = @cw.byron.wallets.list
   handle_api_err wallets, session
   erb :form_coin_selection, { :locals => { :addr_amt => nil,
+                                           :assets => nil,
                                            :coin_selection => nil,
                                            :wallets => wallets } }
 end
@@ -683,13 +684,10 @@ end
 post "/byron-wallets/coin-selection/random" do
   wallets = @cw.byron.wallets.list
   handle_api_err wallets, session
-  begin
-    address_amount = parse_addr_amt(params[:addr_amt])
-    coin_selection = @cw.byron.coin_selections.random(params[:wid], address_amount)
-  rescue ArgumentError
-    session[:error] = "Make sure the input is in the form of address:amount per line."
-  end
+  payload = prepare_payload(params)
+  coin_selection = @cw.byron.coin_selections.random(params[:wid], payload)
   erb :form_coin_selection, { :locals => { :addr_amt => params[:addr_amt],
+                                           :assets => params[:assets],
                                            :coin_selection => coin_selection,
                                            :wallets => wallets } }
 end

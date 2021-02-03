@@ -29,6 +29,7 @@ module Helpers
     # - form_tx_to_multi_address
     # - form_tx_fee_to_address
     # - form_tx_fee_to_multi_address
+    # - form_coin_selection
     # Common for Byron/Shelley
     def prepare_payload(params)
       if params[:addr_amt]
@@ -294,7 +295,7 @@ module Helpers
     end
     def render_assets(wal)
       r = %Q{ <div class="col-4" style="margin-left:0px;padding:0px"> <b>Assets:</b> }
-      if wal['assets']['total'].size > 0
+      if (wal['assets'] && wal['assets']['total'].size > 0)
         r += %Q{
           <small>
           <table class="table">
@@ -307,13 +308,14 @@ module Helpers
               </tr>
             </thead> }
         wal['assets']['total'].each do |t|
+          available = wal['assets']['available'].select{|a| a['policy_id'] == t['policy_id'] && a['asset_name'] == t['asset_name']}.first if wal['assets']['available']
           r += %Q{
               <tbody>
                 <tr>
                   <td>#{t['policy_id']}</th>
                   <td>#{t['asset_name']}</td>
                   <td>#{t['quantity']}</td>
-                  <td>#{wal['assets']['available'].select{|a| a['policy_id'] == t['policy_id'] && a['asset_name'] == t['asset_name']}.first['quantity']}</td>
+                  <td>#{available ? available['quantity'] : 0}</td>
                 </tr>
            }
         end
@@ -325,17 +327,42 @@ module Helpers
       r
     end
 
-    def render_assets_form_part(multi = nil)
+    def render_amount_form_part(balance)
+      balance_listed = ""
+      balance.each do |b|
+        balance_listed += "#{b.first.capitalize}: #{b.last['quantity']}<br/>"
+      end
+      %Q{
+        <div class="form-group">
+          <label for="amount">Amount</label>
+          <input type="text" class="form-control" name="amount" id="amount" placeholder="Amount to send" value="1000000">
+          <small id="help" class="form-text text-muted">
+            <details>
+              <summary><i>Available balance 👇</summary>
+              <code>
+                #{balance_listed}
+              </code>
+            </details>
+          </small>
+        </div>
+       }
+    end
+
+    def render_assets_form_part(assets_available, multi = nil, assets_per_line = nil, assets_strategy = nil)
+      assets_balance = assets_available.collect do |a|
+        "#{a['policy_id']}:#{a['asset_name']}:#{a['quantity']}<br/>"
+      end.join("")
+
       radios = %Q{
         <small>
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="assets_strategy" id="assets_first" value="assets_first" checked>
+          <input class="form-check-input" type="radio" name="assets_strategy" id="assets_first" value="assets_first" #{"checked" if (assets_strategy == "assets_first" || assets_strategy == nil)}>
           <label class="form-check-label" for="assets_first">
             Add to first address
           </label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="assets_strategy" id="assets_each" value="assets_each">
+          <input class="form-check-input" type="radio" name="assets_strategy" id="assets_each" value="assets_each" #{"checked" if assets_strategy == "assets_each"}>
           <label class="form-check-label" for="assets_each">
             Add to each address
           </label>
@@ -347,14 +374,12 @@ module Helpers
         <div class="form-group">
           <label for="assets">Assets</label>
           #{radios if multi}
-          <textarea class="form-control" name="assets" id="assets" rows="3"></textarea>
+          <textarea class="form-control" name="assets" id="assets" rows="3">#{assets_per_line}</textarea>
           <small id="help" class="form-text text-muted">
             <details>
-              <summary><i>policyId:assetName:amount</i> per line.</summary>
+              <summary><i>policyId:assetName:amount</i> per line. Available assets 👇</summary>
               <code>
-  69819f8fdbaa8bd3e6169ddb9ec203820d077755c261cb19f3c6a91f:6164726573746961636f696e:438
-  <br/>4f8d6817100ef16d92d69f30becd77806e1f5ca83cd73739f0374237:7375706572636f696e:55
-  <br/>4f8d6817100ef16d92d69f30becd77806e1f5ca83cd73739f0374237::498
+                #{assets_balance}
               </code>
             </details>
           </small>
@@ -362,11 +387,11 @@ module Helpers
         }
     end
 
-    def render_addr_amt
+    def render_addr_amt(addr_amt = nil)
       %Q{
         <div class="form-group">
           <label for="addr_amt">Address : Amount</label>
-          <textarea class="form-control" name="addr_amt" id="addr_amt" rows="5"></textarea>
+          <textarea class="form-control" name="addr_amt" id="addr_amt" rows="5">#{addr_amt}</textarea>
           <small id="help" class="form-text text-muted">
 
             <details>
