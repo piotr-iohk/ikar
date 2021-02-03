@@ -29,6 +29,7 @@ module Helpers
     # - form_tx_to_multi_address
     # - form_tx_fee_to_address
     # - form_tx_fee_to_multi_address
+    # - form_coin_selection
     # Common for Byron/Shelley
     def prepare_payload(params)
       if params[:addr_amt]
@@ -347,7 +348,7 @@ module Helpers
        }
     end
 
-    def render_assets_form_part(assets_available, multi = nil)
+    def render_assets_form_part(assets_available, multi = nil, assets_per_line = nil, assets_strategy = nil)
       assets_balance = assets_available.collect do |a|
         "#{a['policy_id']}:#{a['asset_name']}:#{a['quantity']}<br/>"
       end.join("")
@@ -355,13 +356,13 @@ module Helpers
       radios = %Q{
         <small>
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="assets_strategy" id="assets_first" value="assets_first" checked>
+          <input class="form-check-input" type="radio" name="assets_strategy" id="assets_first" value="assets_first" #{"checked" if (assets_strategy == "assets_first" || assets_strategy == nil)}>
           <label class="form-check-label" for="assets_first">
             Add to first address
           </label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="assets_strategy" id="assets_each" value="assets_each">
+          <input class="form-check-input" type="radio" name="assets_strategy" id="assets_each" value="assets_each" #{"checked" if assets_strategy == "assets_each"}>
           <label class="form-check-label" for="assets_each">
             Add to each address
           </label>
@@ -373,7 +374,7 @@ module Helpers
         <div class="form-group">
           <label for="assets">Assets</label>
           #{radios if multi}
-          <textarea class="form-control" name="assets" id="assets" rows="3"></textarea>
+          <textarea class="form-control" name="assets" id="assets" rows="3">#{assets_per_line}</textarea>
           <small id="help" class="form-text text-muted">
             <details>
               <summary><i>policyId:assetName:amount</i> per line. Available assets 👇</summary>
@@ -386,11 +387,11 @@ module Helpers
         }
     end
 
-    def render_addr_amt
+    def render_addr_amt(addr_amt = nil)
       %Q{
         <div class="form-group">
           <label for="addr_amt">Address : Amount</label>
-          <textarea class="form-control" name="addr_amt" id="addr_amt" rows="5"></textarea>
+          <textarea class="form-control" name="addr_amt" id="addr_amt" rows="5">#{addr_amt}</textarea>
           <small id="help" class="form-text text-muted">
 
             <details>
