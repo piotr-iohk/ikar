@@ -284,7 +284,10 @@ module Helpers
               <tbody>
                 <tr>
                   <td>#{a['policy_id']}</th>
-                  <td>#{a['asset_name']}</td>
+                  <td>#{[a['asset_name']].pack('H*')}
+                       <br/>
+                       <small title="asset's name hex representation">#{a['asset_name']}</small>
+                  </td>
                   <td>#{a['quantity']}</td>
                 </tr>
            }
@@ -313,7 +316,10 @@ module Helpers
               <tbody>
                 <tr>
                   <td>#{t['policy_id']}</th>
-                  <td>#{t['asset_name']}</td>
+                  <td>#{[t['asset_name']].pack('H*')}
+                       <br/>
+                       <small title="asset's name hex representation">#{t['asset_name']}</small>
+                  </td>
                   <td>#{t['quantity']}</td>
                   <td>#{available ? available['quantity'] : 0}</td>
                 </tr>
