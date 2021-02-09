@@ -64,6 +64,25 @@
                   }
                   <br/><br/>
 
+                  Script for delegation address with time-locking and validation:<br/>
+                  {
+                "payment": {
+                    "all" : [
+                        "script_vkh1yf07000d4ml3ywd3d439kmwp07xzgv6p35cwx8h605jfx0dtd4a",
+                        { "active_from": 120 },
+                        { "active_until": 100 }
+                        ]
+                    },
+                "stake": {
+                    "all" : [
+                        "script_vkh1yf07000d4ml3ywd3d439kmwp07xzgv6p35cwx8h605jfx0dtd4a",
+                        { "active_from": 120 }
+                        ]
+                    },
+                "validation": "recommended"
+                }
+                <br/><br/>
+
 
             </code>
         </details>
