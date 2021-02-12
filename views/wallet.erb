@@ -170,7 +170,7 @@
     <% end %>
 
      <div class="row" style="margin-top:20px; margin-left:10px;">
-       <div class="col-<%= (url_path.include? "byron") ? "4" : "5" %>">
+       <div class="col-5">
          <% if session[:tx_forgotten] %>
          <%= render_success(session[:tx_forgotten]) + "<br/>" %>
          <%
