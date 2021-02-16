@@ -1,7 +1,7 @@
 module Helpers
   module App
     def version
-      'v2021-02-12'
+      'v2021-02-15'
     end
 
     def is_connected?(w)
