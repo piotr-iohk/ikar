@@ -297,19 +297,23 @@ module Helpers
       r
     end
     def render_assets(wal)
-      r = %Q{ <div class="col-4" style="margin-left:0px;padding:0px"> <b>Assets:</b> }
+      r = %Q{ <div class="col-4" style="margin-left:0px;padding:0px">  }
       if (wal['assets'] && wal['assets']['total'].size > 0)
         r += %Q{
-          <small>
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">Policy ID</th>
-                <th scope="col">Asset name</th>
-                <th scope="col">Total</th>
-                <th scope="col">Available</th>
-              </tr>
-            </thead> }
+          <details>
+            <summary><b>Assets:</b> <i>Available</i></summary>
+              <small>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Policy ID</th>
+                    <th scope="col">Asset name</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Available</th>
+                  </tr>
+                </thead>
+
+          }
         wal['assets']['total'].each do |t|
           available = wal['assets']['available'].select{|a| a['policy_id'] == t['policy_id'] && a['asset_name'] == t['asset_name']}.first if wal['assets']['available']
           r += %Q{
@@ -325,9 +329,9 @@ module Helpers
                 </tr>
            }
         end
-        r += %Q{  </tbody></table></small> }
+        r += %Q{  </tbody></table></small></details> }
       else
-      r += %Q{ <i>N/A</i> }
+      r += %Q{ <b>Assets:</b> <i>N/A</i> }
       end
       r += %Q{</div>}
       r
