@@ -457,20 +457,23 @@ module Helpers
       r
     end
 
-    def render_tx_shelley_form_part
-      %q{
-
+    def render_withdrawal_form_part(value = nil)
+      %Q{
         <div class="form-group">
           <label class="form-check-label" for="withdrawal">Use rewards in transaction</label>
           <input type="text" class="form-control" class="form-check-input" id="withdrawal"
                 name="withdrawal"
-                placeholder="self or mnemonics">
+                placeholder="self or mnemonics" value="#{value}"/>
           <small id="help" class="form-text text-muted">Use: 'self' for self withdrawal or mnemonic sentence for external one.</small>
         </div>
+        }
+    end
 
+    def render_metadata_form_part(value = nil)
+      %Q{
         <div class="form-group">
           <label class="form-check-label" for="metadata">Attach metadata</label>
-          <textarea class="form-control" name="metadata" id="metadata" rows="4"></textarea>
+          <textarea class="form-control" name="metadata" id="metadata" rows="4">#{value}</textarea>
           <small id="help" class="form-text text-muted">
             <details>
               <summary>Examplary metadata</summary>
@@ -523,7 +526,14 @@ module Helpers
             </details>
           </small>
         </div>
+        }
+    end
 
+    def render_tx_shelley_form_part
+      %Q{
+
+        #{render_withdrawal_form_part}
+        #{render_metadata_form_part}
         <div class="form-group">
           <label class="form-check-label" for="ttl">Time-to-live</label>
           <input type="text" class="form-control" class="form-check-input" id="ttl"

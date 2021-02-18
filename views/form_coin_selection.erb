@@ -26,6 +26,11 @@
       <%= render_addr_amt(addr_amt) %>
       <%= render_assets_form_part(wallets.select{|w| w['id'] == wid }.first['assets']['available'], multi = true, assets, params[:assets_strategy]) %>
 
+      <% unless (url_path.include? "byron") %>
+        <%= render_withdrawal_form_part(withdrawal) %>
+        <%= render_metadata_form_part(metadata) %>
+      <% end %>
+
       <button type="submit" class="btn btn-success">Verify</button>
     </form>
   </div>

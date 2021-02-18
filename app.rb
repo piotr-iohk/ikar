@@ -297,6 +297,8 @@ get "/wallets/coin-selection/random" do
   handle_api_err wallets, session
   erb :form_coin_selection, { :locals => { :addr_amt => nil,
                                            :assets => nil,
+                                           :withdrawal => nil,
+                                           :metadata => nil,
                                            :coin_selection => nil,
                                            :wallets => wallets } }
 end
@@ -306,10 +308,22 @@ post "/wallets/coin-selection/random" do
   handle_api_err wallets, session
 
   payload = prepare_payload(params)
-  coin_selection = @cw.shelley.coin_selections.random(params[:wid], payload)
+  case params[:withdrawal]
+  when ''
+    w = nil
+  when 'self'
+    w = 'self'
+  else
+    w = params[:withdrawal].split
+  end
+  m = parse_metadata(params[:metadata])
+
+  coin_selection = @cw.shelley.coin_selections.random(params[:wid], payload, w, m)
 
   erb :form_coin_selection, { :locals => { :addr_amt => params[:addr_amt],
                                            :assets => params[:assets],
+                                           :withdrawal => params[:withdrawal],
+                                           :metadata => params[:metadata],
                                            :coin_selection => coin_selection,
                                            :wallets => wallets } }
 end
@@ -677,6 +691,8 @@ get "/byron-wallets/coin-selection/random" do
   handle_api_err wallets, session
   erb :form_coin_selection, { :locals => { :addr_amt => nil,
                                            :assets => nil,
+                                           :withdrawal => nil,
+                                           :metadata => nil,
                                            :coin_selection => nil,
                                            :wallets => wallets } }
 end
@@ -688,6 +704,8 @@ post "/byron-wallets/coin-selection/random" do
   coin_selection = @cw.byron.coin_selections.random(params[:wid], payload)
   erb :form_coin_selection, { :locals => { :addr_amt => params[:addr_amt],
                                            :assets => params[:assets],
+                                           :withdrawal => nil,
+                                           :metadata => nil,
                                            :coin_selection => coin_selection,
                                            :wallets => wallets } }
 end
