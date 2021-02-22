@@ -54,13 +54,6 @@
   <div class="list-group-item"  >
     <small id="asset">
         <%= response2table(asset) %>
-        <% if asset.respond_to?(:append)
-            asset.each do |a| %>
-        <%=   "#{a['policy_id']}:#{a['asset_name']}:<br/>" %>
-        <%  end
-           else %>
-        <%=   "#{asset['policy_id']}:#{asset['asset_name']}:<br/>" %>
-        <% end %>
     </small>
   </div>
   <% end %>

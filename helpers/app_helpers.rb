@@ -135,8 +135,8 @@ module Helpers
             }
 
         r += generate_curl(response)
-        r += generate_raw_response(response.to_json)
-        r += Json2table::get_html_table(response.to_s, table_options)
+        r += generate_raw_response(response.to_s.force_encoding('UTF-8').to_json)
+        r += Json2table::get_html_table(response.to_s.force_encoding('UTF-8'), table_options)
       end
       r
     end
