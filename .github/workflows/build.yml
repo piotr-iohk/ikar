@@ -31,15 +31,17 @@ jobs:
       run: bundle install
     - name: Set up cardano-wallet & cardano-node on Shelley testnet
       run: |
-        wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/docker-compose-shelley.yml
-        wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/spec/testnet/testnet-config.json
-        wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/spec/testnet/testnet-byron-genesis.json
-        wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/spec/testnet/testnet-shelley-genesis.json
-        wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/spec/testnet/testnet-topology.json
-        NODE_CONFIG_PATH=`pwd` docker-compose -f docker-compose-shelley.yml up --detach
+        wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/docker-compose.yml
+        wget $CONFIG_URL/testnet-config.json
+        wget $CONFIG_URL/testnet-byron-genesis.json
+        wget $CONFIG_URL/testnet-shelley-genesis.json
+        wget $CONFIG_URL/testnet-topology.json
+        NODE_CONFIG_PATH=`pwd` docker-compose up --detach
     - name: Run tests
       run: rspec tests
     env:
+      CONFIG_URL: https://hydra.iohk.io/job/Cardano/cardano-node/cardano-deployment/latest-finished/download/1
       NETWORK: testnet
       WALLET: dev-master-shelley
       NODE: master
+      TOKEN_METADATA: http://metadata-server-mock.herokuapp.com/
