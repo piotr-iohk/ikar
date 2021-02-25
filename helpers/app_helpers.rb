@@ -408,13 +408,12 @@ module Helpers
               <summary><i>address:amount</i> per line.</summary>
               <code>
                 Testnet:<br/><br/>
-  37btjrVyb4KF6KtvXYUxDHqjAwfKAuDzP71UEuG6vh87rjstvB8o1Muu6KaeGAF8xZro63Zc5VAYNnQtcci4vT8jhLuNtwku9x1YgS18LHFAhxxTi8:1000000
-  <br/>2cWKMJemoBakujqtRy1FT978A3dLJcc1vXKzGTxxhsShkRL8YDUreEje2GqaC3en5TtCc:1000000
-  <br/>addr1qrvc39e0lampjjpg0z65z0pccjvpg502c738s3kyam755rhl0dw5r75vk42mv3ykq8vyjeaanvpytg79xqzymqy5acmqjdm7lg:1000000
+  37btjrVyb4KEciULDrqJDBh6SjgPqi9JJ5qQqWGgvtsB7GcsuqorKceMTBRudFK8zDu3btoC5FtN7K1PEHmko4neQPfV9TDVfivc9JTZVNPKtRd4w2:1000000
+  <br/>2cWKMJemoBahV5kQm7SzV7Yc2b4vyqLE7oYJiEkd5GE5GCKzSCgh9HBaRKkdVrxzsEuRb:1000000
+  <br/>addr_test1qq9grthf479qmyygzrenk6yqqhtvf3aq2xy5jfscm334qsvs47mevx68ut5g3jt5gxntcaygv3szmhzyytdjfat9758s2h6z2v:1000000
   <br/><br/>Mainnet:<br/><br/>
-  addr1q95vgw8r27wtsm7efxulnh6mx6r6fh6q35p4pv6zr4eraef7y5xc6cr99fsj8w0hqksgwv3enatmz9ulpp6zn2kuskaqmqda5n:1000000
-  <br/>addr1qxxkaq0d3c739xf0gdj0jdf0rel7azpqkskn8y6c5fusvue7y5xc6cr99fsj8w0hqksgwv3enatmz9ulpp6zn2kuskaqarfnmd:1000000
-
+  addr1q9rad75p5r9qk9pnczhyqhkqfv5j2hp7lrmwxpusfqmc8pp7y5xc6cr99fsj8w0hqksgwv3enatmz9ulpp6zn2kuskaqmq72h5:1000000
+  <br/>addr1qyu3sm9rqetm0nvmsgkkj9e84h0yy0c32fe6ut6alcnalvf7y5xc6cr99fsj8w0hqksgwv3enatmz9ulpp6zn2kuskaqp42lp0:1000000
               </code>
             </details>
 
