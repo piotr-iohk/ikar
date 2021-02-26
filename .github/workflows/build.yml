@@ -31,12 +31,12 @@ jobs:
       run: bundle install
     - name: Set up cardano-wallet & cardano-node on Shelley testnet
       run: |
-        wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/docker-compose.yml
+        wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/docker-compose.yml -O docker-compose-test.yml
         wget $CONFIG_URL/testnet-config.json
         wget $CONFIG_URL/testnet-byron-genesis.json
         wget $CONFIG_URL/testnet-shelley-genesis.json
         wget $CONFIG_URL/testnet-topology.json
-        NODE_CONFIG_PATH=`pwd` docker-compose up --detach
+        NODE_CONFIG_PATH=`pwd` docker-compose -f docker-compose-test.yml up --detach
     - name: Run tests
       run: rspec tests
     env:
