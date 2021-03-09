@@ -31,8 +31,8 @@ This immediately spins up:
 Visit http://localhost:4444/, click _Connect_ and play around!
 
 
-## Alternative setup
-Alternatively one can [set up cardano-wallet](https://github.com/input-output-hk/cardano-wallet/releases) with any of the supported block producer and start ikar on top of it:
+## Setup
+If you already have [cardano-wallet](https://github.com/input-output-hk/cardano-wallet) and [cardano-node](https://github.com/input-output-hk/cardano-node) set up on your machine, you can connect Ikar to the stack as follows:
 
 <details>
     <summary>Via docker</summary>
