@@ -301,7 +301,7 @@ module Helpers
       if (wal['assets'] && wal['assets']['total'].size > 0)
         r += %Q{
           <details>
-            <summary><b>Assets:</b> <i>Available</i></summary>
+            <summary><b>Assets:</b> <i>Available (#{wal['assets']['total'].size })</i></summary>
               <small>
               <table class="table">
                 <thead>
