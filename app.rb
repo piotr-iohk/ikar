@@ -239,6 +239,58 @@ post "/submit-external-tx" do
   erb :form_tx_external, { :locals => { :tx => tx, :blob => params['blob'] } }
 end
 
+# SHARED WALLETS
+
+get "/shared-wallets/:wal_id" do
+  wal = @cw.shared.wallets.get params[:wal_id]
+  handle_api_err wal, session
+  # txs = @cw.shelley.transactions.list params[:wal_id]
+  # handle_api_err txs, session
+  # addrs = @cw.shelley.addresses.list params[:wal_id]
+  # handle_api_err addrs, session
+
+  erb :shared_wallet, { :locals => { :wal => wal, :txs => nil, :addrs => nil} }
+end
+
+get "/shared-wallets-delete/:wal_id" do
+  @cw.shared.wallets.delete params[:wal_id]
+  redirect "/wallets"
+end
+
+get "/shared-wallets-create" do
+  # 24-word mnemonics
+  bits = bits_from_word_count '24'
+  mnemonics = BipMnemonic.to_mnemonic(bits: bits, language: 'english')
+  erb :form_create_wallet, { :locals => { :mnemonics => mnemonics} }
+end
+
+post "/shared-wallets-create" do
+  m = prepare_mnemonics params[:mnemonics]
+  pass = params[:pass]
+  name = params[:wal_name]
+  pool_gap = params[:pool_gap].to_i
+  account_index = params[:account_index]
+  payment_script_template = JSON.parse(params[:payment_script_template].strip)
+  payload = { mnemonic_sentence: m,
+              passphrase: pass,
+              name: name,
+              address_pool_gap: pool_gap,
+              account_index: account_index,
+              payment_script_template: payment_script_template
+              }
+  if params[:delegation_script_template] != ''
+    delegation_script_template = JSON.parse params[:delegation_script_template]
+    payload[:delegation_script_template] = delegation_script_template
+  end
+
+  wal = @cw.shared.wallets.create(payload)
+  handle_api_err wal, session
+  session[:wal] = wal
+  handle_api_err wal, session
+
+  redirect "/shared-wallets/#{wal['id']}"
+end
+
 # SHELLEY WALLETS
 
 get "/wallets-get-assets" do
@@ -377,8 +429,8 @@ get "/wallets-delete/:wal_id" do
 end
 
 get "/wallets-create" do
-  # 15-word mnemonics
-  bits = bits_from_word_count '15'
+  # 24-word mnemonics
+  bits = bits_from_word_count '24'
   mnemonics = BipMnemonic.to_mnemonic(bits: bits, language: 'english')
   erb :form_create_wallet, { :locals => { :mnemonics => mnemonics} }
 end

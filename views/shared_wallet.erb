@@ -1,0 +1,221 @@
+<%
+  url_path = request.env['PATH_INFO'].to_s
+  id = wal['id']
+  name = wal['name']
+  status = wal['state']['status'] if wal['state']
+  discovery = wal['discovery']
+%>
+
+<script src="../lib.js" type="text/javascript"></script>
+
+<div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                Delete wallet <b><%= name %></b>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-danger btn-ok" href="<%= "/shared-wallets-delete/#{id}" %>" >Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+ <div class="list-group">
+   <div class="list-group-item">
+
+         <nav class="nav nav-tabs">
+           <a class="nav-link disabled" href="/shared-wallets">List All Shared</a>
+           <div>
+             <a class="nav-link dropdown-toggle"
+               data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Management</a>
+             <div class="dropdown-menu">
+               <a class="dropdown-item" href="#" data-toggle="modal" data-target="#confirm-delete">Delete</a>
+               <a class="dropdown-item" href="/shared-wallets/<%= id %>/update-payment">Update payment</a>
+               <a class="dropdown-item" href="/shared-wallets/<%= id %>/update-delegation">Update delegation</a>
+             </div>
+           </div>
+
+         </nav>
+
+
+     <div class="row" style="margin-top:20px; margin-left:10px;">
+       <div class="col-5">
+         <% if session[:tx_forgotten] %>
+         <%= render_success(session[:tx_forgotten]) + "<br/>" %>
+         <%
+               session.delete :tx_forgotten
+            end
+         %>
+         <div class="d-flex w-100 justify-content-between">
+           <h5 class="mb-1">
+             <a href="/<%= "shared-wallets" %>/<%= id %>"><%= name %></a>
+           </h5>
+         </div>
+         <% if wal['balance'] %>
+           <b>Balance:</b> (Total: <%= wal['balance']['total']['quantity'] %>
+                                  , Available: <%= wal['balance']['available']['quantity'] %>
+                                  <%= ", Rewards: #{wal['balance']['reward']['quantity']}" if wal['balance']['reward'] %>)
+           <br/>
+            <%= render_assets(wal) %>
+         <% end %>
+         <small><b>ID:</b> <%= id %></small><br/>
+         <small>
+           <b>Status:</b>
+           <%= render_wal_status status, wal %>
+         </small><br/>
+         <% if wal['tip'] %>
+           <small>
+             <b>Tip:</b> (Height: <%= wal['tip']['height']['quantity'] %>
+                         , Epoch: <%= wal['tip']['epoch_number'] %>
+                         , Slot: <%= wal['tip']['slot_number'] %>)
+           </small><br/>
+         <% end %>
+
+         <% if discovery %>
+         <small>
+           <b>Address discovery:</b> <%= discovery %>
+         </small>
+         <% end %>
+     <br/>
+          <% if wal['delegation'] %>
+            <%
+             active_delegation = wal['delegation']['active']
+             next_delegation = wal['delegation']['next']
+             %>
+             <small><b>Delegation active:</b><br/>
+               &nbsp;&nbsp;<b>Status:</b> <%= render_deleg_status active_delegation['status']%>
+               <%= active_delegation['status'] == "delegating" ? "<br/>&nbsp;&nbsp;<b>Target:</b> #{active_delegation['target']}" : ""%>
+             </small><br/>
+             <% if next_delegation
+                 next_delegation.each do |n|
+             %>
+               <small><b>Delegation next:</b> <br/>
+                 &nbsp;&nbsp;<b>Status:</b> <%= render_deleg_status n['status']%><br/>
+                 &nbsp;&nbsp;<b>Target:</b> <%= n['target']%><br/>
+                 &nbsp;&nbsp;<b>Changes at:</b><br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;<b>Epoch start time:</b> <%= n['changes_at']['epoch_start_time']%><br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;<b>Epoch number:</b> <%= n['changes_at']['epoch_number']%>
+               </small><br/>
+             <% end %>
+              <br/>
+           <% end %>
+           <% end %>
+
+         <% if wal['address_pool_gap'] %>
+         <small>
+           <b>Address pool gap:</b> <%= wal['address_pool_gap'] %>
+         </small><br/>
+         <% end %>
+           <%
+           # unless url_path.include? "byron"
+              if addrs
+                addresses = addrs
+                used = addresses.select{ |a| a['state'] == "used" }
+                unused = addresses.select{ |a| a['state'] == "unused" }
+            %>
+               <small><b>Addresses:</b> <br/>
+                         &nbsp;&nbsp;<a href="#" onClick="showIt('addr')">Total:</a> <span id="addr_size"><%= addresses.size %></span> <br/>
+                          &nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('addr_used')">Used:</a> <span id="addr_used_size"><%= used.size %></span>  <br/>
+                          &nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('addr_unused')">Unused:</a> <span id="addr_unused_size"><%= unused.size %></span>  <br/>
+
+               </small>
+            <% end %>
+           <% # end %>
+           <%
+              if txs
+                txs_pending = txs.select{ |t| t['status'] == "pending" }
+                txs_expired = txs.select{ |t| t['status'] == "expired" }
+                txs_inledger = txs.select{ |t| t['status'] == "in_ledger" }
+                txs_in = txs.select{ |t| t['direction'] == "incoming" }
+                txs_out = txs.select{ |t| t['direction'] == "outgoing" }
+            %>
+           <small><b>Transactions:</b>  <br/>
+                 &nbsp;&nbsp;<a href="#" onClick="showIt('txs')" >Total:</a> <span id="txs_total"><%= txs.size %></span> <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;Status: <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('txs_pending')" >Pending:</a>  <span id="txs_pending_size"><%= txs_pending.size %></span> <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('txs_expired')" >Expired:</a>  <span id="txs_expired_size"><%= txs_expired.size %></span> <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('txs_inledger')" >InLedger:</a>  <span id="txs_inledger_size"><%= txs_inledger.size %></span> <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;Direction: <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('txs_in')" >Incoming:</a>  <span id="txs_in_size"><%= txs_in.size %></span> <br/>
+                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="showIt('txs_out')" >Outgoing:</a>  <span id="txs_out_size"><%= txs_out.size %></span> <br/>
+           </small><br/>
+           <% end %>
+           <small><%= generate_curl(wal, "Wallet curl") %></small>
+           <small><%= generate_curl(addresses, "Addresses curl") if txs %></small>
+           <small><%= generate_curl(txs, "Transactions curl") if addresses %></small>
+       </div>
+       <div class="col displ_details" style="display:none" id="addr">
+         <div class="list-group-item">
+           Addresses total:<br/>
+           <small><%= addresses.map { |a| a['id'] }.join("<br/>") if addrs %></small>
+         </div>
+       </div>
+       <div class="col displ_details" style="display:none" id="addr_used">
+         <div class="list-group-item">
+           Addresses used:<br/>
+           <small><%= used.map { |a| a['id'] }.join("<br/>") if addrs %></small>
+         </div>
+       </div>
+       <div class="col displ_details" style="display:none" id="addr_unused">
+         <div class="list-group-item">
+           Addresses unused:<br/>
+           <small><%= unused.map { |a| a['id'] }.join("<br/>") if addrs %></small>
+         </div>
+       </div>
+
+       <% if txs %>
+         <div class="col displ_details" style="display:none" id="txs">
+           <div class="list-group-item">
+             Txs total:<br/>
+             <% txs.each do |tx| %>
+                <%= render_tx_on_wallet_page(url_path, tx, id) %>
+             <% end %>
+           </div>
+         </div>
+         <div class="col displ_details" style="display:none" id="txs_pending">
+           <div class="list-group-item">
+             Txs pending:<br/>
+             <% txs_pending.each do |tx| %>
+                <%= render_tx_on_wallet_page(url_path, tx, id) %>
+             <% end %>
+           </div>
+         </div>
+         <div class="col displ_details" style="display:none" id="txs_expired">
+           <div class="list-group-item">
+             Txs expired:<br/>
+             <% txs_expired.each do |tx| %>
+                <%= render_tx_on_wallet_page(url_path, tx, id) %>
+             <% end %>
+           </div>
+         </div>
+         <div class="col displ_details" style="display:none" id="txs_inledger">
+           <div class="list-group-item">
+             Txs in ledger:<br/>
+             <% txs_inledger.each do |tx| %>
+              <%= render_tx_on_wallet_page(url_path, tx, id) %>
+             <% end %>
+           </div>
+         </div>
+         <div class="col displ_details" style="display:none" id="txs_in">
+           <div class="list-group-item">
+             Txs incoming:<br/>
+             <% txs_in.each do |tx| %>
+                <%= render_tx_on_wallet_page(url_path, tx, id) %>
+             <% end %>
+           </div>
+         </div>
+         <div class="col displ_details" style="display:none" id="txs_out">
+           <div class="list-group-item">
+             Txs outgoing:<br/>
+             <% txs_out.each do |tx| %>
+                <%= render_tx_on_wallet_page(url_path, tx, id) %>
+             <% end %>
+           </div>
+         </div>
+       <% end %>
+
+     </div>
+
+   </div>
+ </div>
