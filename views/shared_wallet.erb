@@ -31,8 +31,8 @@
                data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Management</a>
              <div class="dropdown-menu">
                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#confirm-delete">Delete</a>
-               <a class="dropdown-item" href="/shared-wallets/<%= id %>/update-payment">Update payment</a>
-               <a class="dropdown-item" href="/shared-wallets/<%= id %>/update-delegation">Update delegation</a>
+               <a class="dropdown-item" href="/shared-wallets/<%= id %>/patch-payment">Update payment</a>
+               <a class="dropdown-item" href="/shared-wallets/<%= id %>/patch-delegation">Update delegation</a>
              </div>
            </div>
 
@@ -62,7 +62,7 @@
          <small><b>ID:</b> <%= id %></small><br/>
          <small>
            <b>Status:</b>
-           <%= render_wal_status status, wal %>
+           <%= status ? render_wal_status(status, wal) : 'pending' %>
          </small><br/>
          <% if wal['tip'] %>
            <small>
@@ -71,12 +71,44 @@
                          , Slot: <%= wal['tip']['slot_number'] %>)
            </small><br/>
          <% end %>
-
-         <% if discovery %>
+         <% if wal['address_pool_gap'] %>
          <small>
-           <b>Address discovery:</b> <%= discovery %>
-         </small>
+           <b>Address pool gap:</b> <%= wal['address_pool_gap'] %>
+         </small><br/>
          <% end %>
+
+         <% if wal['account_index'] %>
+         <small>
+           <b>Account index:</b> <%= wal['account_index'] %>
+         </small><br/>
+         <% end %>
+
+         <% if wal['payment_script_template'] %>
+         <small>
+           <details>
+             <summary><b>Payment Script Template</b></summary>
+             <pre><%= JSON.pretty_generate(wal['payment_script_template']) %></pre>
+           </details>
+         </small>
+         <% else %>
+         <small>
+           <b>Payment Script Template:</b> <i>N/A</i>
+         </small><br/>
+         <% end %>
+
+         <% if wal['delegation_script_template'] %>
+         <small>
+           <details>
+             <summary><b>Delegation Script Template</b></summary>
+               <pre><%= JSON.pretty_generate(wal['delegation_script_template']) %></pre>
+           </details>
+         </small>
+         <% else %>
+         <small>
+           <b>Delegation Script Template:</b> <i>N/A</i>
+         </small><br/>
+         <% end %>
+
      <br/>
           <% if wal['delegation'] %>
             <%
@@ -88,25 +120,20 @@
                <%= active_delegation['status'] == "delegating" ? "<br/>&nbsp;&nbsp;<b>Target:</b> #{active_delegation['target']}" : ""%>
              </small><br/>
              <% if next_delegation
-                 next_delegation.each do |n|
+                  next_delegation.each do |n|
              %>
-               <small><b>Delegation next:</b> <br/>
-                 &nbsp;&nbsp;<b>Status:</b> <%= render_deleg_status n['status']%><br/>
-                 &nbsp;&nbsp;<b>Target:</b> <%= n['target']%><br/>
-                 &nbsp;&nbsp;<b>Changes at:</b><br/>
-                 &nbsp;&nbsp;&nbsp;&nbsp;<b>Epoch start time:</b> <%= n['changes_at']['epoch_start_time']%><br/>
-                 &nbsp;&nbsp;&nbsp;&nbsp;<b>Epoch number:</b> <%= n['changes_at']['epoch_number']%>
-               </small><br/>
-             <% end %>
+                     <small><b>Delegation next:</b> <br/>
+                       &nbsp;&nbsp;<b>Status:</b> <%= render_deleg_status n['status']%><br/>
+                       &nbsp;&nbsp;<b>Target:</b> <%= n['target']%><br/>
+                       &nbsp;&nbsp;<b>Changes at:</b><br/>
+                       &nbsp;&nbsp;&nbsp;&nbsp;<b>Epoch start time:</b> <%= n['changes_at']['epoch_start_time']%><br/>
+                       &nbsp;&nbsp;&nbsp;&nbsp;<b>Epoch number:</b> <%= n['changes_at']['epoch_number']%>
+                     </small><br/>
+                   <% end %>
               <br/>
-           <% end %>
-           <% end %>
+                <% end # if next_delegation %>
+           <% end # if wal['delegation'] %>
 
-         <% if wal['address_pool_gap'] %>
-         <small>
-           <b>Address pool gap:</b> <%= wal['address_pool_gap'] %>
-         </small><br/>
-         <% end %>
            <%
            # unless url_path.include? "byron"
               if addrs

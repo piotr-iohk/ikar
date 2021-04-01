@@ -241,6 +241,39 @@ end
 
 # SHARED WALLETS
 
+get "/shared-wallets/:wal_id/patch-payment" do
+  wal = @cw.shared.wallets.get params[:wal_id]
+  handle_api_err wal, session
+
+  erb :form_shared_wallet_patch, { :locals => { :wal => wal} }
+end
+
+post "/shared-wallets/:wal_id/patch-payment" do
+  up = @cw.shared.wallets.update_payment_script(params[:wal_id],
+                                                params[:cosigner],
+                                                params[:acc_pub_key])
+  handle_api_err up, session
+
+  redirect "/shared-wallets/#{params[:wal_id]}"
+end
+
+
+get "/shared-wallets/:wal_id/patch-delegation" do
+  wal = @cw.shared.wallets.get params[:wal_id]
+  handle_api_err wal, session
+
+  erb :form_shared_wallet_patch, { :locals => { :wal => wal} }
+end
+
+post "/shared-wallets/:wal_id/patch-delegation" do
+  up = @cw.shared.wallets.update_delegation_script(params[:wal_id],
+                                                   params[:cosigner],
+                                                   params[:acc_pub_key])
+  handle_api_err up, session
+
+  redirect "/shared-wallets/#{params[:wal_id]}"
+end
+
 get "/shared-wallets/:wal_id" do
   wal = @cw.shared.wallets.get params[:wal_id]
   handle_api_err wal, session
@@ -270,7 +303,12 @@ post "/shared-wallets-create" do
   name = params[:wal_name]
   pool_gap = params[:pool_gap].to_i
   account_index = params[:account_index]
-  payment_script_template = JSON.parse(params[:payment_script_template].strip)
+  begin
+    payment_script_template = JSON.parse(params[:payment_script_template].strip)
+  rescue
+    session[:error] = "Make sure the 'payment_script_template' has correct JSON format."
+    redirect '/shared-wallets-create'
+  end
   payload = { mnemonic_sentence: m,
               passphrase: pass,
               name: name,
@@ -279,7 +317,12 @@ post "/shared-wallets-create" do
               payment_script_template: payment_script_template
               }
   if params[:delegation_script_template] != ''
-    delegation_script_template = JSON.parse params[:delegation_script_template]
+    begin
+      delegation_script_template = JSON.parse(params[:delegation_script_template].strip)
+    rescue
+      session[:error] = "Make sure the 'delegation_script_template' has correct JSON format."
+      redirect '/shared-wallets-create'
+    end
     payload[:delegation_script_template] = delegation_script_template
   end
 

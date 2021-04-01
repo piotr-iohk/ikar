@@ -4,6 +4,14 @@
   shelley_ep = "/wallets-create"
   shared_ep = "/shared-wallets-create"
 %>
+<% if session[:error] %>
+      <div class="alert alert-danger" role="alert">
+        <%= session[:error]%>
+      </div>
+<%
+      session.delete :error
+   end
+%>
 <div class="list-group">
   <div class="list-group-item">
     <form action="<%= (url_path.include? "byron") ? byron_ep : ((url_path.include? "shared") ? shared_ep : shelley_ep) %>" method="POST">
