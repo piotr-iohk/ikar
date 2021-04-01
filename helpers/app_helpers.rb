@@ -1,3 +1,5 @@
+require 'bip_mnemonic'
+
 module Helpers
   module App
     def version
@@ -589,24 +591,11 @@ module Helpers
       end
     end
 
-    def bits_from_word_count wc
-      case wc
-        when '9'
-          bits = 96
-        when '12'
-          bits = 128
-        when '15'
-          bits = 164
-        when '18'
-          bits = 196
-        when '21'
-          bits = 224
-        when '24'
-          bits = 256
-        else
-          raise "Non-supported no of words #{wc}!"
-      end
-      bits
+    def mnemonic_sentence wc
+      mtrx = {'9' => 96, '12' => 128, '15' => 164, '18' => 196, '21' => 224, '24' => 256}
+      wc = wc.to_s
+      raise "Non-supported no of words #{wc}! Supported are #{mtrx.keys}" unless mtrx.keys.include?(wc)
+      BipMnemonic.to_mnemonic(bits: mtrx[wc], language: 'english')
     end
 
   end

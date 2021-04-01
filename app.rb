@@ -1,5 +1,4 @@
 require 'sinatra'
-require 'bip_mnemonic'
 require 'chartkick'
 require 'cardano_wallet'
 require 'sys/proctable'
@@ -292,8 +291,7 @@ end
 
 get "/shared-wallets-create" do
   # 24-word mnemonics
-  bits = bits_from_word_count '24'
-  mnemonics = BipMnemonic.to_mnemonic(bits: bits, language: 'english')
+  mnemonics = mnemonic_sentence(24)
   erb :form_create_wallet, { :locals => { :mnemonics => mnemonics} }
 end
 
@@ -473,8 +471,7 @@ end
 
 get "/wallets-create" do
   # 24-word mnemonics
-  bits = bits_from_word_count '24'
-  mnemonics = BipMnemonic.to_mnemonic(bits: bits, language: 'english')
+  mnemonics = mnemonic_sentence(24)
   erb :form_create_wallet, { :locals => { :mnemonics => mnemonics} }
 end
 
@@ -541,10 +538,9 @@ post "/wallets-create-many" do
   name = params[:wal_name]
   pool_gap = params[:pool_gap].to_i
   how_many = params[:how_many].to_i
-  bits = bits_from_word_count params[:words_count]
 
   1.upto how_many do |i|
-    mnemonics = BipMnemonic.to_mnemonic(bits: bits, language: 'english').split
+    mnemonics = mnemonic_sentence(params[:words_count]).split
     wal = @cw.shelley.wallets.create({mnemonic_sentence: mnemonics,
                                       passphrase: pass,
                                       name: "#{name} #{i}",
@@ -908,8 +904,7 @@ end
 
 get "/byron-wallets-create" do
   # 12-word mnemonics
-  bits = bits_from_word_count '12'
-  mnemonics = BipMnemonic.to_mnemonic(bits: bits, language: 'english')
+  mnemonics = mnemonic_sentence(12)
   erb :form_create_wallet, { :locals => { :mnemonics => mnemonics} }
 end
 
@@ -992,10 +987,9 @@ post "/byron-wallets-create-many" do
   name = params[:wal_name]
   how_many = params[:how_many].to_i
   style = params[:style]
-  bits = bits_from_word_count params[:words_count]
 
   1.upto how_many do |i|
-    mnemonics = BipMnemonic.to_mnemonic(bits: bits, language: 'english').split
+    mnemonics = mnemonic_sentence(params[:words_count]).split
     wal = @cw.byron.wallets.create({name: "#{name} (#{style}) #{i}",
                                     style: style,
                                     passphrase: pass,
@@ -1126,11 +1120,9 @@ get "/gen-mnemonics" do
 end
 
 post "/gen-mnemonics" do
-  bits = bits_from_word_count params[:words_count]
-  words_count = params[:words_count]
-  mnemonics = BipMnemonic.to_mnemonic(bits: bits, language: 'english')
+  mnemonics = mnemonic_sentence(params[:words_count])
   erb :form_gen_mnemonics, { :locals => {:mnemonics => mnemonics,
-                                         :words_count => words_count } }
+                                         :words_count => params[:words_count] } }
 end
 
 # STAKE-POOLS
