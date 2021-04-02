@@ -289,6 +289,40 @@ get "/shared-wallets-delete/:wal_id" do
   redirect "/wallets"
 end
 
+get "/shared-wallets-create-from-pub-key" do
+  erb :form_create_wallet_from_pub_key
+end
+
+post "/shared-wallets-create-from-pub-key" do
+  name = params[:wal_name]
+  pub_key = params[:pub_key]
+  account_index = params[:account_index]
+  begin
+    payment_script_template = JSON.parse(params[:payment_script_template].strip)
+  rescue
+    session[:error] = "Make sure the 'payment_script_template' has correct JSON format."
+    redirect '/shared-wallets-create-from-pub-key'
+  end
+  payload = {name: name,
+             account_public_key: pub_key,
+             account_index: account_index,
+             payment_script_template: payment_script_template
+             }
+  if params[:delegation_script_template] != ''
+    begin
+      delegation_script_template = JSON.parse(params[:delegation_script_template].strip)
+    rescue
+      session[:error] = "Make sure the 'delegation_script_template' has correct JSON format."
+      redirect '/shared-wallets-create-from-pub-key'
+    end
+    payload[:delegation_script_template] = delegation_script_template
+  end
+  wal = @cw.shared.wallets.create(payload)
+  handle_api_err wal, session
+
+  redirect "/shared-wallets/#{wal['id']}"
+end
+
 get "/shared-wallets-create" do
   # 24-word mnemonics
   mnemonics = mnemonic_sentence(24)
@@ -299,7 +333,6 @@ post "/shared-wallets-create" do
   m = prepare_mnemonics params[:mnemonics]
   pass = params[:pass]
   name = params[:wal_name]
-  pool_gap = params[:pool_gap].to_i
   account_index = params[:account_index]
   begin
     payment_script_template = JSON.parse(params[:payment_script_template].strip)
@@ -310,7 +343,6 @@ post "/shared-wallets-create" do
   payload = { mnemonic_sentence: m,
               passphrase: pass,
               name: name,
-              address_pool_gap: pool_gap,
               account_index: account_index,
               payment_script_template: payment_script_template
               }
@@ -924,7 +956,6 @@ post "/byron-wallets-create" do
 end
 
 get "/byron-wallets-create-from-pub-key" do
-  # 15-word mnemonics
   erb :form_create_wallet_from_pub_key
 end
 
@@ -933,9 +964,9 @@ post "/byron-wallets-create-from-pub-key" do
   name = params[:wal_name]
   pool_gap = params[:pool_gap].to_i
   wal = @cw.byron.wallets.create({name: name,
-                                    account_public_key: pub_key,
-                                    address_pool_gap: pool_gap,
-                                    })
+                                  account_public_key: pub_key,
+                                  address_pool_gap: pool_gap,
+                                  })
   handle_api_err wal, session
 
   redirect "/byron-wallets/#{wal['id']}"

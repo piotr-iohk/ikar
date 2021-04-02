@@ -545,6 +545,62 @@ module Helpers
        }
     end
 
+    def render_shared_wallet_create_form_part
+      %(
+        <div class="form-group">
+          <label for="account_index">Account index</label>
+          <input type="text" class="form-control" name="account_index" id="account_index"
+                 placeholder="Account index" value="">
+          <small id="help_acc" class="form-text text-muted">An individual segment within a derivation path. E.g. 1852H.</small>
+
+        </div>
+
+        <div class="form-group">
+          <label for="payment_script_template">Payment script template</label>
+          <textarea class="form-control" name="payment_script_template" id="payment_script_template" rows="10"></textarea>
+          <small id="help_pay" class="form-text text-muted">
+            <details>
+              <summary>Examplary template</summary>
+                <pre>
+{ "cosigners":
+  { "cosigner#0": "1423856bc91c49e928f6f30f4e8d665d53eb4ab6028bd0ac971809d514c92db11423856bc91c49e928f6f30f4e8d665d53eb4ab6028bd0ac971809d514c92db2" },
+"template":
+    { "all":
+       [ "cosigner#0",
+         { "active_from": 120 }
+       ]
+    }
+}
+                </pre>
+            </details>
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="delegation_script_template">Delegation script template</label>
+          <textarea class="form-control" name="delegation_script_template" id="delegation_script_template" rows="10"></textarea>
+          <small id="help_del" class="form-text text-muted">
+            <details>
+              <summary>Examplary template</summary>
+                <pre>
+{ "cosigners":
+  { "cosigner#0": "1423856bc91c49e928f6f30f4e8d665d53eb4ab6028bd0ac971809d514c92db11423856bc91c49e928f6f30f4e8d665d53eb4ab6028bd0ac971809d514c92db2" },
+"template":
+    { "all":
+       [ "cosigner#0",
+         "cosigner#1",
+         { "active_from": 120 },
+         { "active_until": 100 }
+       ]
+    }
+}
+                </pre>
+            </details>
+          </small>
+        </div>
+       )
+    end
+
     def render_danger(text)
       "<span class='badge badge-danger'>#{text}</span>"
     end

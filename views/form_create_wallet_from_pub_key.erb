@@ -2,10 +2,20 @@
   url_path = request.env['PATH_INFO'].to_s
   byron_ep = "/byron-wallets-create-from-pub-key"
   shelley_ep = "/wallets-create-from-pub-key"
+  shared_ep = "/shared-wallets-create-from-pub-key"
+
+%>
+<% if session[:error] %>
+      <div class="alert alert-danger" role="alert">
+        <%= session[:error]%>
+      </div>
+<%
+      session.delete :error
+   end
 %>
 <div class="list-group">
   <div class="list-group-item">
-    <form action="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>" method="POST">
+    <form action="<%= (url_path.include? "byron") ? byron_ep : ((url_path.include? "shared") ? shared_ep : shelley_ep) %>" method="POST">
 
       <div class="form-group">
         <label for="wal_name">Wallet name</label>
@@ -17,15 +27,18 @@
         <textarea class="form-control" name="pub_key" id="pub_key" rows="3">b47546e661b6c1791452d003d375756dde6cac2250093ce4630f16b9b9c0ac87411337bda4d5bc0216462480b809824ffb48f17e08d95ab9f1b91d391e48e66b</textarea>
       </div>
 
-      <div class="form-group">
-        <label for="pool_gap">Address pool gap</label>
-        <select class="form-control" name="pool_gap" id="pool_gap">
-          <% 10.upto 100 do |i| %>
-          <option <%= i == 20 ? "selected" : "" %> <%= "value=\"#{i}\">#{i}" %></option>
-
-          <% end %>
-        </select>
-      </div>
+      <%# Don't show address pool gap Shared wallets %>
+      <% unless (url_path.include?('shared'))  %>
+          <div class="form-group">
+            <label for="pool_gap">Address pool gap</label>
+            <input type="text" class="form-control" name="pool_gap" id="pool_gap"
+                   placeholder="Address pool gap" value="20">
+          </div>
+      <% end %>
+      <%# Shared wallets specific %>
+      <% if url_path.include? "shared" %>
+      <%= render_shared_wallet_create_form_part %>
+      <% end %>
 
 
       <button type="submit" class="btn btn-success">Create</button>
