@@ -2,10 +2,19 @@
   url_path = request.env['PATH_INFO'].to_s
   byron_ep = "/byron-wallets-create"
   shelley_ep = "/wallets-create"
+  shared_ep = "/shared-wallets-create"
+%>
+<% if session[:error] %>
+      <div class="alert alert-danger" role="alert">
+        <%= session[:error]%>
+      </div>
+<%
+      session.delete :error
+   end
 %>
 <div class="list-group">
   <div class="list-group-item">
-    <form action="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>" method="POST">
+    <form action="<%= (url_path.include? "byron") ? byron_ep : ((url_path.include? "shared") ? shared_ep : shelley_ep) %>" method="POST">
       <% if url_path.include? "byron" %>
         <div class="form-group">
           <label for="style">Style</label>
@@ -20,7 +29,7 @@
 
       <div class="form-group">
         <label for="wal_name">Wallet name</label>
-        <input type="text" class="form-control" name="wal_name" id="wal_name" placeholder="Wallet Name" value="My Test Wallet">
+        <input type="text" class="form-control" name="wal_name" id="wal_name" placeholder="Wallet Name" value="<%= url_path.include?("shared") ? 'My Test Shared Wallet' : 'My Test Wallet' %>">
       </div>
 
       <div class="form-group">
@@ -33,13 +42,18 @@
         <textarea class="form-control" name="mnemonics" id="mnemonics" rows="3"><%= mnemonics %></textarea>
       </div>
 
-      <%# Don't show address pool gap for Byron wallets %>
-      <% unless url_path.include? "byron" %>
+      <%# Don't show address pool gap for Byron or Shared wallets %>
+      <% unless (url_path.include?('byron') || url_path.include?('shared'))  %>
           <div class="form-group">
             <label for="pool_gap">Address pool gap</label>
             <input type="text" class="form-control" name="pool_gap" id="pool_gap"
                    placeholder="Address pool gap" value="20">
           </div>
+      <% end %>
+
+      <%# Shared wallets specific %>
+      <% if url_path.include? "shared" %>
+      <%= render_shared_wallet_create_form_part %>
       <% end %>
 
       <button type="submit" class="btn btn-success">Create</button>

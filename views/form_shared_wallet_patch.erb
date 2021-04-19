@@ -1,0 +1,32 @@
+<%
+url_path = request.env['PATH_INFO'].to_s
+payment_ep = "/shared-wallets/#{wal['id']}/patch-payment"
+delegation_ep = "/shared-wallets/#{wal['id']}/patch-delegation"
+wid = wal['id']
+%>
+
+<div class="list-group">
+  <div class="list-group-item">
+    <small>
+      Update <%= (url_path.include? "payment") ? 'Payment' : 'Delegation' %>
+      | <a href="<%= "/shared-wallets/#{wid}" %>">go back to wallet</a></small>
+  </div>
+
+  <div class="list-group-item">
+    <form action="<%= (url_path.include? "payment") ? payment_ep : delegation_ep %>" method="POST">
+      <div class="form-group">
+        <label for="cosigner">Cosigner</label>
+        <input type="text" class="form-control" name="cosigner" id="cosigner"
+            placeholder="Cosigner" value="">
+      </div>
+
+      <div class="form-group">
+        <label for="acc_pub_key">Account public key</label>
+        <input type="text" class="form-control" name="acc_pub_key" id="acc_pub_key"
+            placeholder="Account public key" value="">
+      </div>
+
+      <button type="submit" class="btn btn-success">Update <%= (url_path.include? "payment") ? 'Payment' : 'Delegation' %></button>
+    </form>
+  </div>
+</div>

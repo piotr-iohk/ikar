@@ -1,5 +1,4 @@
 require 'sinatra'
-require 'bip_mnemonic'
 require 'chartkick'
 require 'cardano_wallet'
 require 'sys/proctable'
@@ -239,6 +238,132 @@ post "/submit-external-tx" do
   erb :form_tx_external, { :locals => { :tx => tx, :blob => params['blob'] } }
 end
 
+# SHARED WALLETS
+
+get "/shared-wallets/:wal_id/patch-payment" do
+  wal = @cw.shared.wallets.get params[:wal_id]
+  handle_api_err wal, session
+
+  erb :form_shared_wallet_patch, { :locals => { :wal => wal} }
+end
+
+post "/shared-wallets/:wal_id/patch-payment" do
+  up = @cw.shared.wallets.update_payment_script(params[:wal_id],
+                                                params[:cosigner],
+                                                params[:acc_pub_key])
+  handle_api_err up, session
+
+  redirect "/shared-wallets/#{params[:wal_id]}"
+end
+
+
+get "/shared-wallets/:wal_id/patch-delegation" do
+  wal = @cw.shared.wallets.get params[:wal_id]
+  handle_api_err wal, session
+
+  erb :form_shared_wallet_patch, { :locals => { :wal => wal} }
+end
+
+post "/shared-wallets/:wal_id/patch-delegation" do
+  up = @cw.shared.wallets.update_delegation_script(params[:wal_id],
+                                                   params[:cosigner],
+                                                   params[:acc_pub_key])
+  handle_api_err up, session
+
+  redirect "/shared-wallets/#{params[:wal_id]}"
+end
+
+get "/shared-wallets/:wal_id" do
+  wal = @cw.shared.wallets.get params[:wal_id]
+  handle_api_err wal, session
+  # txs = @cw.shelley.transactions.list params[:wal_id]
+  # handle_api_err txs, session
+  # addrs = @cw.shelley.addresses.list params[:wal_id]
+  # handle_api_err addrs, session
+
+  erb :shared_wallet, { :locals => { :wal => wal, :txs => nil, :addrs => nil} }
+end
+
+get "/shared-wallets-delete/:wal_id" do
+  @cw.shared.wallets.delete params[:wal_id]
+  redirect "/wallets"
+end
+
+get "/shared-wallets-create-from-pub-key" do
+  erb :form_create_wallet_from_pub_key
+end
+
+post "/shared-wallets-create-from-pub-key" do
+  name = params[:wal_name]
+  pub_key = params[:pub_key]
+  account_index = params[:account_index]
+  begin
+    payment_script_template = JSON.parse(params[:payment_script_template].strip)
+  rescue
+    session[:error] = "Make sure the 'payment_script_template' has correct JSON format."
+    redirect '/shared-wallets-create-from-pub-key'
+  end
+  payload = {name: name,
+             account_public_key: pub_key,
+             account_index: account_index,
+             payment_script_template: payment_script_template
+             }
+  if params[:delegation_script_template] != ''
+    begin
+      delegation_script_template = JSON.parse(params[:delegation_script_template].strip)
+    rescue
+      session[:error] = "Make sure the 'delegation_script_template' has correct JSON format."
+      redirect '/shared-wallets-create-from-pub-key'
+    end
+    payload[:delegation_script_template] = delegation_script_template
+  end
+  wal = @cw.shared.wallets.create(payload)
+  handle_api_err wal, session
+
+  redirect "/shared-wallets/#{wal['id']}"
+end
+
+get "/shared-wallets-create" do
+  # 24-word mnemonics
+  mnemonics = mnemonic_sentence(24)
+  erb :form_create_wallet, { :locals => { :mnemonics => mnemonics} }
+end
+
+post "/shared-wallets-create" do
+  m = prepare_mnemonics params[:mnemonics]
+  pass = params[:pass]
+  name = params[:wal_name]
+  account_index = params[:account_index]
+  begin
+    payment_script_template = JSON.parse(params[:payment_script_template].strip)
+  rescue
+    session[:error] = "Make sure the 'payment_script_template' has correct JSON format."
+    redirect '/shared-wallets-create'
+  end
+  payload = { mnemonic_sentence: m,
+              passphrase: pass,
+              name: name,
+              account_index: account_index,
+              payment_script_template: payment_script_template
+              }
+  if params[:delegation_script_template] != ''
+    begin
+      delegation_script_template = JSON.parse(params[:delegation_script_template].strip)
+    rescue
+      session[:error] = "Make sure the 'delegation_script_template' has correct JSON format."
+      redirect '/shared-wallets-create'
+    end
+    payload[:delegation_script_template] = delegation_script_template
+  end
+
+  wal = @cw.shared.wallets.create(payload)
+  handle_api_err wal, session
+  session[:wal] = wal
+  handle_api_err wal, session
+
+  redirect "/shared-wallets/#{wal['id']}"
+end
+
 # SHELLEY WALLETS
 
 get "/wallets-get-assets" do
@@ -377,9 +502,8 @@ get "/wallets-delete/:wal_id" do
 end
 
 get "/wallets-create" do
-  # 15-word mnemonics
-  bits = bits_from_word_count '15'
-  mnemonics = BipMnemonic.to_mnemonic(bits: bits, language: 'english')
+  # 24-word mnemonics
+  mnemonics = mnemonic_sentence(24)
   erb :form_create_wallet, { :locals => { :mnemonics => mnemonics} }
 end
 
@@ -446,10 +570,9 @@ post "/wallets-create-many" do
   name = params[:wal_name]
   pool_gap = params[:pool_gap].to_i
   how_many = params[:how_many].to_i
-  bits = bits_from_word_count params[:words_count]
 
   1.upto how_many do |i|
-    mnemonics = BipMnemonic.to_mnemonic(bits: bits, language: 'english').split
+    mnemonics = mnemonic_sentence(params[:words_count]).split
     wal = @cw.shelley.wallets.create({mnemonic_sentence: mnemonics,
                                       passphrase: pass,
                                       name: "#{name} #{i}",
@@ -813,8 +936,7 @@ end
 
 get "/byron-wallets-create" do
   # 12-word mnemonics
-  bits = bits_from_word_count '12'
-  mnemonics = BipMnemonic.to_mnemonic(bits: bits, language: 'english')
+  mnemonics = mnemonic_sentence(12)
   erb :form_create_wallet, { :locals => { :mnemonics => mnemonics} }
 end
 
@@ -834,7 +956,6 @@ post "/byron-wallets-create" do
 end
 
 get "/byron-wallets-create-from-pub-key" do
-  # 15-word mnemonics
   erb :form_create_wallet_from_pub_key
 end
 
@@ -843,9 +964,9 @@ post "/byron-wallets-create-from-pub-key" do
   name = params[:wal_name]
   pool_gap = params[:pool_gap].to_i
   wal = @cw.byron.wallets.create({name: name,
-                                    account_public_key: pub_key,
-                                    address_pool_gap: pool_gap,
-                                    })
+                                  account_public_key: pub_key,
+                                  address_pool_gap: pool_gap,
+                                  })
   handle_api_err wal, session
 
   redirect "/byron-wallets/#{wal['id']}"
@@ -897,10 +1018,9 @@ post "/byron-wallets-create-many" do
   name = params[:wal_name]
   how_many = params[:how_many].to_i
   style = params[:style]
-  bits = bits_from_word_count params[:words_count]
 
   1.upto how_many do |i|
-    mnemonics = BipMnemonic.to_mnemonic(bits: bits, language: 'english').split
+    mnemonics = mnemonic_sentence(params[:words_count]).split
     wal = @cw.byron.wallets.create({name: "#{name} (#{style}) #{i}",
                                     style: style,
                                     passphrase: pass,
@@ -1031,11 +1151,9 @@ get "/gen-mnemonics" do
 end
 
 post "/gen-mnemonics" do
-  bits = bits_from_word_count params[:words_count]
-  words_count = params[:words_count]
-  mnemonics = BipMnemonic.to_mnemonic(bits: bits, language: 'english')
+  mnemonics = mnemonic_sentence(params[:words_count])
   erb :form_gen_mnemonics, { :locals => {:mnemonics => mnemonics,
-                                         :words_count => words_count } }
+                                         :words_count => params[:words_count] } }
 end
 
 # STAKE-POOLS

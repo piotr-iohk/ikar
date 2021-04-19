@@ -1,3 +1,5 @@
+require 'bip_mnemonic'
+
 module Helpers
   module App
     def version
@@ -543,6 +545,62 @@ module Helpers
        }
     end
 
+    def render_shared_wallet_create_form_part
+      %(
+        <div class="form-group">
+          <label for="account_index">Account index</label>
+          <input type="text" class="form-control" name="account_index" id="account_index"
+                 placeholder="Account index" value="">
+          <small id="help_acc" class="form-text text-muted">An individual segment within a derivation path. E.g. 1852H.</small>
+
+        </div>
+
+        <div class="form-group">
+          <label for="payment_script_template">Payment script template</label>
+          <textarea class="form-control" name="payment_script_template" id="payment_script_template" rows="10"></textarea>
+          <small id="help_pay" class="form-text text-muted">
+            <details>
+              <summary>Examplary template</summary>
+                <pre>
+{ "cosigners":
+  { "cosigner#0": "1423856bc91c49e928f6f30f4e8d665d53eb4ab6028bd0ac971809d514c92db11423856bc91c49e928f6f30f4e8d665d53eb4ab6028bd0ac971809d514c92db2" },
+"template":
+    { "all":
+       [ "cosigner#0",
+         { "active_from": 120 }
+       ]
+    }
+}
+                </pre>
+            </details>
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="delegation_script_template">Delegation script template</label>
+          <textarea class="form-control" name="delegation_script_template" id="delegation_script_template" rows="10"></textarea>
+          <small id="help_del" class="form-text text-muted">
+            <details>
+              <summary>Examplary template</summary>
+                <pre>
+{ "cosigners":
+  { "cosigner#0": "1423856bc91c49e928f6f30f4e8d665d53eb4ab6028bd0ac971809d514c92db11423856bc91c49e928f6f30f4e8d665d53eb4ab6028bd0ac971809d514c92db2" },
+"template":
+    { "all":
+       [ "cosigner#0",
+         "cosigner#1",
+         { "active_from": 120 },
+         { "active_until": 100 }
+       ]
+    }
+}
+                </pre>
+            </details>
+          </small>
+        </div>
+       )
+    end
+
     def render_danger(text)
       "<span class='badge badge-danger'>#{text}</span>"
     end
@@ -589,24 +647,11 @@ module Helpers
       end
     end
 
-    def bits_from_word_count wc
-      case wc
-        when '9'
-          bits = 96
-        when '12'
-          bits = 128
-        when '15'
-          bits = 164
-        when '18'
-          bits = 196
-        when '21'
-          bits = 224
-        when '24'
-          bits = 256
-        else
-          raise "Non-supported no of words #{wc}!"
-      end
-      bits
+    def mnemonic_sentence wc
+      mtrx = {'9' => 96, '12' => 128, '15' => 164, '18' => 196, '21' => 224, '24' => 256}
+      wc = wc.to_s
+      raise "Non-supported no of words #{wc}! Supported are #{mtrx.keys}" unless mtrx.keys.include?(wc)
+      BipMnemonic.to_mnemonic(bits: mtrx[wc], language: 'english')
     end
 
   end

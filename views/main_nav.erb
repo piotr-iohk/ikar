@@ -13,6 +13,15 @@
   </li>
   <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle <%="disabled" unless session[:w_connected]%>"
+      data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Shared wallets</a>
+    <div class="dropdown-menu">
+      <!-- <a class="dropdown-item" href="/shared-wallets">List</a> -->
+      <a class="dropdown-item" href="/shared-wallets-create">Create</a>
+      <a class="dropdown-item" href="/shared-wallets-create-from-pub-key">Create from pub key</a>
+    </div>
+  </li>
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle <%="disabled" unless session[:w_connected]%>"
       data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Byron wallets</a>
     <div class="dropdown-menu">
       <a class="dropdown-item" href="/byron-wallets">List</a>
