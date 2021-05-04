@@ -624,12 +624,25 @@ post "/wallets-migrate" do
   erb :show_migrated, { :locals => { transactions: r, wid_src: wid_src} }
 end
 
-get "/wallets-migration-fee" do
+get "/wallets-migration-plan" do
   wid = params[:wid]
   wallets = @cw.shelley.wallets.list
-  r = @cw.shelley.migrations.cost wid
 
-  erb :show_migration_fee, { :locals => { :migration_fee => r,
+  erb :show_migration_plan, { :locals => { :migration_plan => nil,
+                                          :addresses => nil,
+                                          :wid => wid,
+                                          :wallets => wallets } }
+end
+
+post "/wallets-migration-plan" do
+  wid = params[:wid]
+  addresses = params[:addresses].split("\n").map{|a| a.strip}
+  wallets = @cw.shelley.wallets.list
+  r = @cw.shelley.migrations.plan(wid, addresses)
+  handle_api_err(r, session)
+
+  erb :show_migration_plan, { :locals => { :migration_plan => r,
+                                          :addresses => params[:addresses],
                                           :wid => wid,
                                           :wallets => wallets } }
 end
@@ -1062,12 +1075,25 @@ post "/byron-wallets-migrate" do
   erb :show_migrated, { :locals => { transactions: r, wid_src: wid_src} }
 end
 
-get "/byron-wallets-migration-fee" do
+get "/byron-wallets-migration-plan" do
   wid = params[:wid]
   wallets = @cw.byron.wallets.list
-  r = @cw.byron.migrations.cost wid
 
-  erb :show_migration_fee, { :locals => { :migration_fee => r,
+  erb :show_migration_plan, { :locals => { :migration_plan => nil,
+                                          :addresses => nil,
+                                          :wid => wid,
+                                          :wallets => wallets } }
+end
+
+post "/byron-wallets-migration-plan" do
+  wid = params[:wid]
+  addresses = params[:addresses].split("\n").map{|a| a.strip}
+  wallets = @cw.byron.wallets.list
+  r = @cw.byron.migrations.plan(wid, addresses)
+  handle_api_err(r, session)
+
+  erb :show_migration_plan, { :locals => { :migration_plan => r,
+                                          :addresses => params[:addresses],
                                           :wid => wid,
                                           :wallets => wallets } }
 end
