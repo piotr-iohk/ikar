@@ -136,11 +136,11 @@ describe 'Using App', type: :feature do
       expect(page).to have_link("go back to wallet")
     end
 
-    it "I can see Migration cost" do
+    it "I can see Migration plan" do
       create_byron_wallet "random"
       click_link "Migrations"
-      find(:xpath, "//a[contains(@href,'migration-fee')]").click
-      expect(page).to have_text "This endpoint is temporarily disabled"
+      find(:xpath, "//a[contains(@href,'migration-plan')]").click
+      expect(page).to have_button "Create Migration Plan"
     end
 
     it "I could Migrate" do
