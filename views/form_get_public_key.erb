@@ -1,19 +1,25 @@
-
+<%
+  url_path = request.env['PATH_INFO'].to_s
+  shelley_ep = "/get-pub-key"
+  shared_ep = "/shared-get-pub-key"
+%>
 <div class="list-group">
   <div class="list-group-item">
      Get public key
-     | <small><a href="/wallets/<%= wid %>">
+     | <small><a href="<%= url_path.include?('shared')? "/shared-wallets/" : "/wallets/" %><%= wid %>">
              go back to wallet
            </a></small>
   </div>
   <div class="list-group-item">
-    <form action="/get-pub-key" method="POST">
+    <form action="<%= url_path.include?('shared')? shared_ep : shelley_ep %>"
+          method="POST">
       <div class="form-group">
         <label for="wid">Wallet</label>
         <select class="form-control" name="wid" id="wid">
           <% wallets.each do |w| %>
           <option <%= wid == w['id'] ? "selected" : "" %> value="<%= w['id'] %>">
-            <%= "#{w['name']} [id: #{w['id']}, balance available: #{w['balance']['available']['quantity']}]" %>
+            <%= "#{w['name']} [id: #{w['id']}" %>
+            <%# , balance available: #{w['balance']['available']['quantity']}] %>
           </option>
           <% end %>
         </select>
@@ -34,7 +40,15 @@
         <small id="help" class="form-text text-muted">Example: 1852H. An individual segment within a derivation path.</small>
       </div>
 
-
+      <% if url_path.include?('shared') %>
+        <div class="form-group">
+          <label for="hash">Hash</label>
+          <select class="form-control" name="hash" id="hash">
+            <option <%= "selected" if hash == "false" %> value="false">false</option>
+            <option <%= "selected" if hash == "true" %> value="true">true</option>
+          </select>
+        </div>
+      <% end %>
 
       <button type="submit" class="btn btn-success">Get public key</button>
     </form>

@@ -97,7 +97,8 @@ get "/get-pub-key" do
                                           :wid => wid,
                                           :role => params[:role],
                                           :index => params[:index],
-                                          :pub_key => nil
+                                          :pub_key => nil,
+                                          :hash => nil
                                         } }
 end
 
@@ -118,7 +119,8 @@ post "/get-pub-key" do
                                           :wid => params[:wid],
                                           :role => params[:role],
                                           :index => params[:index],
-                                          :pub_key => pub_key
+                                          :pub_key => pub_key,
+                                          :hash => nil
                                         } }
 end
 
@@ -239,6 +241,79 @@ post "/submit-external-tx" do
 end
 
 # SHARED WALLETS
+
+get "/shared-get-acc-pub-key" do
+  # wallets = @cw.shared.wallets.list
+  # handle_api_err wallets, session
+  # params[:wid] ? wid = params[:wid] : wid = wallets.first['id']
+  wid = params[:wid]
+
+  erb :form_get_acc_public_key, { :locals => { :wallets => [@cw.shared.wallets.get(wid)],
+                                          :wid => wid,
+                                          :index => params[:index],
+                                          :extended => params[:extended],
+                                          :acc_pub_key => nil
+                                        } }
+end
+
+post "/shared-get-acc-pub-key" do
+  # wallets = @cw.shared.wallets.list
+  # handle_api_err wallets, session
+  extended = (params[:extended] == "true") ? true : false
+  begin
+    acc_pub_key = @cw.shared.keys.create_acc_public_key(params[:wid],
+                                            params[:index],
+                                            params[:pass],
+                                            extended)
+  rescue
+    session[:error] = "Make sure parameters are valid. "
+    redirect "/shared-get-acc-pub-key"
+  end
+  handle_api_err acc_pub_key, session
+  erb :form_get_acc_public_key, { :locals => { :wallets => [@cw.shared.wallets.get(params[:wid])],
+                                          :wid => params[:wid],
+                                          :index => params[:index],
+                                          :extended => params[:extended],
+                                          :acc_pub_key => acc_pub_key
+                                        } }
+end
+
+get "/shared-get-pub-key" do
+  # wallets = @cw.shared.wallets.list
+  # handle_api_err wallets, session
+  # params[:wid] ? wid = params[:wid] : wid = wallets.first['id']
+  wid = params[:wid]
+  erb :form_get_public_key, { :locals => { :wallets => [@cw.shared.wallets.get(wid)],
+                                          :wid => wid,
+                                          :role => params[:role],
+                                          :index => params[:index],
+                                          :pub_key => nil,
+                                          :hash => nil
+                                        } }
+end
+
+post "/shared-get-pub-key" do
+  # wallets = @cw.shared.wallets.list
+  # handle_api_err wallets, session
+
+  begin
+    pub_key = @cw.shared.keys.get_public_key(params[:wid],
+                                            params[:role],
+                                            params[:index],
+                                            {'hash' => params[:hash]})
+  rescue
+    session[:error] = "Make sure parameters are valid. "
+    redirect "/shared-get-pub-key"
+  end
+  handle_api_err pub_key, session
+  erb :form_get_public_key, { :locals => { :wallets => [@cw.shared.wallets.get(params[:wid])],
+                                          :wid => params[:wid],
+                                          :role => params[:role],
+                                          :index => params[:index],
+                                          :pub_key => pub_key,
+                                          :hash => params[:hash]
+                                        } }
+end
 
 get "/shared-wallets/:wal_id/patch-payment" do
   wal = @cw.shared.wallets.get params[:wal_id]

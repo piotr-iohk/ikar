@@ -1,19 +1,24 @@
-
+<%
+  url_path = request.env['PATH_INFO'].to_s
+  shelley_ep = "/get-acc-pub-key"
+  shared_ep = "/shared-get-acc-pub-key"
+%>
 <div class="list-group">
   <div class="list-group-item">
      Get account public key
-     | <small><a href="/wallets/<%= wid %>">
+     | <small><a href="<%= url_path.include?('shared')? "/shared-wallets/" : "/wallets/" %><%= wid %>">
              go back to wallet
            </a></small>
   </div>
   <div class="list-group-item">
-    <form action="/get-acc-pub-key" method="POST">
+    <form action="<%= url_path.include?('shared')? shared_ep : shelley_ep %>" method="POST">
       <div class="form-group">
         <label for="wid">Wallet</label>
         <select class="form-control" name="wid" id="wid">
           <% wallets.each do |w| %>
           <option <%= wid == w['id'] ? "selected" : "" %> value="<%= w['id'] %>">
-            <%= "#{w['name']} [id: #{w['id']}, balance available: #{w['balance']['available']['quantity']}]" %>
+            <%= "#{w['name']} [id: #{w['id']}]" %>
+            <%# , balance available: #{w['balance']['available']['quantity']} %>
           </option>
           <% end %>
         </select>

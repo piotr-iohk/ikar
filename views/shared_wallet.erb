@@ -35,6 +35,15 @@
                <a class="dropdown-item" href="/shared-wallets/<%= id %>/patch-delegation">Update delegation</a>
              </div>
            </div>
+           <div>
+             <a class="nav-link dropdown-toggle"
+               data-toggle="dropdown" href="#" role="button"
+               aria-haspopup="true" aria-expanded="false">Keys</a>
+             <div class="dropdown-menu">
+               <a class="dropdown-item" href="/shared-get-acc-pub-key?wid=<%= wal['id'] %>">Get account public key</a>
+               <a class="dropdown-item" href="/shared-get-pub-key?wid=<%= wal['id'] %>">Get public key</a>
+             </div>
+           </div>
 
          </nav>
 
