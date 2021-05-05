@@ -1,10 +1,10 @@
 <%
- mf = migration_fee
+ mp = migration_plan
  url_path = request.env['PATH_INFO'].to_s
  byron_ep = "/byron-wallets/#{wid}"
  shelley_ep = "/wallets/#{wid}"
- byron_migr_ep = "/byron-wallets-migration-fee?wid=#{wid}"
- shelley_migr_ep = "/wallets-migration-fee?wid=#{wid}"
+ byron_migr_ep = "/byron-wallets-migration-plan?wid=#{wid}"
+ shelley_migr_ep = "/wallets-migration-plan?wid=#{wid}"
 %>
 
 <div class="list-group">
@@ -13,7 +13,7 @@
      | <small><a href="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>">go back to wallet</a></small>
   </div>
   <div class="list-group-item">
-    <form action="<%= (url_path.include? "byron") ? byron_migr_ep : shelley_migr_ep %>" method="GET">
+    <form action="<%= (url_path.include? "byron") ? byron_migr_ep : shelley_migr_ep %>" method="POST">
       <div class="form-row">
         <div class="col">
           <select class="form-control" name="wid" id="wid">
@@ -24,15 +24,20 @@
             <% end %>
           </select>
         </div>
-        <div class="col">
-          <button type="submit" class="btn btn-success">Refresh</button>
-        </div>
+
       </div>
+
+      <div class="form-group controls">
+        <label for="addresses">Addresses</label>
+        <textarea class="form-control" name="addresses" rows="6"><%= addresses %></textarea>
+        <small id="help" class="form-text text-muted">One address per line.</small>
+      </div>
+      <button type="submit" class="btn btn-success">Create Migration Plan</button>
     </form>
   </div>
   <div class="list-group-item">
     <small id="mf">
-        <%= response2table(mf) if wid %>
+        <%= response2table(mp) if mp %>
     </small>
   </div>
 </div>
