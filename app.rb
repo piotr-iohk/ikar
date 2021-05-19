@@ -242,12 +242,12 @@ end
 # SHARED WALLETS
 
 get "/shared-get-acc-pub-key" do
-  # wallets = @cw.shared.wallets.list
-  # handle_api_err wallets, session
+  wallets = @cw.shared.wallets.list
+  handle_api_err wallets, session
   # params[:wid] ? wid = params[:wid] : wid = wallets.first['id']
   wid = params[:wid]
 
-  erb :form_get_acc_public_key, { :locals => { :wallets => [@cw.shared.wallets.get(wid)],
+  erb :form_get_acc_public_key, { :locals => { :wallets => wallets,
                                           :wid => wid,
                                           :index => params[:index],
                                           :format => params[:format],
@@ -256,8 +256,8 @@ get "/shared-get-acc-pub-key" do
 end
 
 post "/shared-get-acc-pub-key" do
-  # wallets = @cw.shared.wallets.list
-  # handle_api_err wallets, session
+  wallets = @cw.shared.wallets.list
+  handle_api_err wallets, session
   begin
     acc_pub_key = @cw.shared.keys.create_acc_public_key(params[:wid],
                                             params[:index],
@@ -268,7 +268,7 @@ post "/shared-get-acc-pub-key" do
     redirect "/shared-get-acc-pub-key"
   end
   handle_api_err acc_pub_key, session
-  erb :form_get_acc_public_key, { :locals => { :wallets => [@cw.shared.wallets.get(params[:wid])],
+  erb :form_get_acc_public_key, { :locals => { :wallets => wallets,
                                           :wid => params[:wid],
                                           :index => params[:index],
                                           :format => params[:format],
@@ -277,11 +277,11 @@ post "/shared-get-acc-pub-key" do
 end
 
 get "/shared-get-pub-key" do
-  # wallets = @cw.shared.wallets.list
-  # handle_api_err wallets, session
+  wallets = @cw.shared.wallets.list
+  handle_api_err wallets, session
   # params[:wid] ? wid = params[:wid] : wid = wallets.first['id']
   wid = params[:wid]
-  erb :form_get_public_key, { :locals => { :wallets => [@cw.shared.wallets.get(wid)],
+  erb :form_get_public_key, { :locals => { :wallets => wallets,
                                           :wid => wid,
                                           :role => params[:role],
                                           :index => params[:index],
@@ -291,8 +291,8 @@ get "/shared-get-pub-key" do
 end
 
 post "/shared-get-pub-key" do
-  # wallets = @cw.shared.wallets.list
-  # handle_api_err wallets, session
+  wallets = @cw.shared.wallets.list
+  handle_api_err wallets, session
 
   begin
     pub_key = @cw.shared.keys.get_public_key(params[:wid],
@@ -304,7 +304,7 @@ post "/shared-get-pub-key" do
     redirect "/shared-get-pub-key"
   end
   handle_api_err pub_key, session
-  erb :form_get_public_key, { :locals => { :wallets => [@cw.shared.wallets.get(params[:wid])],
+  erb :form_get_public_key, { :locals => { :wallets => wallets,
                                           :wid => params[:wid],
                                           :role => params[:role],
                                           :index => params[:index],
@@ -317,7 +317,7 @@ get "/shared-wallets/:wal_id/patch-payment" do
   wal = @cw.shared.wallets.get params[:wal_id]
   handle_api_err wal, session
 
-  erb :form_shared_wallet_patch, { :locals => { :wal => wal} }
+  erb :form_shared_wallet_patch, { :locals => { :wal => wal } }
 end
 
 post "/shared-wallets/:wal_id/patch-payment" do
@@ -346,20 +346,40 @@ post "/shared-wallets/:wal_id/patch-delegation" do
   redirect "/shared-wallets/#{params[:wal_id]}"
 end
 
+get "/shared-wallets" do
+  wallets = @cw.shared.wallets.list
+  handle_api_err wallets, session
+  erb :shared_wallets, { :locals => { :wallets => wallets } }
+end
+
 get "/shared-wallets/:wal_id" do
   wal = @cw.shared.wallets.get params[:wal_id]
   handle_api_err wal, session
   # txs = @cw.shelley.transactions.list params[:wal_id]
   # handle_api_err txs, session
-  # addrs = @cw.shelley.addresses.list params[:wal_id]
-  # handle_api_err addrs, session
+  addrs = @cw.shared.addresses.list params[:wal_id]
+  handle_api_err addrs, session
 
-  erb :shared_wallet, { :locals => { :wal => wal, :txs => nil, :addrs => nil} }
+  erb :shared_wallet, { :locals => { :wal => wal, :txs => nil, :addrs => addrs} }
 end
 
 get "/shared-wallets-delete/:wal_id" do
   @cw.shared.wallets.delete params[:wal_id]
-  redirect "/wallets"
+  redirect "/shared-wallets"
+end
+
+get "/shared-wallets-delete-all" do
+  erb :form_del_all
+end
+
+post "/shared-wallets-delete-all" do
+  s = @cw.shared.wallets.list
+  handle_api_err s, session
+  s.each do |wal|
+    r = @cw.shared.wallets.delete wal['id']
+    handle_api_err r, session
+  end
+  redirect "/shared-wallets"
 end
 
 get "/shared-wallets-create-from-pub-key" do

@@ -25,7 +25,7 @@
    <div class="list-group-item">
 
          <nav class="nav nav-tabs">
-           <a class="nav-link disabled" href="/shared-wallets">List All Shared</a>
+           <a class="nav-link" href="/shared-wallets">List All Shared</a>
            <div>
              <a class="nav-link dropdown-toggle"
                data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Management</a>
@@ -71,7 +71,7 @@
          <small><b>ID:</b> <%= id %></small><br/>
          <small>
            <b>Status:</b>
-           <%= status ? render_wal_status(status, wal) : 'pending' %>
+           <%= status ? render_wal_status(status, wal) : 'incomplete' %>
          </small><br/>
          <% if wal['tip'] %>
            <small>
@@ -178,8 +178,8 @@
            </small><br/>
            <% end %>
            <small><%= generate_curl(wal, "Wallet curl") %></small>
-           <small><%= generate_curl(addresses, "Addresses curl") if txs %></small>
-           <small><%= generate_curl(txs, "Transactions curl") if addresses %></small>
+           <small><%= generate_curl(addresses, "Addresses curl") if addresses %></small>
+           <small><%= generate_curl(txs, "Transactions curl") if txs %></small>
        </div>
        <div class="col displ_details" style="display:none" id="addr">
          <div class="list-group-item">

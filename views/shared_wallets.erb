@@ -1,0 +1,89 @@
+<%
+# wallets = wallets
+path_info = request.env['PATH_INFO'].to_s
+shared_ep = "/shared-wallets"
+%>
+<div class="list-group">
+  <div class="list-group-item">
+     <%= "Shared wallets: #{wallets.size} " %>
+     <small>
+       <a href="<%= shared_ep %>">refresh</a>
+     </small>
+       |
+     <small>
+       <a href="<%= "#{shared_ep}-create" %>">create</a>
+     </small>
+       |
+     <small>
+       <a href="<%= "#{shared_ep}-delete-all" %>">delete all</a>
+     </small>
+     <small><%= generate_curl(wallets) %></small>
+  </div>
+<%
+wallets.each do |wal|
+  id = wal['id']
+  name = wal['name']
+  status = wal['state']['status'] if wal['state']
+  discovery = wal['discovery']
+
+  wal['delegation'] ? has_delegation = true : has_delegation = false
+%>
+
+  <div class="list-group-item">
+    <div class="d-flex w-100 justify-content-between">
+      <h5 class="mb-1">
+        <a href="<%= "#{shared_ep}/#{id}" %>"><%= name %></a>
+      </h5>
+    </div>
+    <% if wal['balance'] %>
+      <b>Balance:</b> (Total: <%= wal['balance']['total']['quantity'] %>
+                             , Available: <%= wal['balance']['available']['quantity'] %>
+                             <%= ", Rewards: #{wal['balance']['reward']['quantity']}" if wal['balance']['reward'] %>)
+      <br/>
+       <%= render_assets(wal) %>
+    <% end %>
+    <small><b>ID:</b> <%= id %></small><br/>
+    <small>
+      <b>Status:</b>
+        <%= status ? render_wal_status(status, wal) : 'incomplete' %>
+    </small><br/>
+    <small>
+      <b>Tip:</b> (Height: <%= wal['tip']['height']['quantity'] if wal['tip'] %>
+                  , Epoch: <%= wal['tip']['epoch_number'] if wal['tip'] %>
+                  , Slot: <%= wal['tip']['slot_number'] if wal['tip'] %>)
+    </small><br/>
+    <% if discovery %>
+    <small>
+      <b>Address discovery:</b> <%= discovery %>
+    </small>
+    <% end %>
+<br/>
+    <%# Display this only for Shelley wallets %>
+    <% if has_delegation
+        active_delegation = wal['delegation']['active']
+        next_delegation = wal['delegation']['next']
+    %>
+      <small><b>Delegation active:</b><br/>
+        &nbsp;&nbsp;<b>Status:</b> <%= render_deleg_status active_delegation['status']%>
+        <%= active_delegation['status'] == "delegating" ? "<br/>&nbsp;&nbsp;<b>Target:</b> #{active_delegation['target']}" : ""%>
+      </small><br/>
+        <% if next_delegation
+            next_delegation.each do |n|
+        %>
+        <small><b>Delegation next:</b><br/>
+          &nbsp;&nbsp;<b>Status:</b> <%= render_deleg_status n['status']%><br/>
+            &nbsp;&nbsp;<b>Target:</b> <%= n['target']%><br/>
+            &nbsp;&nbsp;<b>Changes at:</b><br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;<b>Epoch start time:</b> <%= n['changes_at']['epoch_start_time']%><br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;<b>Epoch number:</b> <%= n['changes_at']['epoch_number']%>
+          </small><br/>
+        <%  end
+          end %>
+    <% end %>
+
+  </div>
+
+<%
+  end
+%>
+</div>
