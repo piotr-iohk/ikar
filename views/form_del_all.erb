@@ -2,12 +2,13 @@
   url_path = request.env['PATH_INFO'].to_s
   byron_ep = "/byron-wallets-delete-all"
   shelley_ep = "/wallets-delete-all"
+  shared_ep = "/shared-wallets-delete-all"
 %>
 <div class="list-group">
   <div class="list-group-item">
-    <form action="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>" method="POST">
+    <form action="<%= (url_path.include? "byron") ? byron_ep : ((url_path.include? "shared") ? shared_ep : shelley_ep) %>" method="POST">
       <button type="submit" class="btn btn-danger">
-        Delete all <%= (url_path.include? "byron") ? "Byron" : "Shelley" %> wallets?
+        Delete all <%= (url_path.include? "byron") ? "Byron" : ((url_path.include? "shared") ? "Shared" : "Shelley") %> wallets?
       </button>
     </form>
   </div>

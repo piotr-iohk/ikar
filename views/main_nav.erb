@@ -15,9 +15,11 @@
     <a class="nav-link dropdown-toggle <%="disabled" unless session[:w_connected]%>"
       data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Shared wallets</a>
     <div class="dropdown-menu">
-      <!-- <a class="dropdown-item" href="/shared-wallets">List</a> -->
+      <a class="dropdown-item" href="/shared-wallets">List</a>
       <a class="dropdown-item" href="/shared-wallets-create">Create</a>
       <a class="dropdown-item" href="/shared-wallets-create-from-pub-key">Create from pub key</a>
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href="/shared-wallets-delete-all">Delete all</a>
     </div>
   </li>
   <li class="nav-item dropdown">
