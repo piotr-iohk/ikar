@@ -1417,3 +1417,13 @@ get "/stake-pools-fee" do
                                            :wid => wid,
                                            :wallets => wallets } }
 end
+
+get "/stake-keys" do
+  wid = params['wid']
+  r = @cw.shelley.stake_pools.list_stake_keys wid if wid
+  wallets = @cw.shelley.wallets.list
+
+  erb :show_stake_keys, { :locals => { :stake_keys => r,
+                                           :wid => wid,
+                                           :wallets => wallets } }
+end

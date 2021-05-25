@@ -76,7 +76,8 @@
                   href="/stake-pools-quit<%="?wid=#{wal['id']}"%><%= "&sid=#{wal['delegation']['target']}" if wal['delegation']%>">
                   Quit Stakepool
                 </a>
-               <a class="dropdown-item" href="/stake-pools-fee?wid=<%= wal['id'] %>" >Fees</a>
+                <a class="dropdown-item" href="/stake-pools-fee?wid=<%= wal['id'] %>" >Fees</a>
+               <a class="dropdown-item" href="/stake-keys?wid=<%= wal['id'] %>" >List Stake Keys</a>
              </div>
            </div>
            <div>

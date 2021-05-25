@@ -1,3 +1,9 @@
+PATH
+  remote: ../cardano_wallet
+  specs:
+    cardano_wallet (0.3.7)
+      httparty (~> 0.18.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
