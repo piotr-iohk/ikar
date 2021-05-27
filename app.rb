@@ -58,8 +58,32 @@ end
 get "/get-acc-pub-key" do
   wallets = @cw.shelley.wallets.list
   handle_api_err wallets, session
-  params[:wid] ? wid = params[:wid] : wid = wallets.first['id']
+  wid = params[:wid]
+
   erb :form_get_acc_public_key, { :locals => { :wallets => wallets,
+                                          :wid => wid,
+                                          :format => params[:format],
+                                          :acc_pub_key => nil
+                                        } }
+end
+
+post "/get-acc-pub-key" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  acc_pub_key = @cw.shelley.keys.get_acc_public_key(params[:wid], {format: params[:format]})
+  handle_api_err acc_pub_key, session
+  erb :form_get_acc_public_key, { :locals => { :wallets => wallets,
+                                          :wid => params[:wid],
+                                          :format => params[:format],
+                                          :acc_pub_key => acc_pub_key
+                                        } }
+end
+
+get "/create-acc-pub-key" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  params[:wid] ? wid = params[:wid] : wid = wallets.first['id']
+  erb :form_create_acc_public_key, { :locals => { :wallets => wallets,
                                           :wid => wid,
                                           :index => params[:index],
                                           :format => params[:format],
@@ -67,7 +91,7 @@ get "/get-acc-pub-key" do
                                         } }
 end
 
-post "/get-acc-pub-key" do
+post "/create-acc-pub-key" do
   wallets = @cw.shelley.wallets.list
   handle_api_err wallets, session
   begin
@@ -80,7 +104,7 @@ post "/get-acc-pub-key" do
     redirect "/get-pub-key"
   end
   handle_api_err acc_pub_key, session
-  erb :form_get_acc_public_key, { :locals => { :wallets => wallets,
+  erb :form_create_acc_public_key, { :locals => { :wallets => wallets,
                                           :wid => params[:wid],
                                           :index => params[:index],
                                           :format => params[:format],
@@ -240,14 +264,37 @@ post "/submit-external-tx" do
 end
 
 # SHARED WALLETS
-
 get "/shared-get-acc-pub-key" do
+  wallets = @cw.shared.wallets.list
+  handle_api_err wallets, session
+  wid = params[:wid]
+
+  erb :form_get_acc_public_key, { :locals => { :wallets => wallets,
+                                          :wid => wid,
+                                          :format => params[:format],
+                                          :acc_pub_key => nil
+                                        } }
+end
+
+post "/shared-get-acc-pub-key" do
+  wallets = @cw.shared.wallets.list
+  handle_api_err wallets, session
+  acc_pub_key = @cw.shared.keys.get_acc_public_key(params[:wid], {format: params[:format]})
+  handle_api_err acc_pub_key, session
+  erb :form_get_acc_public_key, { :locals => { :wallets => wallets,
+                                          :wid => params[:wid],
+                                          :format => params[:format],
+                                          :acc_pub_key => acc_pub_key
+                                        } }
+end
+
+get "/shared-create-acc-pub-key" do
   wallets = @cw.shared.wallets.list
   handle_api_err wallets, session
   # params[:wid] ? wid = params[:wid] : wid = wallets.first['id']
   wid = params[:wid]
 
-  erb :form_get_acc_public_key, { :locals => { :wallets => wallets,
+  erb :form_create_acc_public_key, { :locals => { :wallets => wallets,
                                           :wid => wid,
                                           :index => params[:index],
                                           :format => params[:format],
@@ -255,7 +302,7 @@ get "/shared-get-acc-pub-key" do
                                         } }
 end
 
-post "/shared-get-acc-pub-key" do
+post "/shared-create-acc-pub-key" do
   wallets = @cw.shared.wallets.list
   handle_api_err wallets, session
   begin
@@ -265,10 +312,10 @@ post "/shared-get-acc-pub-key" do
                                             params[:format])
   rescue
     session[:error] = "Make sure parameters are valid. "
-    redirect "/shared-get-acc-pub-key"
+    redirect "/shared-create-acc-pub-key"
   end
   handle_api_err acc_pub_key, session
-  erb :form_get_acc_public_key, { :locals => { :wallets => wallets,
+  erb :form_create_acc_public_key, { :locals => { :wallets => wallets,
                                           :wid => params[:wid],
                                           :index => params[:index],
                                           :format => params[:format],
