@@ -38,5 +38,16 @@
                 <%= column_chart utxo['distribution'].sort, title: "#{wal['name']} UTxO distribution" %>
             </div>
         </div>
+        <div class="card">
+            <div class="card-body">
+              <small>
+                <details>
+                  <summary>UTxO Snapshot</summary>
+                      <b>Entries:</b> <%= utxo_snapshot['entries'].size %>
+                      <%= response2table(utxo_snapshot) %>
+                </details>
+              </small>
+            </div>
+        </div>
       </div>
 </div>
