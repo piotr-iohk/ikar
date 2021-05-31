@@ -738,11 +738,13 @@ end
 
 get "/wallets-utxo" do
   utxo = @cw.shelley.wallets.utxo params[:wid]
+  utxo_snapshot = @cw.shelley.wallets.utxo_snapshot params[:wid]
   wal = @cw.shelley.wallets.get params[:wid]
   wallets = @cw.shelley.wallets.list
 
   erb :utxo_details, { :locals => { :wal => wal,
                                     :utxo => utxo,
+                                    :utxo_snapshot => utxo_snapshot,
                                     :wallets => wallets } }
 end
 
@@ -1047,6 +1049,7 @@ end
 
 get "/byron-wallets-utxo" do
   utxo = @cw.byron.wallets.utxo params[:wid]
+  utxo_snapshot = @cw.byron.wallets.utxo_snapshot params[:wid]
   wal = @cw.byron.wallets.get params[:wid]
   wallets = @cw.byron.wallets.list
 
@@ -1054,6 +1057,7 @@ get "/byron-wallets-utxo" do
   handle_api_err wal, session
   erb :utxo_details, { :locals => { :wal => wal,
                                     :utxo => utxo,
+                                    :utxo_snapshot => utxo_snapshot,
                                     :wallets => wallets } }
 end
 
