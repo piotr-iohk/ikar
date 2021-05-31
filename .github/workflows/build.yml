@@ -42,6 +42,6 @@ jobs:
     env:
       CONFIG_URL: https://hydra.iohk.io/job/Cardano/cardano-node/cardano-deployment/latest-finished/download/1
       NETWORK: testnet
-      WALLET: dev-master-shelley
-      NODE: 1.25.1
+      WALLET: dev-master
+      NODE: 1.26.2
       TOKEN_METADATA: http://metadata-server-mock.herokuapp.com/
