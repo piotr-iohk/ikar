@@ -1,0 +1,40 @@
+<%
+ sk = stake_keys
+%>
+
+<div class="list-group">
+  <div class="list-group-item">
+     Wallet Stake Keys
+     | <small><a href="/wallets<%= "/#{wid}" if wid %>">
+             go back to wallet<%= "s" unless wid %>
+           </a></small>
+  </div>
+  <div class="list-group-item">
+    <form action="/stake-keys?wid=<%= wid %>" method="GET">
+      <div class="form-row">
+        <div class="col">
+          <select class="form-control" name="wid" id="wid">
+            <% wallets.each do |w| %>
+            <option <%= wid == w['id'] ? "selected" : "" %> value="<%= w['id'] %>">
+              <%
+                bal = w['balance']['available']['quantity']
+                bal_t = w['balance']['total']['quantity']
+                rew = w['balance']['reward']['quantity']
+              %>
+              <%= "#{w['name']} [balance total: #{bal_t}, balance available: #{bal}, rewards: #{rew}]" %>
+            </option>
+            <% end %>
+          </select>
+        </div>
+        <div class="col">
+          <button type="submit" class="btn btn-success">List</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="list-group-item">
+    <small id="sk">
+        <%= response2table(sk) if wid %>
+    </small>
+  </div>
+</div>
