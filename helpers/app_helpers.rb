@@ -143,11 +143,11 @@ module Helpers
       r
     end
 
-    def parse_addr_amt(addr_amt)
+    def parse_addr_amt(addr_amt, unit = 'lovelace')
       addr_amt.split("\n").map{|a| a.strip.split(":")}.collect do |a|
         {:address => a.first.strip,
          :amount => {:quantity => a.last.strip.to_i,
-                     :unit => "lovelace"}
+                     :unit => unit}
         }
       end
     end
