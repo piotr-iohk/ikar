@@ -29,6 +29,15 @@
             placeholder="" value="<%= index %>">
         <small id="help" class="form-text text-muted">Example: 1852H. An individual segment within a derivation path.</small>
       </div>
+      <% unless url_path.include?('shared') %>
+      <div class="form-group">
+        <label for="index">Purpose</label>
+        <input type="text" class="form-control" name="purpose" id="purpose"
+            placeholder="" value="<%= purpose %>">
+        <small id="help" class="form-text text-muted">Example: 1852H, 1854H. Purpose segment in the derivation path. (optional)</small>
+      </div>
+      <% end %>
+
       <div class="form-group">
         <label for="role">Format</label>
         <select class="form-control" name="format" id="format">
