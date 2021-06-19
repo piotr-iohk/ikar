@@ -530,11 +530,8 @@ module Helpers
         }
     end
 
-    def render_tx_shelley_form_part
-      %Q{
-
-        #{render_withdrawal_form_part}
-        #{render_metadata_form_part}
+    def render_ttl_form_part
+      %{
         <div class="form-group">
           <label class="form-check-label" for="ttl">Time-to-live</label>
           <input type="text" class="form-control" class="form-check-input" id="ttl"
@@ -542,6 +539,14 @@ module Helpers
                 placeholder="TTL in seconds">
           <small id="help" class="form-text text-muted">Transaction TTL in seconds.</small>
         </div>
+      }
+    end
+
+    def render_tx_shelley_form_part
+      %Q{
+        #{render_withdrawal_form_part}
+        #{render_metadata_form_part}
+        #{render_ttl_form_part}
        }
     end
 
