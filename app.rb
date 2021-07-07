@@ -858,6 +858,91 @@ post "/wallets-migration-plan" do
 end
 
 # TRANSACTIONS SHELLEY
+
+get "/construct-tx-shelley" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+
+  erb :form_tx_new_construct, {:locals => { :wallets => wallets, :tx => nil } }
+end
+
+post "/sign-tx-shelley" do
+  wid = params[:wid]
+
+  if params[:payments_check]
+    payload = prepare_payload(params)
+  end
+
+  if params[:withdrawals_check]
+    case params[:withdrawal]
+    when ''
+      withdrawal = nil
+    when 'self'
+      withdrawal = 'self'
+    else
+      withdrawal = params[:withdrawal].split
+    end
+  end
+
+  if params[:metadata_check]
+    metadata = parse_metadata(params[:metadata])
+  end
+
+  if params[:delegations_check]
+    case params[:delegation_action]
+    when 'join'
+      delegations = [
+          { 'join' =>
+            { 'pool' => params[:pool_id],
+              'stake_key_index' => params[:stake_key_id]
+            }
+          }
+      ]
+    when 'quit'
+      delegations = [
+          { 'quit' =>
+            { 'stake_key_index' => params[:stake_key_id]
+            }
+          }
+      ]
+    end
+  end
+
+  if params[:validity_interval_check]
+    validity_interval = {}
+
+    if params[:invalid_before_specified]
+      validity_interval["invalid_before"] = {
+        "quantity" => params[:invalid_before].to_i,
+        "unit" => params[:invalid_before_unit]
+      }
+    else
+      validity_interval["invalid_before"] = "unspecified"
+    end
+
+    if params[:invalid_hereafter_specified]
+      validity_interval["invalid_hereafter"] = {
+        "quantity" => params[:invalid_hereafter].to_i,
+        "unit" => params[:invalid_hereafter_unit]
+      }
+    else
+      validity_interval["invalid_hereafter"] = "unspecified"
+    end
+
+  end
+
+  r = @cw.shelley.transactions.construct(wid,
+                                         payload,
+                                         withdrawal,
+                                         metadata,
+                                         delegations,
+                                         mint = nil,
+                                         validity_interval)
+  handle_api_err r, session
+
+  erb :form_tx_new_sign, {:locals => { :tx => r } }
+end
+
 get "/wallets-transactions" do
   query = toListTransactionsQuery(params)
   r = @cw.shelley.transactions.list(params[:wid], query)

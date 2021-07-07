@@ -1,0 +1,34 @@
+<script>
+function goBack() {
+  window.history.back();
+}
+</script>
+<div class="list-group">
+  <div class="list-group-item">
+    Sign Transaction
+    | <small><a href="#" onclick="goBack()">
+        go back
+      </a></small>
+  </div>
+  <div class="list-group-item"  >
+    <b>Fee: </b> <%= "#{tx['fee']['quantity']} #{tx['fee']['unit']}" %>
+    <br/>
+    <br/>
+    <form action="/sign-tx" method="POST">
+      <button type="submit" class="btn btn-success" disabled>Sign</button>
+    </form>
+  </div>
+  <% if tx %>
+  <div class="list-group-item"  >
+    <details>
+      <summary>Transaction details</summary>
+        <code>
+          <small id="tx">
+              <%= response2table(tx) %>
+          </small>
+        </code>
+    </details>
+
+  </div>
+  <% end %>
+</div>

@@ -49,7 +49,10 @@ module Helpers
         address = params[:address]
 
         if params[:assets] == ''
-          payload = [{address => amount}]
+          payload = [ { "address": address,
+                        "amount": { "quantity": amount.to_i, "unit": "lovelace" }
+                      }
+                    ]
         else
           assets = parse_assets(params[:assets])
           payload = [ { "address": address,
@@ -357,7 +360,7 @@ module Helpers
       r
     end
 
-    def render_amount_form_part(balance)
+    def render_amount_form_part(balance, value = 1000000)
       balance_listed = ""
       balance.each do |b|
         balance_listed += "#{b.first.capitalize}: #{b.last['quantity']}<br/>"
@@ -365,7 +368,7 @@ module Helpers
       %Q{
         <div class="form-group">
           <label for="amount">Amount</label>
-          <input type="text" class="form-control" name="amount" id="amount" placeholder="Amount to send" value="1000000">
+          <input type="text" class="form-control" name="amount" id="amount" placeholder="Amount to send in lovelace" value="#{value}">
           <small id="help" class="form-text text-muted">
             <details>
               <summary><i>Available balance 👇</summary>
