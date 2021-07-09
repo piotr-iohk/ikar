@@ -940,7 +940,16 @@ post "/sign-tx-shelley" do
                                          validity_interval)
   handle_api_err r, session
 
-  erb :form_tx_new_sign, {:locals => { :tx => r } }
+  erb :form_tx_new_sign, {:locals => { :tx => r, :wid => wid } }
+end
+
+post "/submit-tx-shelley" do
+  wid = params[:wid]
+  r = @cw.shelley.transactions.sign(wid,
+                                    params[:pass],
+                                    params[:transaction])
+  handle_api_err r, session
+  erb :form_tx_new_submit, {:locals => { :tx => r, :wid => wid } }
 end
 
 get "/wallets-transactions" do

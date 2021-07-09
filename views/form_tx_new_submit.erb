@@ -5,23 +5,15 @@ function goBack() {
 </script>
 <div class="list-group">
   <div class="list-group-item">
-    Sign Transaction 🔒
+    Submit Transaction 🚀
     | <small><a href="#" onclick="goBack()">
         go back
       </a></small>
   </div>
   <div class="list-group-item"  >
-    <b>Fee: </b> <%= "#{tx['fee']['quantity']} #{tx['fee']['unit']}" %>
-    <br/>
-    <br/>
     <form action="/submit-tx-shelley" method="POST">
-      <div class="form-group">
-        <label for="pass">Passphrase</label>
-        <input type="text" class="form-control" name="pass" id="pass" placeholder="Passphrase" value="Secure Passphrase">
-      </div>
-      <input type="hidden" name="transaction" value="<%= tx['transaction'] %>"/>
       <input type="hidden" name="wid" value="<%= wid %>"/>
-      <button type="submit" class="btn btn-success">Sign</button>
+      <button type="submit" class="btn btn-success" disabled>Submit</button>
     </form>
   </div>
   <% if tx %>
