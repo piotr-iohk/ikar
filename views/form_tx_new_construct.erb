@@ -1,8 +1,9 @@
 <%
- # wallets = wallets
-url_path = request.env['PATH_INFO'].to_s
-shelley_ep = "/sign-tx-shelley"
-wid = params[:wid] if params[:wid]
+  # wallets = wallets
+  url_path = request.env['PATH_INFO'].to_s
+  shelley_ep = "/sign-tx-shelley"
+  byron_ep = "/sign-tx-byron"
+  wid = params[:wid] if params[:wid]
 %>
 <script type="text/javascript">
   $(function() {
@@ -154,13 +155,15 @@ wid = params[:wid] if params[:wid]
 <div class="list-group">
   <div class="list-group-item">
     Construct Transaction 🛠️
-    | <small><a href="<%= "/wallets/#{wid}" %>">
+    | <small>
+      <a href="<%= url_path.include?('shelley') ? "/wallets/#{wid}" : "/byron-wallets/#{wid}" %>">
         go back to wallet
       </a></small>
   </div>
   <div class="list-group-item">
 
-    <form action="<%= shelley_ep %>" method="POST">
+    <form action="<%= url_path.include?('shelley') ? shelley_ep : byron_ep %>"
+        method="POST">
       <div class="form-group">
         <label for="wid">Source Wallet</label>
         <select class="form-control" name="wid" id="wid">
@@ -190,7 +193,8 @@ wid = params[:wid] if params[:wid]
 
       <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="metadata_check"
-          name="metadata_check" <%= "checked" if params[:metadata_check] %>>
+          name="metadata_check" <%= "checked" if params[:metadata_check] %>
+          <%= " disabled" if url_path.include?('byron') %>>
         <label class="form-check-label" for="metadata_check">
           Metadata
         </label>
@@ -201,7 +205,8 @@ wid = params[:wid] if params[:wid]
 
       <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="withdrawals_check"
-          name="withdrawals_check" <%= "checked" if params[:withdrawals_check] %>>
+          name="withdrawals_check" <%= "checked" if params[:withdrawals_check] %>
+          <%= " disabled" if url_path.include?('byron') %>>
         <label class="form-check-label" for="withdrawals_check">
           Withdrawals
         </label>
@@ -212,7 +217,8 @@ wid = params[:wid] if params[:wid]
 
       <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="delegations_check"
-          name="delegations_check" <%= "checked" if params[:delegations_check] %>>
+          name="delegations_check" <%= "checked" if params[:delegations_check] %>
+          <%= " disabled" if url_path.include?('byron') %>>
         <label class="form-check-label" for="delegations_check">
           Delegations
         </label>
@@ -244,7 +250,9 @@ wid = params[:wid] if params[:wid]
 
       <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" name="validity_interval_check"
-          id="validity_interval_check" <%= "checked" if params[:validity_interval_check] %>>
+          id="validity_interval_check"
+          <%= "checked" if params[:validity_interval_check] %>
+          <%= " disabled" if url_path.include?('byron') %>>
         <label class="form-check-label" for="validity_interval_check">
           Validity interval
         </label>

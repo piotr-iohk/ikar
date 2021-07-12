@@ -1,3 +1,11 @@
+<%
+  # wallets = wallets
+  url_path = request.env['PATH_INFO'].to_s
+  shelley_ep = "/submit-tx-shelley"
+  byron_ep = "/submit-tx-byron"
+  wid = params[:wid] if params[:wid]
+%>
+
 <script>
 function goBack() {
   window.history.back();

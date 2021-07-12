@@ -1405,6 +1405,66 @@ post "/byron-wallets-migration-plan" do
 end
 
 # TRANSACTIONS BYRON
+get "/construct-tx-byron" do
+  wallets = @cw.byron.wallets.list
+  handle_api_err wallets, session
+
+  erb :form_tx_new_construct, {:locals => { :wallets => wallets, :tx => nil } }
+end
+
+post "/sign-tx-byron" do
+  wid = params[:wid]
+
+  if params[:payments_check]
+    payload = prepare_payload(params)
+  end
+
+  if params[:metadata_check]
+    metadata = parse_metadata(params[:metadata])
+  end
+
+  if params[:validity_interval_check]
+    validity_interval = {}
+
+    if params[:invalid_before_specified]
+      validity_interval["invalid_before"] = {
+        "quantity" => params[:invalid_before].to_i,
+        "unit" => params[:invalid_before_unit]
+      }
+    else
+      validity_interval["invalid_before"] = "unspecified"
+    end
+
+    if params[:invalid_hereafter_specified]
+      validity_interval["invalid_hereafter"] = {
+        "quantity" => params[:invalid_hereafter].to_i,
+        "unit" => params[:invalid_hereafter_unit]
+      }
+    else
+      validity_interval["invalid_hereafter"] = "unspecified"
+    end
+
+  end
+
+  r = @cw.byron.transactions.construct(wid,
+                                       payload,
+                                       metadata,
+                                       mint = nil,
+                                       validity_interval)
+  handle_api_err r, session
+
+  erb :form_tx_new_sign, {:locals => { :tx => r, :wid => wid } }
+end
+
+post "/submit-tx-byron" do
+  wid = params[:wid]
+  r = @cw.byron.transactions.sign(wid,
+                                    params[:pass],
+                                    params[:transaction])
+  handle_api_err r, session
+  erb :form_tx_new_submit, {:locals => { :tx => r, :wid => wid } }
+end
+
 get "/byron-wallets-transactions" do
   query = toListTransactionsQuery(params)
   r = @cw.byron.transactions.list(params[:wid], query)

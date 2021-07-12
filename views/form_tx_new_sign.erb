@@ -1,3 +1,11 @@
+<%
+  # wallets = wallets
+  url_path = request.env['PATH_INFO'].to_s
+  shelley_ep = "/submit-tx-shelley"
+  byron_ep = "/submit-tx-byron"
+  wid = params[:wid] if params[:wid]
+%>
+
 <script>
 function goBack() {
   window.history.back();
@@ -14,7 +22,8 @@ function goBack() {
     <b>Fee: </b> <%= "#{tx['fee']['quantity']} #{tx['fee']['unit']}" %>
     <br/>
     <br/>
-    <form action="/submit-tx-shelley" method="POST">
+    <form action="<%= url_path.include?('shelley') ? shelley_ep : byron_ep %>"
+        method="POST">
       <div class="form-group">
         <label for="pass">Passphrase</label>
         <input type="text" class="form-control" name="pass" id="pass" placeholder="Passphrase" value="Secure Passphrase">
