@@ -77,6 +77,33 @@
       });
 
       $(function(){
+          if($('#single_output').prop("checked")) {
+              $('#payment_form_single_output').show();
+          } else {
+              $('#payment_form_single_output').hide();
+          }
+
+          if($('#multi_output').prop("checked")) {
+              $('#payment_form_multi_output').show();
+          } else {
+              $('#payment_form_multi_output').hide();
+          }
+
+          if($('#between_wallets').prop("checked")) {
+              $('#payment_form_between_wallets').show();
+          } else {
+              $('#payment_form_between_wallets').hide();
+          }
+
+          $('input[type="radio"][name="payments_mode"]').click(function(){
+          	var demovalue = $(this).val();
+              $("div.payment_forms").hide();
+              $("#payment_form_"+demovalue).show();
+          });
+      });
+
+
+      $(function(){
           if($('#withdrawals_check').prop("checked")) {
               $('#withdrawals_form').show();
           } else {
@@ -180,16 +207,62 @@
         <label class="form-check-label" for="payments_check">
           Payments
         </label>
-      </div>
-      <div id="payments_form" style="display:none">
-        <div class="form-group">
-          <label for="address">Address</label>
-          <input type="text" class="form-control" name="address" id="address"
-            placeholder="Address" value="">
+        <div id="payments_form" style="display:none">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="payments_mode"
+              id="between_wallets" value="between_wallets"
+              <%= "disabled" if url_path.include? 'byron' %>>
+            <label class="form-check-label" for="between_wallets">
+              Between my wallets
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="payments_mode"
+              id="single_output" value="single_output">
+            <label class="form-check-label" for="single_output">
+              Single-output
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="payments_mode"
+              id="multi_output" value="multi_output">
+            <label class="form-check-label" for="multi_output">
+              Multi-output
+            </label>
+          </div>
+
+          <div id="payment_form_single_output" class="payment_forms" style="display:none">
+            <div class="form-group">
+              <label for="address">Address</label>
+              <input type="text" class="form-control" name="address" id="address"
+                placeholder="Address" value="">
+            </div>
+            <%= render_amount_form_part(wallets.select{|w| w['id'] == wid }.first['balance'], value = nil) %>
+            <%= render_assets_form_part(wallets.select{|w| w['id'] == wid }.first['assets']['available']) %>
+          </div>
+          <div id="payment_form_multi_output" class="payment_forms" style="display:none">
+            <%= render_addr_amt %>
+            <%= render_assets_form_part(wallets.select{|w| w['id'] == wid }.first['assets']['available'], multi = true) %>
+          </div>
+          <div id="payment_form_between_wallets" class="payment_forms" style="display:none">
+            <div class="form-group">
+              <label for="wid_dst">Destination Wallet</label>
+              <select class="form-control" name="wid_dst" id="wid_dst">
+                <% wallets.each do |w| %>
+                <option value="<%= w['id'] %>"> <%= "#{w['name']} [id: #{w['id']}, balance total: #{w['balance']['total']['quantity']}]" %> </option>
+                <% end %>
+              </select>
+              <small id="help" class="form-text text-muted">I will pick up an unused address from that wallet and send funds to it.</small>
+              <%= render_amount_form_part(wallets.select{|w| w['id'] == wid }.first['balance'], value = nil) %>
+              <%= render_assets_form_part(wallets.select{|w| w['id'] == wid }.first['assets']['available']) %>
+            </div>
+          </div>
+
+
         </div>
-        <%= render_amount_form_part(wallets.select{|w| w['id'] == wid }.first['balance'], value = nil) %>
-        <%= render_assets_form_part(wallets.select{|w| w['id'] == wid }.first['assets']['available']) %>
       </div>
+
+
 
       <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="metadata_check"

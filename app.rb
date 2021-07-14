@@ -870,7 +870,29 @@ post "/sign-tx-shelley" do
   wid = params[:wid]
 
   if params[:payments_check]
-    payload = prepare_payload(params)
+    case params[:payments_mode]
+    when 'single_output', 'multi_output'
+      payload = prepare_payload_new_tx(params)
+    when 'between_wallets'
+      wid_dst = params[:wid_dst]
+      amount = params[:amount]
+      address_dst = @cw.shelley.addresses.list(wid_dst,
+                                              {state: "unused"}).
+                                              sample['id']
+      if params[:assets] == ''
+        payload = [ { "address": address_dst,
+                      "amount": { "quantity": amount.to_i, "unit": "lovelace" }
+                    }
+                  ]
+      else
+        assets = parse_assets(params[:assets])
+        payload = [ { "address": address_dst,
+                      "amount": { "quantity": amount.to_i, "unit": "lovelace" },
+                      "assets": assets
+                    }
+                  ]
+      end
+    end
   end
 
   if params[:withdrawals_check]
@@ -1414,9 +1436,11 @@ end
 
 post "/sign-tx-byron" do
   wid = params[:wid]
-
   if params[:payments_check]
-    payload = prepare_payload(params)
+    case params[:payments_mode]
+    when 'single_output', 'multi_output'
+      payload = prepare_payload_new_tx(params)
+    end
   end
 
   if params[:metadata_check]

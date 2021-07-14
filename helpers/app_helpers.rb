@@ -65,6 +65,41 @@ module Helpers
       payload
     end
 
+    ##
+    # Prepares payments for new construct tx ep on form:
+    # - form_tx_new_sign
+    def prepare_payload_new_tx(params)
+      if params[:payments_mode] == 'multi_output'
+        payload = parse_addr_amt(params[:addr_amt])
+        if params[:assets] != ''
+          assets = parse_assets(params[:assets])
+          if params[:assets_strategy] == 'assets_first'
+            payload[0][:assets] = assets
+          elsif params[:assets_strategy] == 'assets_each'
+            payload.each{|p| p[:assets] = assets}
+          end
+        end
+      else
+        amount = params[:amount]
+        address = params[:address]
+
+        if params[:assets] == ''
+          payload = [ { "address": address,
+                        "amount": { "quantity": amount.to_i, "unit": "lovelace" }
+                      }
+                    ]
+        else
+          assets = parse_assets(params[:assets])
+          payload = [ { "address": address,
+                        "amount": { "quantity": amount.to_i, "unit": "lovelace" },
+                        "assets": assets
+                      }
+                    ]
+        end
+      end
+      payload
+    end
+
     def generate_curl(response, label = 'curl')
       uri = response.request.last_uri
       body = response.request.options[:body]
