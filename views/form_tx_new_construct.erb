@@ -237,8 +237,8 @@
               <input type="text" class="form-control" name="address" id="address"
                 placeholder="Address" value="">
             </div>
-            <%= render_amount_form_part(wallets.select{|w| w['id'] == wid }.first['balance'], value = nil) %>
-            <%= render_assets_form_part(wallets.select{|w| w['id'] == wid }.first['assets']['available']) %>
+            <%= render_amount_form_part(wallets.select{|w| w['id'] == wid }.first['balance'], value = nil, "amount_single") %>
+            <%= render_assets_form_part(wallets.select{|w| w['id'] == wid }.first['assets']['available'], nil, nil, nil, nil, nil, "assets_single") %>
           </div>
           <div id="payment_form_multi_output" class="payment_forms" style="display:none">
             <%= render_addr_amt %>
@@ -253,8 +253,8 @@
                 <% end %>
               </select>
               <small id="help" class="form-text text-muted">I will pick up an unused address from that wallet and send funds to it.</small>
-              <%= render_amount_form_part(wallets.select{|w| w['id'] == wid }.first['balance'], value = nil) %>
-              <%= render_assets_form_part(wallets.select{|w| w['id'] == wid }.first['assets']['available']) %>
+              <%= render_amount_form_part(wallets.select{|w| w['id'] == wid }.first['balance'], value = nil, "amount_wallet") %>
+              <%= render_assets_form_part(wallets.select{|w| w['id'] == wid }.first['assets']['available'], nil, nil, nil, nil, nil, "assets_wallet") %>
             </div>
           </div>
 

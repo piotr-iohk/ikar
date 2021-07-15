@@ -868,24 +868,24 @@ end
 
 post "/sign-tx-shelley" do
   wid = params[:wid]
-
+  
   if params[:payments_check]
     case params[:payments_mode]
     when 'single_output', 'multi_output'
       payload = prepare_payload_new_tx(params)
     when 'between_wallets'
       wid_dst = params[:wid_dst]
-      amount = params[:amount]
+      amount = params[:amount_wallet]
       address_dst = @cw.shelley.addresses.list(wid_dst,
                                               {state: "unused"}).
                                               sample['id']
-      if params[:assets] == ''
+      if params[:assets_wallet] == ''
         payload = [ { "address": address_dst,
                       "amount": { "quantity": amount.to_i, "unit": "lovelace" }
                     }
                   ]
       else
-        assets = parse_assets(params[:assets])
+        assets = parse_assets(params[:assets_wallet])
         payload = [ { "address": address_dst,
                       "amount": { "quantity": amount.to_i, "unit": "lovelace" },
                       "assets": assets
