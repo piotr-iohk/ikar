@@ -511,6 +511,69 @@ end
 
 # SHELLEY WALLETS
 
+get "/mint-to-address" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err(wallets, session)
+
+  erb :form_mint_to_multi_address, { :locals => { :wallets => wallets,
+                                       :asset_name => nil,
+                                       :asset => nil } }
+end
+
+post "/mint-to-address" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err(wallets, session)
+
+  case params['operation']
+  when 'mint_to_self'
+    my_address = @cw.shelley.addresses.list(params['wid_src'], {state: "unused"}).first['id']
+    mint_burn = [
+      {
+        "monetary_policy_index" => params['monetary_policy_index'],
+        "asset_name" => params['asset_name'].unpack('H*').first,
+        "operation" => {
+                      "mint" => {
+                        "receiving_address" => my_address,
+                        "amount" => {
+                            "quantity" => params['amount'].to_i,
+                            "unit" => "assets"
+                                    }
+                        }
+                      }
+      }
+    ]
+
+
+  when 'mint'
+    mint_burn = parse_addr_amt_mint(params['addr_amt'],
+                                    params['monetary_policy_index'],
+                                    params['asset_name'].unpack('H*').first)
+  when 'burn'
+    mint_burn = [
+      {
+        "monetary_policy_index" => params['monetary_policy_index'],
+        "asset_name" => params['asset_name'].unpack('H*').first,
+        "operation" => {
+                      "burn" => { "quantity" => params['amount'].to_i,
+                                  "unit": "assets" }
+                      }
+      }
+    ]
+  end
+  # operation = JSON.parse(params['operation'])
+  m = parse_metadata(params[:metadata])
+  params[:ttl] == '' ? ttl = nil : ttl = params[:ttl].to_i
+  mint_or_burn = @cw.shelley.assets.mint(params['wid_src'],
+                                         mint_burn,
+                                         params['pass'],
+                                         m,
+                                         ttl
+                                         )
+  handle_api_err(mint_or_burn, session)
+
+  erb :tx_details, { :locals => { :tx => mint_or_burn, :wid => params['wid_src'] }  }
+end
+
 get "/wallets-get-assets" do
   wallets = @cw.shelley.wallets.list
   handle_api_err(wallets, session)

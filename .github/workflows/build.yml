@@ -35,6 +35,7 @@ jobs:
         wget $CONFIG_URL/testnet-config.json
         wget $CONFIG_URL/testnet-byron-genesis.json
         wget $CONFIG_URL/testnet-shelley-genesis.json
+        wget $CONFIG_URL/testnet-alonzo-genesis.json
         wget $CONFIG_URL/testnet-topology.json
         NODE_CONFIG_PATH=`pwd` docker-compose -f docker-compose-test.yml up --detach
     - name: Run tests
@@ -43,5 +44,5 @@ jobs:
       CONFIG_URL: https://hydra.iohk.io/job/Cardano/cardano-node/cardano-deployment/latest-finished/download/1
       NETWORK: testnet
       WALLET: dev-master
-      NODE: 1.26.2
-      TOKEN_METADATA: http://metadata-server-mock.herokuapp.com/
+      NODE: alonzo-white-1.1
+      TOKEN_METADATA: https://metadata.cardano-testnet.iohkdev.io/

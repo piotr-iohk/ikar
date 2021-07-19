@@ -143,11 +143,29 @@ module Helpers
       r
     end
 
-    def parse_addr_amt(addr_amt)
+    def parse_addr_amt(addr_amt, unit = 'lovelace')
       addr_amt.split("\n").map{|a| a.strip.split(":")}.collect do |a|
         {:address => a.first.strip,
          :amount => {:quantity => a.last.strip.to_i,
-                     :unit => "lovelace"}
+                     :unit => unit}
+        }
+      end
+    end
+
+    def parse_addr_amt_mint(addr_amt, monetary_policy_index, asset_name)
+      addr_amt.split("\n").map{|a| a.strip.split(":")}.collect do |a|
+        {
+          "monetary_policy_index" => monetary_policy_index,
+          "asset_name" => asset_name,
+          "operation" => {
+                        "mint" => {
+                          "receiving_address" => a.first.strip,
+                          "amount" => {
+                              "quantity" => a.last.strip.to_i,
+                              "unit" => "assets"
+                                      }
+                          }
+                        }
         }
       end
     end
@@ -530,11 +548,8 @@ module Helpers
         }
     end
 
-    def render_tx_shelley_form_part
-      %Q{
-
-        #{render_withdrawal_form_part}
-        #{render_metadata_form_part}
+    def render_ttl_form_part
+      %{
         <div class="form-group">
           <label class="form-check-label" for="ttl">Time-to-live</label>
           <input type="text" class="form-control" class="form-check-input" id="ttl"
@@ -542,6 +557,14 @@ module Helpers
                 placeholder="TTL in seconds">
           <small id="help" class="form-text text-muted">Transaction TTL in seconds.</small>
         </div>
+      }
+    end
+
+    def render_tx_shelley_form_part
+      %Q{
+        #{render_withdrawal_form_part}
+        #{render_metadata_form_part}
+        #{render_ttl_form_part}
        }
     end
 
