@@ -527,33 +527,45 @@ post "/mint-to-address" do
   case params['operation']
   when 'mint_to_self'
     my_address = @cw.shelley.addresses.list(params['wid_src'], {state: "unused"}).first['id']
-    operation = [
-                	  {
-                		"mint" => {
-                		  "receiving_address" => my_address,
-                		  "amount" => {
-                    			"quantity" => params['amount'].to_i,
-                    			"unit" => "assets"
-                		              }
-                		  }
-                	  }
-                ]
+    mint_burn = [
+      {
+        "monetary_policy_index" => params['monetary_policy_index'],
+        "asset_name" => params['asset_name'].unpack('H*').first,
+        "operation" => {
+                      "mint" => {
+                        "receiving_address" => my_address,
+                        "amount" => {
+                            "quantity" => params['amount'].to_i,
+                            "unit" => "assets"
+                                    }
+                        }
+                      }
+      }
+    ]
+
+
   when 'mint'
-    operation = parse_addr_amt_mint(params['addr_amt'])
+    mint_burn = parse_addr_amt_mint(params['addr_amt'],
+                                    params['monetary_policy_index'],
+                                    params['asset_name'].unpack('H*').first)
   when 'burn'
-    operation = [ {
-        params['operation'] => { "quantity" => params['amount'].to_i,
-                                 "unit": "assets" }
-    } ]
+    mint_burn = [
+      {
+        "monetary_policy_index" => params['monetary_policy_index'],
+        "asset_name" => params['asset_name'].unpack('H*').first,
+        "operation" => {
+                      "burn" => { "quantity" => params['amount'].to_i,
+                                  "unit": "assets" }
+                      }
+      }
+    ]
   end
   # operation = JSON.parse(params['operation'])
   m = parse_metadata(params[:metadata])
   params[:ttl] == '' ? ttl = nil : ttl = params[:ttl].to_i
   mint_or_burn = @cw.shelley.assets.mint(params['wid_src'],
-                                         params['monetary_policy_index'],
-                                         params['asset_name'].unpack('H*').first,
+                                         mint_burn,
                                          params['pass'],
-                                         operation,
                                          m,
                                          ttl
                                          )

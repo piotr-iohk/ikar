@@ -152,15 +152,21 @@ module Helpers
       end
     end
 
-    def parse_addr_amt_mint(addr_amt, unit = 'assets')
+    def parse_addr_amt_mint(addr_amt, monetary_policy_index, asset_name)
       addr_amt.split("\n").map{|a| a.strip.split(":")}.collect do |a|
         {
-          :mint => { :receiving_address => a.first.strip,
-                     :amount => {:quantity => a.last.strip.to_i,
-                               :unit => unit}
-                   }
+          "monetary_policy_index" => monetary_policy_index,
+          "asset_name" => asset_name,
+          "operation" => {
+                        "mint" => {
+                          "receiving_address" => a.first.strip,
+                          "amount" => {
+                              "quantity" => a.last.strip.to_i,
+                              "unit" => "assets"
+                                      }
+                          }
+                        }
         }
-
       end
     end
 
