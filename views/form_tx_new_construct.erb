@@ -1,0 +1,371 @@
+<%
+  # wallets = wallets
+  url_path = request.env['PATH_INFO'].to_s
+  shelley_ep = "/sign-tx-shelley"
+  byron_ep = "/sign-tx-byron"
+  wid = params[:wid] if params[:wid]
+%>
+<script type="text/javascript">
+  $(function() {
+
+      $(function(){
+          if($('#invalid_before_specified').prop("checked")) {
+              $('#invalid_before').prop("disabled", false);
+              $('#invalid_before_unit').prop("disabled", false);
+          } else {
+            $('#invalid_before').prop("disabled", true);
+            $('#invalid_before_unit').prop("disabled", true);
+          }
+      });
+      $('#invalid_before_specified').change(function(){
+          if($('#invalid_before_specified').prop("checked")) {
+              $('#invalid_before').prop("disabled", false);
+              $('#invalid_before_unit').prop("disabled", false);
+          } else {
+            $('#invalid_before').prop("disabled", true);
+            $('#invalid_before_unit').prop("disabled", true);
+          }
+      });
+
+      $(function(){
+          if($('#invalid_hereafter_specified').prop("checked")) {
+              $('#invalid_hereafter').prop("disabled", false);
+              $('#invalid_hereafter_unit').prop("disabled", false);
+          } else {
+            $('#invalid_hereafter').prop("disabled", true);
+            $('#invalid_hereafter_unit').prop("disabled", true);
+          }
+      });
+      $('#invalid_hereafter_specified').change(function(){
+          if($('#invalid_hereafter_specified').prop("checked")) {
+              $('#invalid_hereafter').prop("disabled", false);
+              $('#invalid_hereafter_unit').prop("disabled", false);
+          } else {
+            $('#invalid_hereafter').prop("disabled", true);
+            $('#invalid_hereafter_unit').prop("disabled", true);
+          }
+      });
+
+      $(function(){
+          if($('#metadata_check').prop("checked")) {
+              $('#metadata_form').show();
+          } else {
+              $('#metadata_form').hide();
+          }
+      });
+      $('#metadata_check').change(function(){
+          if($('#metadata_check').prop("checked")) {
+              $('#metadata_form').show();
+          } else {
+              $('#metadata_form').hide();
+          }
+      });
+
+      $(function(){
+          if($('#payments_check').prop("checked")) {
+              $('#payments_form').show();
+          } else {
+              $('#payments_form').hide();
+          }
+      });
+      $('#payments_check').change(function(){
+          if($('#payments_check').prop("checked")) {
+              $('#payments_form').show();
+          } else {
+              $('#payments_form').hide();
+          }
+      });
+
+      $(function(){
+          if($('#single_output').prop("checked")) {
+              $('#payment_form_single_output').show();
+          } else {
+              $('#payment_form_single_output').hide();
+          }
+
+          if($('#multi_output').prop("checked")) {
+              $('#payment_form_multi_output').show();
+          } else {
+              $('#payment_form_multi_output').hide();
+          }
+
+          if($('#between_wallets').prop("checked")) {
+              $('#payment_form_between_wallets').show();
+          } else {
+              $('#payment_form_between_wallets').hide();
+          }
+
+          $('input[type="radio"][name="payments_mode"]').click(function(){
+          	var demovalue = $(this).val();
+              $("div.payment_forms").hide();
+              $("#payment_form_"+demovalue).show();
+          });
+      });
+
+
+      $(function(){
+          if($('#withdrawals_check').prop("checked")) {
+              $('#withdrawals_form').show();
+          } else {
+              $('#withdrawals_form').hide();
+          }
+      });
+      $('#withdrawals_check').change(function(){
+          if($('#withdrawals_check').prop("checked")) {
+              $('#withdrawals_form').show();
+          } else {
+              $('#withdrawals_form').hide();
+          }
+      });
+
+      $(function(){
+          if($('#delegations_check').prop("checked")) {
+              $('#delegations_form').show();
+          } else {
+              $('#delegations_form').hide();
+          }
+      });
+      $('#delegations_check').change(function(){
+          if($('#delegations_check').prop("checked")) {
+              $('#delegations_form').show();
+          } else {
+              $('#delegations_form').hide();
+          }
+      });
+
+      $(function(){
+          if($('#minting_check').prop("checked")) {
+              $('#minting_form').show();
+          } else {
+              $('#minting_form').hide();
+          }
+      });
+      $('#minting_check').change(function(){
+          if($('#minting_check').prop("checked")) {
+              $('#minting_form').show();
+          } else {
+              $('#minting_form').hide();
+          }
+      });
+
+      $(function(){
+          if($('#validity_interval_check').prop("checked")) {
+              $('#validity_interval_form').show();
+          } else {
+              $('#validity_interval_form').hide();
+          }
+      });
+      $('#validity_interval_check').change(function(){
+          if($('#validity_interval_check').prop("checked")) {
+              $('#validity_interval_form').show();
+          } else {
+              $('#validity_interval_form').hide();
+          }
+      });
+
+      $(function() {
+          if($('#delegation_action').val() == 'quit') {
+              $('#pool_id').hide();
+          } else {
+              $('#pool_id').show();
+          }
+          $('#delegation_action').change(function(){
+              if($('#delegation_action').val() == 'quit') {
+                  $('#pool_id').hide();
+              } else {
+                  $('#pool_id').show();
+              }
+          });
+      });
+  });
+</script>
+<div class="list-group">
+  <div class="list-group-item">
+    Construct Transaction 🛠️
+    | <small>
+      <a href="<%= url_path.include?('shelley') ? "/wallets/#{wid}" : "/byron-wallets/#{wid}" %>">
+        go back to wallet
+      </a></small>
+  </div>
+  <div class="list-group-item">
+
+    <form action="<%= url_path.include?('shelley') ? shelley_ep : byron_ep %>"
+        method="POST">
+      <div class="form-group">
+        <label for="wid">Source Wallet</label>
+        <select class="form-control" name="wid" id="wid">
+          <% wallets.each do |w| %>
+          <option <%= wid == w['id'] ? "selected" : "" %> value="<%= w['id'] %>">
+            <%= "#{w['name']} [id: #{w['id']}, balance available: #{w['balance']['available']['quantity']}]" %>
+          </option>
+          <% end %>
+        </select>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value=""
+        id="payments_check" name="payments_check" <%= "checked" if params[:payments_check] %>>
+        <label class="form-check-label" for="payments_check">
+          Payments
+        </label>
+        <div id="payments_form" style="display:none">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="payments_mode"
+              id="between_wallets" value="between_wallets"
+              <%= "disabled" if url_path.include? 'byron' %>>
+            <label class="form-check-label" for="between_wallets">
+              Between my wallets
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="payments_mode"
+              id="single_output" value="single_output">
+            <label class="form-check-label" for="single_output">
+              Single-output
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="payments_mode"
+              id="multi_output" value="multi_output">
+            <label class="form-check-label" for="multi_output">
+              Multi-output
+            </label>
+          </div>
+
+          <div id="payment_form_single_output" class="payment_forms" style="display:none">
+            <div class="form-group">
+              <label for="address">Address</label>
+              <input type="text" class="form-control" name="address" id="address"
+                placeholder="Address" value="">
+            </div>
+            <%= render_amount_form_part(wallets.select{|w| w['id'] == wid }.first['balance'], value = nil, "amount_single") %>
+            <%= render_assets_form_part(wallets.select{|w| w['id'] == wid }.first['assets']['available'], nil, nil, nil, nil, nil, "assets_single") %>
+          </div>
+          <div id="payment_form_multi_output" class="payment_forms" style="display:none">
+            <%= render_addr_amt %>
+            <%= render_assets_form_part(wallets.select{|w| w['id'] == wid }.first['assets']['available'], multi = true) %>
+          </div>
+          <div id="payment_form_between_wallets" class="payment_forms" style="display:none">
+            <div class="form-group">
+              <label for="wid_dst">Destination Wallet</label>
+              <select class="form-control" name="wid_dst" id="wid_dst">
+                <% wallets.each do |w| %>
+                <option value="<%= w['id'] %>"> <%= "#{w['name']} [id: #{w['id']}, balance total: #{w['balance']['total']['quantity']}]" %> </option>
+                <% end %>
+              </select>
+              <small id="help" class="form-text text-muted">I will pick up an unused address from that wallet and send funds to it.</small>
+              <%= render_amount_form_part(wallets.select{|w| w['id'] == wid }.first['balance'], value = nil, "amount_wallet") %>
+              <%= render_assets_form_part(wallets.select{|w| w['id'] == wid }.first['assets']['available'], nil, nil, nil, nil, nil, "assets_wallet") %>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+
+
+
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="metadata_check"
+          name="metadata_check" <%= "checked" if params[:metadata_check] %>
+          <%= " disabled" if url_path.include?('byron') %>>
+        <label class="form-check-label" for="metadata_check">
+          Metadata
+        </label>
+      </div>
+      <div id="metadata_form" style="display:none">
+        <%= render_metadata_form_part %>
+      </div>
+
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="withdrawals_check"
+          name="withdrawals_check" <%= "checked" if params[:withdrawals_check] %>
+          <%= " disabled" if url_path.include?('byron') %>>
+        <label class="form-check-label" for="withdrawals_check">
+          Withdrawals
+        </label>
+      </div>
+      <div id="withdrawals_form" style="display:none">
+        <%= render_withdrawal_form_part %>
+      </div>
+
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="delegations_check"
+          name="delegations_check" <%= "checked" if params[:delegations_check] %>
+          <%= " disabled" if url_path.include?('byron') %>>
+        <label class="form-check-label" for="delegations_check">
+          Delegations
+        </label>
+      </div>
+      <div id="delegations_form" style="display:none">
+        <div class="form-group">
+          <select class="form-control" name="delegation_action" id="delegation_action">
+            <option value="join">Join</option>
+            <option value="quit">Quit</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <input type="text" class="form-control" name="pool_id" id="pool_id"
+            placeholder="Pool ID" value="">
+        </div>
+        <div class="form-group">
+          <input type="text" class="form-control" name="stake_key_id" id="stake_key_id"
+            placeholder="Stake key ID" value="">
+            <small id="help" class="form-text text-muted">Example: 1852H. An individual segment within a derivation path.</small>
+        </div>
+      </div>
+
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="minting_check" disabled>
+        <label class="form-check-label" for="minting_check">
+          Minting
+        </label>
+      </div>
+
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" name="validity_interval_check"
+          id="validity_interval_check"
+          <%= "checked" if params[:validity_interval_check] %>
+          <%= " disabled" if url_path.include?('byron') %>>
+        <label class="form-check-label" for="validity_interval_check">
+          Validity interval
+        </label>
+      </div>
+      <div id="validity_interval_form" style="display:none">
+        <div class="form-inline">
+          &nbsp;&nbsp;
+          <input class="form-check-input" type="checkbox" value=""
+            name="invalid_before_specified"
+            id="invalid_before_specified"
+            <%= "checked" if params[:invalid_before_specified] %>>
+          <input type="text" class="form-control" name="invalid_before" id="invalid_before"
+            placeholder="Invalid Before" value="">
+
+          <select class="form-control" name="invalid_before_unit" id="invalid_before_unit">
+            <option value="second">second</option>
+            <option value="slot">slot</option>
+          </select>
+        </div>
+        <br/>
+        <div class="form-inline">
+          &nbsp;&nbsp;
+          <input class="form-check-input" type="checkbox" value=""
+            name="invalid_hereafter_specified"
+            id="invalid_hereafter_specified"
+            <%= "checked" if params[:invalid_hereafter_specified] %>>
+          <input type="text" class="form-control" name="invalid_hereafter" id="invalid_hereafter"
+            placeholder="Invalid Hereafter" value="">
+
+          <select class="form-control" name="invalid_hereafter_unit" id="invalid_hereafter_unit">
+            <option value="second">second</option>
+            <option value="slot">slot</option>
+          </select>
+        </div>
+        <br/>
+
+      </div>
+      <br/>
+      <button type="submit" class="btn btn-success">Construct</button>
+
+    </form>
+  </div>
+</div>

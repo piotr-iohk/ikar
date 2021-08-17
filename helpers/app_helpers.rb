@@ -49,9 +49,47 @@ module Helpers
         address = params[:address]
 
         if params[:assets] == ''
-          payload = [{address => amount}]
+          payload = [ { "address": address,
+                        "amount": { "quantity": amount.to_i, "unit": "lovelace" }
+                      }
+                    ]
         else
           assets = parse_assets(params[:assets])
+          payload = [ { "address": address,
+                        "amount": { "quantity": amount.to_i, "unit": "lovelace" },
+                        "assets": assets
+                      }
+                    ]
+        end
+      end
+      payload
+    end
+
+    ##
+    # Prepares payments for new construct tx ep on form:
+    # - form_tx_new_sign
+    def prepare_payload_new_tx(params)
+      if params[:payments_mode] == 'multi_output'
+        payload = parse_addr_amt(params[:addr_amt])
+        if params[:assets] != ''
+          assets = parse_assets(params[:assets])
+          if params[:assets_strategy] == 'assets_first'
+            payload[0][:assets] = assets
+          elsif params[:assets_strategy] == 'assets_each'
+            payload.each{|p| p[:assets] = assets}
+          end
+        end
+      else
+        amount = params[:amount_single]
+        address = params[:address]
+
+        if params[:assets_single] == ''
+          payload = [ { "address": address,
+                        "amount": { "quantity": amount.to_i, "unit": "lovelace" }
+                      }
+                    ]
+        else
+          assets = parse_assets(params[:assets_single])
           payload = [ { "address": address,
                         "amount": { "quantity": amount.to_i, "unit": "lovelace" },
                         "assets": assets
@@ -357,7 +395,7 @@ module Helpers
       r
     end
 
-    def render_amount_form_part(balance)
+    def render_amount_form_part(balance, value = 1000000, input_name = "amount")
       balance_listed = ""
       balance.each do |b|
         balance_listed += "#{b.first.capitalize}: #{b.last['quantity']}<br/>"
@@ -365,7 +403,7 @@ module Helpers
       %Q{
         <div class="form-group">
           <label for="amount">Amount</label>
-          <input type="text" class="form-control" name="amount" id="amount" placeholder="Amount to send" value="1000000">
+          <input type="text" class="form-control" name="#{input_name}" id="#{input_name}" placeholder="Amount to send in lovelace" value="#{value}">
           <small id="help" class="form-text text-muted">
             <details>
               <summary><i>Available balance 👇</summary>
@@ -378,7 +416,13 @@ module Helpers
        }
     end
 
-    def render_assets_form_part(assets_available, multi = nil, assets_per_line = nil, assets_strategy = nil)
+    def render_assets_form_part(assets_available,
+                                multi = nil,
+                                assets_per_line = nil,
+                                assets_strategy = nil,
+                                assets_first_name = "assets_first",
+                                assets_each_name = "assets_each",
+                                assets_textarea_name = "assets")
       assets_balance = assets_available.collect do |a|
         "#{a['policy_id']}:#{a['asset_name']}:#{a['quantity']}<br/>"
       end.join("")
@@ -386,13 +430,17 @@ module Helpers
       radios = %Q{
         <small>
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="assets_strategy" id="assets_first" value="assets_first" #{"checked" if (assets_strategy == "assets_first" || assets_strategy == nil)}>
+          <input class="form-check-input" type="radio" name="assets_strategy"
+            id="#{assets_first_name}" value="#{assets_first_name}"
+            #{"checked" if (assets_strategy == "assets_first" || assets_strategy == nil)}>
           <label class="form-check-label" for="assets_first">
             Add to first address
           </label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="assets_strategy" id="assets_each" value="assets_each" #{"checked" if assets_strategy == "assets_each"}>
+          <input class="form-check-input" type="radio" name="assets_strategy"
+            id="#{assets_each_name}" value="#{assets_each_name}"
+            #{"checked" if assets_strategy == "assets_each"}>
           <label class="form-check-label" for="assets_each">
             Add to each address
           </label>
@@ -404,7 +452,8 @@ module Helpers
         <div class="form-group">
           <label for="assets">Assets</label>
           #{radios if multi}
-          <textarea class="form-control" name="assets" id="assets" rows="3">#{assets_per_line}</textarea>
+          <textarea class="form-control" name="#{assets_textarea_name}"
+            id="#{assets_textarea_name}" rows="3">#{assets_per_line}</textarea>
           <small id="help" class="form-text text-muted">
             <details>
               <summary><i>policyId:assetName:amount</i> per line. Available assets 👇</summary>

@@ -858,6 +858,122 @@ post "/wallets-migration-plan" do
 end
 
 # TRANSACTIONS SHELLEY
+
+get "/construct-tx-shelley" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+
+  erb :form_tx_new_construct, {:locals => { :wallets => wallets, :tx => nil } }
+end
+
+post "/sign-tx-shelley" do
+  wid = params[:wid]
+  
+  if params[:payments_check]
+    case params[:payments_mode]
+    when 'single_output', 'multi_output'
+      payload = prepare_payload_new_tx(params)
+    when 'between_wallets'
+      wid_dst = params[:wid_dst]
+      amount = params[:amount_wallet]
+      address_dst = @cw.shelley.addresses.list(wid_dst,
+                                              {state: "unused"}).
+                                              sample['id']
+      if params[:assets_wallet] == ''
+        payload = [ { "address": address_dst,
+                      "amount": { "quantity": amount.to_i, "unit": "lovelace" }
+                    }
+                  ]
+      else
+        assets = parse_assets(params[:assets_wallet])
+        payload = [ { "address": address_dst,
+                      "amount": { "quantity": amount.to_i, "unit": "lovelace" },
+                      "assets": assets
+                    }
+                  ]
+      end
+    end
+  end
+
+  if params[:withdrawals_check]
+    case params[:withdrawal]
+    when ''
+      withdrawal = nil
+    when 'self'
+      withdrawal = 'self'
+    else
+      withdrawal = params[:withdrawal].split
+    end
+  end
+
+  if params[:metadata_check]
+    metadata = parse_metadata(params[:metadata])
+  end
+
+  if params[:delegations_check]
+    case params[:delegation_action]
+    when 'join'
+      delegations = [
+          { 'join' =>
+            { 'pool' => params[:pool_id],
+              'stake_key_index' => params[:stake_key_id]
+            }
+          }
+      ]
+    when 'quit'
+      delegations = [
+          { 'quit' =>
+            { 'stake_key_index' => params[:stake_key_id]
+            }
+          }
+      ]
+    end
+  end
+
+  if params[:validity_interval_check]
+    validity_interval = {}
+
+    if params[:invalid_before_specified]
+      validity_interval["invalid_before"] = {
+        "quantity" => params[:invalid_before].to_i,
+        "unit" => params[:invalid_before_unit]
+      }
+    else
+      validity_interval["invalid_before"] = "unspecified"
+    end
+
+    if params[:invalid_hereafter_specified]
+      validity_interval["invalid_hereafter"] = {
+        "quantity" => params[:invalid_hereafter].to_i,
+        "unit" => params[:invalid_hereafter_unit]
+      }
+    else
+      validity_interval["invalid_hereafter"] = "unspecified"
+    end
+
+  end
+
+  r = @cw.shelley.transactions.construct(wid,
+                                         payload,
+                                         withdrawal,
+                                         metadata,
+                                         delegations,
+                                         mint = nil,
+                                         validity_interval)
+  handle_api_err r, session
+
+  erb :form_tx_new_sign, {:locals => { :tx => r, :wid => wid } }
+end
+
+post "/submit-tx-shelley" do
+  wid = params[:wid]
+  r = @cw.shelley.transactions.sign(wid,
+                                    params[:pass],
+                                    params[:transaction])
+  handle_api_err r, session
+  erb :form_tx_new_submit, {:locals => { :tx => r, :wid => wid } }
+end
+
 get "/wallets-transactions" do
   query = toListTransactionsQuery(params)
   r = @cw.shelley.transactions.list(params[:wid], query)
@@ -1311,6 +1427,68 @@ post "/byron-wallets-migration-plan" do
 end
 
 # TRANSACTIONS BYRON
+get "/construct-tx-byron" do
+  wallets = @cw.byron.wallets.list
+  handle_api_err wallets, session
+
+  erb :form_tx_new_construct, {:locals => { :wallets => wallets, :tx => nil } }
+end
+
+post "/sign-tx-byron" do
+  wid = params[:wid]
+  if params[:payments_check]
+    case params[:payments_mode]
+    when 'single_output', 'multi_output'
+      payload = prepare_payload_new_tx(params)
+    end
+  end
+
+  if params[:metadata_check]
+    metadata = parse_metadata(params[:metadata])
+  end
+
+  if params[:validity_interval_check]
+    validity_interval = {}
+
+    if params[:invalid_before_specified]
+      validity_interval["invalid_before"] = {
+        "quantity" => params[:invalid_before].to_i,
+        "unit" => params[:invalid_before_unit]
+      }
+    else
+      validity_interval["invalid_before"] = "unspecified"
+    end
+
+    if params[:invalid_hereafter_specified]
+      validity_interval["invalid_hereafter"] = {
+        "quantity" => params[:invalid_hereafter].to_i,
+        "unit" => params[:invalid_hereafter_unit]
+      }
+    else
+      validity_interval["invalid_hereafter"] = "unspecified"
+    end
+
+  end
+
+  r = @cw.byron.transactions.construct(wid,
+                                       payload,
+                                       metadata,
+                                       mint = nil,
+                                       validity_interval)
+  handle_api_err r, session
+
+  erb :form_tx_new_sign, {:locals => { :tx => r, :wid => wid } }
+end
+
+post "/submit-tx-byron" do
+  wid = params[:wid]
+  r = @cw.byron.transactions.sign(wid,
+                                    params[:pass],
+                                    params[:transaction])
+  handle_api_err r, session
+  erb :form_tx_new_submit, {:locals => { :tx => r, :wid => wid } }
+end
+
 get "/byron-wallets-transactions" do
   query = toListTransactionsQuery(params)
   r = @cw.byron.transactions.list(params[:wid], query)

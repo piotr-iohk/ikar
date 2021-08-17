@@ -44,5 +44,5 @@ jobs:
       CONFIG_URL: https://hydra.iohk.io/job/Cardano/cardano-node/cardano-deployment/latest-finished/download/1
       NETWORK: testnet
       WALLET: dev-master
-      NODE: alonzo-white-1.1
+      NODE: alonzo-purple-1.0.1
       TOKEN_METADATA: https://metadata.cardano-testnet.iohkdev.io/

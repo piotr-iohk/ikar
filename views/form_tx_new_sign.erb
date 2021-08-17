@@ -1,0 +1,50 @@
+<%
+  # wallets = wallets
+  url_path = request.env['PATH_INFO'].to_s
+  shelley_ep = "/submit-tx-shelley"
+  byron_ep = "/submit-tx-byron"
+  wid = params[:wid] if params[:wid]
+%>
+
+<script>
+function goBack() {
+  window.history.back();
+}
+</script>
+<div class="list-group">
+  <div class="list-group-item">
+    Sign Transaction 🔒
+    | <small><a href="#" onclick="goBack()">
+        go back
+      </a></small>
+  </div>
+  <div class="list-group-item"  >
+    <b>Fee: </b> <%= "#{tx['fee']['quantity']} #{tx['fee']['unit']}" %>
+    <br/>
+    <br/>
+    <form action="<%= url_path.include?('shelley') ? shelley_ep : byron_ep %>"
+        method="POST">
+      <div class="form-group">
+        <label for="pass">Passphrase</label>
+        <input type="text" class="form-control" name="pass" id="pass" placeholder="Passphrase" value="Secure Passphrase">
+      </div>
+      <input type="hidden" name="transaction" value="<%= tx['transaction'] %>"/>
+      <input type="hidden" name="wid" value="<%= wid %>"/>
+      <button type="submit" class="btn btn-success">Sign</button>
+      <a class="btn btn-secondary" href="#" role="button" onclick="goBack()">Back</a>
+    </form>
+  </div>
+  <% if tx %>
+  <div class="list-group-item"  >
+    <details>
+      <summary>Transaction details</summary>
+        <code>
+          <small id="tx">
+              <%= response2table(tx) %>
+          </small>
+        </code>
+    </details>
+
+  </div>
+  <% end %>
+</div>
