@@ -47,6 +47,11 @@
   <% if coin_selection %>
   <div class="list-group-item"  >
     <small id="coin_selection">
+      <% if coin_selection['inputs'] %>
+      <b>Inputs:</b><%= coin_selection['inputs'].size if coin_selection['inputs'] %><br/>
+      <b>Outputs:</b><%= coin_selection['outputs'].size if coin_selection['outputs'] %><br/>
+      <b>Change:</b><%= coin_selection['change'].size if coin_selection['change'] %><br/>
+      <% end %>
         <%= response2table(coin_selection) %>
     </small>
   </div>
