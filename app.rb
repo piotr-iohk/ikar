@@ -859,6 +859,28 @@ end
 
 # TRANSACTIONS SHELLEY
 
+get "/balance-tx-shelley" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+
+  erb :form_tx_new_balance, {:locals => { :wallets => wallets } }
+end
+
+post "/sign-balanced-tx-shelley" do
+  wid = params[:wid]
+  begin
+    payload = JSON.parse(params[:payload].strip)
+  rescue
+    session[:error] = "Make sure the 'payload' has correct JSON format."
+    redirect '/balance-tx-shelley'
+  end
+  r = @cw.shelley.transactions.balance(wid,
+                                       payload)
+  handle_api_err r, session
+
+  erb :form_tx_new_sign, {:locals => { :tx => r, :wid => wid } }
+end
+
 get "/construct-tx-shelley" do
   wallets = @cw.shelley.wallets.list
   handle_api_err wallets, session
@@ -868,7 +890,7 @@ end
 
 post "/sign-tx-shelley" do
   wid = params[:wid]
-  
+
   if params[:payments_check]
     case params[:payments_mode]
     when 'single_output', 'multi_output'
