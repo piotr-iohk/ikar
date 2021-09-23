@@ -19,15 +19,10 @@ when "stake"
   sp = stake_pools.sort_by {|s| -s['metrics']['relative_stake']['quantity']}
 when "non_myopic_member_rewards"
   sp = stake_pools.sort_by {|s| -s['metrics']['non_myopic_member_rewards']['quantity']}
+when "desirability_score"
+  sp = stake_pools.sort_by {|s| -s['metrics']['desirability_score']}
 when "saturation"
   sp = stake_pools.sort_by {|s| -s['metrics']['saturation']}
-# Jorm specific
-when "saturation_jorm"
-  sp = stake_pools.sort_by {|s| -s['saturation']}
-when "apparent_performance"
-  sp = stake_pools.sort_by {|s| -s['apparent_performance']}
-when "desirability"
-  sp = stake_pools.sort_by {|s| -s['desirability']}
 else
   sp = stake_pools
 end
@@ -59,12 +54,14 @@ end
        | <small><a href="<%= ep %>&sort_by=blocks">by produced blocks</a></small>
        | <small><a href="<%= ep %>&sort_by=cost">by cost</a></small>
        | <small><a href="<%= ep %>&sort_by=margin">by margin</a></small>
-       <%# cardano-node specific: %>
        <% unless stake_pools.first['metrics']['relative_stake'].nil? %>
         | <small><a href="<%= ep %>&sort_by=stake">by relative stake</a></small>
        <% end %>
        <% unless stake_pools.first['metrics']['non_myopic_member_rewards'].nil? %>
         | <small><a href="<%= ep %>&sort_by=non_myopic_member_rewards">by non-myopic member rewards</a></small>
+       <% end %>
+       <% unless stake_pools.first['metrics']['desirability_score'].nil? %>
+        | <small><a href="<%= ep %>&sort_by=desirability_score">by desirability score</a></small>
        <% end %>
        <% unless stake_pools.first['metrics']['saturation'].nil? %>
         | <small><a href="<%= ep %>&sort_by=saturation">by saturation</a></small>
@@ -72,18 +69,8 @@ end
        <% unless stake_pools.first['pledge'].nil? %>
         | <small><a href="<%= ep %>&sort_by=pledge">by pledge</a></small>
        <% end %>
-       <%# jorm specific: %>
-       <% unless stake_pools.first['desirability'].nil? %>
-        | <small><a href="<%= ep %>&sort_by=desirability">by desirability</a></small>
-       <% end %>
-       <% unless stake_pools.first['apparent_performance'].nil? %>
-        | <small><a href="<%= ep %>&sort_by=apparent_performance">by apparent performance</a></small>
-       <% end %>
-       <% unless stake_pools.first['saturation'].nil? %>
-        | <small><a href="<%= ep %>&sort_by=saturation_jorm">by saturation</a></small>
-       <% end %>
      <% end %>
-     <small><%= generate_curl(sp) %></small>
+     <small><%= generate_curl(stake_pools) %></small>
      <small>
        <b>Metadata source:</b> <a href="/settings"><%= metadata_source %></a><br/>
        <b>Last metadata gc:</b>
@@ -109,31 +96,51 @@ end
         <% if s['margin'] %>
         <small><b>Cost:</b> <%= s['cost']['quantity'] %> lovelace</small><br/>
         <% end %>
+        <%
+          if s['flags'].include?("owner_stake_lower_than_pledge")
+            is_pledge_ok = "<span title='Pledge is not met byt the owner'>❌</span>"
+          else
+            is_pledge_ok = "<span title='Pledge is met by the owner'>✅</span>"
+          end
+        %>
 
-        <%# Jormungandr: %>
-        <% if s['saturation'] %>
-          <small><b>Saturation:</b> <%= s['saturation'] %>%</small><br/>
-        <% end %>
-        <% if s['apparent_performance'] %>
-          <small><b>Apparent performance:</b> <%= s['apparent_performance'] %>%</small><br/>
-        <% end %>
-        <%# end %>
-
-        <%# Cardano-node: %>
         <% if s['pledge'] %>
-          <small><b>Pledge:</b> <%= "#{s['pledge']['quantity']} #{s['pledge']['unit']}" %></small><br/>
+          <small><b>Pledge:</b> <%= "#{s['pledge']['quantity']} #{s['pledge']['unit']} #{is_pledge_ok}" %></small><br/>
         <% end %>
-        <%# end %>
+        <small><b>Flags: </b><%= s['flags'] %></small></br>
+
 
         <% if s['metrics'] %>
         <small><b>Metrics:</b></small></br>
-        <%# Cardano-node metrics: %>
+          <%
+            desirability_score = s['metrics']['desirability_score']
+            non_myopic_member_rewards = s['metrics']['non_myopic_member_rewards']['quantity']
+            if desirability_score > non_myopic_member_rewards
+              desirability_info = render_success "Better than non-myopic rewards!"
+            elsif desirability_score < non_myopic_member_rewards
+              desirability_info = render_danger "Worse than non-myopic rewards!"
+            else
+              desirability_info = ""
+            end
+          %>
+          <% if s['metrics']['owner_stake'] %>
+            <small>&nbsp;&nbsp;<b>Owner stake:</b>
+              <%= "#{s['metrics']['owner_stake']['quantity']} #{s['metrics']['owner_stake']['unit']}" %>
+            </small><br/>
+          <% end %>
           <% if s['metrics']['saturation'] %>
             <small>&nbsp;&nbsp;<b>Saturation:</b> <%= s['metrics']['saturation'] %></small><br/>
           <% end %>
+          <% if desirability_score %>
+            <small>&nbsp;&nbsp;<b>Desirability score:</b> <%= desirability_score %>
+            </small>
+            <%= desirability_info %>
+
+            <br/>
+          <% end %>
           <% if s['metrics']['non_myopic_member_rewards'] %>
             <small>&nbsp;&nbsp;<b>Non-myopic member rewards:</b>
-              <%= "#{s['metrics']['non_myopic_member_rewards']['quantity']} #{s['metrics']['non_myopic_member_rewards']['unit']}" %>
+              <%= "#{non_myopic_member_rewards} #{s['metrics']['non_myopic_member_rewards']['unit']}" %>
             </small><br/>
           <% end %>
           <% if s['metrics']['produced_blocks'] %>
@@ -143,18 +150,9 @@ end
           <% end %>
           <% if s['metrics']['relative_stake'] %>
             <small>&nbsp;&nbsp;<b>Relative stake:</b>
-              <%= "#{s['metrics']['relative_stake']['quantity']}%" %>
+              <%= "#{s['metrics']['relative_stake']['quantity']} #{s['metrics']['relative_stake']['unit']}" %>
             </small><br/>
           <% end %>
-        <%# end %>
-
-        <%# Jormungandr metrics: %>
-          <% if s['metrics']['controlled_stake'] %>
-            <small>&nbsp;&nbsp;<b>Controlled Stake:</b>
-              <%= s['metrics']['controlled_stake']['quantity'] %>
-            </small><br/>
-          <% end %>
-        <%# end %>
         <% end %>
 
         <% if s['metadata'] %>
@@ -184,7 +182,6 @@ end
         <% else %>
           <small><b>No metadata.</b></small></br>
         <% end %>
-          <small><b>Flags: </b><%= s['flags'] %></small></br>
         <small>
             <a href="/stake-pools-join?sid=<%= s['id']%>">join</a>
           | <a href="/stake-pools-quit">quit</a>
