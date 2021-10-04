@@ -19,9 +19,10 @@ function goBack() {
       </a></small>
   </div>
   <div class="list-group-item"  >
-    <form action="/submit-tx-shelley" method="POST">
+    <form action="<%= url_path.include?('shelley') ? shelley_ep : byron_ep %>" method="POST">
       <input type="hidden" name="wid" value="<%= wid %>"/>
-      <button type="submit" class="btn btn-success" disabled>Submit</button>
+      <input type="hidden" name="transaction" value="<%= tx['transaction'] %>"/>
+      <button type="submit" class="btn btn-success">Submit</button>
       <a class="btn btn-secondary" href="#" role="button" onclick="goBack()">Back</a>
     </form>
   </div>

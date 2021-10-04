@@ -1,0 +1,31 @@
+<%
+  url_path = request.env['PATH_INFO'].to_s
+  ep = (url_path.include? "byron") ? "/byron-wallets" : "/wallets"
+  tx_ep = "#{ep}/#{wid}/txs/#{tx['id']}"
+  forget_ep = "#{ep}/#{wid}/forget-tx/#{tx['id']}"
+  wallet_ep = "#{ep}/#{wid}"
+%>
+
+<div class="list-group">
+
+    <div class="list-group-item">
+      <small><a href="<%= tx_ep %>">refresh</a></small>
+      | <small><a href="<%= forget_ep %>">forget</a></small>
+      | <small><a href="<%= wallet_ep %>">go to wallet</a></small><br/>
+    </div>
+    <div class="list-group-item">
+      <p>
+        Transaction <a href="<%= tx_ep %>"><%= tx['id'] %></a> for wallet <a href="<%= wallet_ep %>"><%= wid %></a>.
+      </p>
+    </div>
+    <div class="list-group-item" >
+      <details>
+        <summary>Table view</summary>
+        <small>
+        <%= response2table(tx) %>
+        </small>
+      </details>
+    </div>
+
+
+</div>
