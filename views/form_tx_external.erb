@@ -6,7 +6,7 @@
     <form action="/submit-external-tx" method="POST">
       <div class="form-group">
         <textarea class="form-control" name="blob" id="blob" rows="3"><%= blob if blob %></textarea>
-        <small id="help" class="form-text text-muted">Binary blob.</small>
+        <small id="help" class="form-text text-muted">Base64 encoded tx.</small>
       </div>
 
       <button type="submit" class="btn btn-success">Submit</button>
@@ -15,7 +15,8 @@
 
   <% if tx %>
   <div class="list-group-item"  >
-    <small id="address_details">
+    Transaction submitted!<br/>
+    <small id="response_details">
         <%= response2table(tx) %>
     </small>
   </div>

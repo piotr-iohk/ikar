@@ -1,3 +1,4 @@
+require 'base64'
 require 'sinatra'
 require 'chartkick'
 require 'cardano_wallet'
@@ -262,9 +263,11 @@ get "/submit-external-tx" do
 end
 
 post "/submit-external-tx" do
-  tx = @cw.misc.proxy.submit_external_transaction(params['blob'].strip)
-  # handle_api_err tx, session
-  erb :form_tx_external, { :locals => { :tx => tx, :blob => params['blob'] } }
+  serialized_tx = Base64.decode64(params['blob'].strip)
+  r = @cw.misc.proxy.submit_external_transaction(serialized_tx)
+  handle_api_err r, session
+
+  erb :form_tx_external, { :locals => { :tx => r, :blob => params['blob'].strip } }
 end
 
 # SHARED WALLETS
@@ -888,7 +891,7 @@ get "/construct-tx-shelley" do
   erb :form_tx_new_construct, {:locals => { :wallets => wallets, :tx => nil } }
 end
 
-post "/sign-tx-shelley" do
+post "/construct-tx-shelley" do
   wid = params[:wid]
 
   if params[:payments_check]
@@ -987,13 +990,22 @@ post "/sign-tx-shelley" do
   erb :form_tx_new_sign, {:locals => { :tx => r, :wid => wid } }
 end
 
-post "/submit-tx-shelley" do
+post "/sign-tx-shelley" do
   wid = params[:wid]
   r = @cw.shelley.transactions.sign(wid,
                                     params[:pass],
                                     params[:transaction])
   handle_api_err r, session
   erb :form_tx_new_submit, {:locals => { :tx => r, :wid => wid } }
+end
+
+post "/submit-tx-shelley" do
+  serialized_tx = Base64.decode64(params['transaction'])
+  wid = params['wid']
+  r = @cw.misc.proxy.submit_external_transaction(serialized_tx)
+  handle_api_err r, session
+
+  erb :tx_submitted, { :locals => { :tx => r, :wid => wid }  }
 end
 
 get "/wallets-transactions" do
@@ -1137,6 +1149,8 @@ get "/wallets/:wal_id/txs/:tx_id" do
   wid = params[:wal_id]
   txid = params[:tx_id]
   tx = @cw.shelley.transactions.get(wid, txid)
+  handle_api_err tx, session
+
   erb :tx_details, { :locals => { :tx => tx, :wid => wid }  }
 end
 
@@ -1456,7 +1470,7 @@ get "/construct-tx-byron" do
   erb :form_tx_new_construct, {:locals => { :wallets => wallets, :tx => nil } }
 end
 
-post "/sign-tx-byron" do
+post "/construct-tx-byron" do
   wid = params[:wid]
   if params[:payments_check]
     case params[:payments_mode]
@@ -1502,13 +1516,22 @@ post "/sign-tx-byron" do
   erb :form_tx_new_sign, {:locals => { :tx => r, :wid => wid } }
 end
 
-post "/submit-tx-byron" do
+post "/sign-tx-byron" do
   wid = params[:wid]
   r = @cw.byron.transactions.sign(wid,
                                     params[:pass],
                                     params[:transaction])
   handle_api_err r, session
   erb :form_tx_new_submit, {:locals => { :tx => r, :wid => wid } }
+end
+
+post "/submit-tx-byron" do
+  serialized_tx = Base64.decode64(params['transaction'])
+  wid = params['wid']
+  r = @cw.misc.proxy.submit_external_transaction(serialized_tx)
+  handle_api_err r, session
+
+  erb :tx_submitted, { :locals => { :tx => r, :wid => wid }  }
 end
 
 get "/byron-wallets-transactions" do

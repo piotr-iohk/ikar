@@ -1,8 +1,8 @@
 <%
   # wallets = wallets
   url_path = request.env['PATH_INFO'].to_s
-  shelley_ep = "/sign-tx-shelley"
-  byron_ep = "/sign-tx-byron"
+  shelley_ep = "/construct-tx-shelley"
+  byron_ep = "/construct-tx-byron"
   wid = params[:wid] if params[:wid]
 %>
 <script type="text/javascript">

@@ -1,8 +1,8 @@
 <%
   # wallets = wallets
   url_path = request.env['PATH_INFO'].to_s
-  shelley_ep = "/submit-tx-shelley"
-  byron_ep = "/submit-tx-byron"
+  shelley_ep = "/sign-tx-shelley"
+  byron_ep = "/sign-tx-byron"
   wid = params[:wid] if params[:wid]
 %>
 
@@ -19,9 +19,11 @@ function goBack() {
       </a></small>
   </div>
   <div class="list-group-item"  >
-    <b>Fee: </b> <%= "#{tx['fee']['quantity']} #{tx['fee']['unit']}" %>
-    <br/>
-    <br/>
+    <% if tx['fee'] %>
+      <b>Fee: </b> <%= "#{tx['fee']['quantity']} #{tx['fee']['unit']}" %>
+      <br/>
+      <br/>
+    <% end %>
     <form action="<%= url_path.include?('shelley') ? shelley_ep : byron_ep %>"
         method="POST">
       <div class="form-group">
