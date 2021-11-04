@@ -862,6 +862,27 @@ end
 
 # TRANSACTIONS SHELLEY
 
+get "/decode-tx-shelley" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+
+  erb :form_tx_new_decode, {:locals => { :wallets => wallets,
+                                         :tx => nil,
+                                         :serialized_tx => nil } }
+end
+
+post "/decode-tx-shelley" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  serialized_tx = params[:serialized_tx].strip
+  tx = @cw.shelley.transactions.decode(params[:wid], serialized_tx)
+  handle_api_err tx, session
+
+  erb :form_tx_new_decode, {:locals => { :wallets => wallets,
+                                         :tx => tx,
+                                         :serialized_tx => serialized_tx } }
+end
+
 get "/balance-tx-shelley" do
   wallets = @cw.shelley.wallets.list
   handle_api_err wallets, session
@@ -992,11 +1013,17 @@ end
 
 post "/sign-tx-shelley" do
   wid = params[:wid]
-  r = @cw.shelley.transactions.sign(wid,
-                                    params[:pass],
-                                    params[:transaction])
-  handle_api_err r, session
-  erb :form_tx_new_submit, {:locals => { :tx => r, :wid => wid } }
+  tx = @cw.shelley.transactions.sign(wid,
+                                     params[:pass],
+                                     params[:transaction])
+  handle_api_err tx, session
+
+  decoded_tx = @cw.shelley.transactions.decode(wid, tx['transaction'])
+  handle_api_err decoded_tx, session
+
+  erb :form_tx_new_submit, {:locals => { :tx => tx,
+                                         :wid => wid,
+                                         :decoded_tx => decoded_tx } }
 end
 
 post "/submit-tx-shelley" do

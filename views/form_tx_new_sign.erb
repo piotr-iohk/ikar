@@ -44,6 +44,11 @@ function goBack() {
           <small id="tx">
               <%= response2table(tx) %>
           </small>
+          <% if decoded_tx %>
+          <small id="decoded_tx">
+              <%= response2table(decoded_tx) %>
+          </small>
+          <% end %>
         </code>
     </details>
 
