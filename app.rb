@@ -263,9 +263,11 @@ get "/submit-external-tx" do
 end
 
 post "/submit-external-tx" do
-  tx = @cw.misc.proxy.submit_external_transaction(params['blob'].strip)
-  # handle_api_err tx, session
-  erb :form_tx_external, { :locals => { :tx => tx, :blob => params['blob'] } }
+  serialized_tx = Base64.decode64(params['blob'].strip)
+  r = @cw.misc.proxy.submit_external_transaction(serialized_tx)
+  handle_api_err r, session
+
+  erb :form_tx_external, { :locals => { :tx => r, :blob => params['blob'].strip } }
 end
 
 # SHARED WALLETS
