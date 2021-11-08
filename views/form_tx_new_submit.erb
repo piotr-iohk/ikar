@@ -36,9 +36,11 @@ function goBack() {
     <details>
       <summary>Transaction details</summary>
         <code>
+          <span title="Encoded transaction">🔒</span>
           <small id="tx">
               <%= response2table(tx) %>
           </small>
+          <span title="Decoded transaction">👀</span>
           <% if decoded_tx %>
             <small id="decoded_tx">
                 <%= response2table(decoded_tx) %>

@@ -13,7 +13,7 @@ function goBack() {
 </script>
 <div class="list-group">
   <div class="list-group-item">
-    Sign Transaction 🔒
+    Sign Transaction ✍️
     | <small><a href="#" onclick="goBack()">
         go back
       </a></small>
@@ -41,10 +41,12 @@ function goBack() {
     <details>
       <summary>Transaction details</summary>
         <code>
+          <span title="Encoded transaction">🔒</span>
           <small id="tx">
               <%= response2table(tx) %>
           </small>
           <% if decoded_tx %>
+          <span title="Decoded transaction">👀</span>
             <small id="decoded_tx">
                 <%= response2table(decoded_tx) %>
             </small>
