@@ -898,11 +898,16 @@ post "/sign-balanced-tx-shelley" do
     session[:error] = "Make sure the 'payload' has correct JSON format."
     redirect '/balance-tx-shelley'
   end
-  r = @cw.shelley.transactions.balance(wid,
+  tx = @cw.shelley.transactions.balance(wid,
                                        payload)
-  handle_api_err r, session
+  handle_api_err tx, session
 
-  erb :form_tx_new_sign, {:locals => { :tx => r, :wid => wid } }
+  decoded_tx = @cw.shelley.transactions.decode(wid, tx['transaction'])
+  handle_api_err decoded_tx, session
+
+  erb :form_tx_new_sign, {:locals => { :tx => tx,
+                                       :wid => wid,
+                                       :decoded_tx => decoded_tx } }
 end
 
 get "/construct-tx-shelley" do
@@ -999,16 +1004,19 @@ post "/construct-tx-shelley" do
 
   end
 
-  r = @cw.shelley.transactions.construct(wid,
+  tx = @cw.shelley.transactions.construct(wid,
                                          payload,
                                          withdrawal,
                                          metadata,
                                          delegations,
                                          mint = nil,
                                          validity_interval)
-  handle_api_err r, session
-
-  erb :form_tx_new_sign, {:locals => { :tx => r, :wid => wid } }
+  handle_api_err tx, session
+  decoded_tx = @cw.shelley.transactions.decode(wid, tx['transaction'])
+  handle_api_err decoded_tx, session
+  erb :form_tx_new_sign, {:locals => { :tx => tx,
+                                       :wid => wid,
+                                       :decoded_tx => decoded_tx } }
 end
 
 post "/sign-tx-shelley" do

@@ -19,8 +19,8 @@ function goBack() {
       </a></small>
   </div>
   <div class="list-group-item"  >
-    <% if tx['fee'] %>
-      <b>Fee: </b> <%= "#{tx['fee']['quantity']} #{tx['fee']['unit']}" %>
+    <% if decoded_tx['fee'] %>
+      <b>Fee: </b> <%= "#{decoded_tx['fee']['quantity']} #{decoded_tx['fee']['unit']}" %>
       <br/>
       <br/>
     <% end %>
@@ -45,9 +45,9 @@ function goBack() {
               <%= response2table(tx) %>
           </small>
           <% if decoded_tx %>
-          <small id="decoded_tx">
-              <%= response2table(decoded_tx) %>
-          </small>
+            <small id="decoded_tx">
+                <%= response2table(decoded_tx) %>
+            </small>
           <% end %>
         </code>
     </details>

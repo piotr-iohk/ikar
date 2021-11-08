@@ -19,6 +19,11 @@ function goBack() {
       </a></small>
   </div>
   <div class="list-group-item"  >
+    <% if decoded_tx['fee'] %>
+      <b>Fee: </b> <%= "#{decoded_tx['fee']['quantity']} #{decoded_tx['fee']['unit']}" %>
+      <br/>
+      <br/>
+    <% end %>
     <form action="<%= url_path.include?('shelley') ? shelley_ep : byron_ep %>" method="POST">
       <input type="hidden" name="wid" value="<%= wid %>"/>
       <input type="hidden" name="transaction" value="<%= tx['transaction'] %>"/>
@@ -34,6 +39,11 @@ function goBack() {
           <small id="tx">
               <%= response2table(tx) %>
           </small>
+          <% if decoded_tx %>
+            <small id="decoded_tx">
+                <%= response2table(decoded_tx) %>
+            </small>
+          <% end %>
         </code>
     </details>
 
