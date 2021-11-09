@@ -20,7 +20,7 @@ function goBack() {
   </div>
   <div class="list-group-item"  >
     <% if decoded_tx['fee'] %>
-      <b>Fee: </b> <%= "#{decoded_tx['fee']['quantity']} #{decoded_tx['fee']['unit']}" %>
+      <b>Fee: </b> <%= "#{as_ada decoded_tx['fee']['quantity']}" %>
       <br/>
       <br/>
     <% end %>
