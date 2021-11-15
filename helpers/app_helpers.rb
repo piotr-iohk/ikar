@@ -15,6 +15,10 @@ module Helpers
       end
     end
 
+    def as_ada(quantity)
+      "#{quantity.to_f/1000000.to_f} ₳"
+    end
+
     def toListTransactionsQuery(params)
       query = {}
       [:minWithdrawal, :start, :end, :order].each do |label|

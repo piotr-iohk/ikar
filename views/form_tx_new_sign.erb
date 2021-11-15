@@ -13,14 +13,14 @@ function goBack() {
 </script>
 <div class="list-group">
   <div class="list-group-item">
-    Sign Transaction 🔒
+    Sign Transaction ✍️
     | <small><a href="#" onclick="goBack()">
         go back
       </a></small>
   </div>
   <div class="list-group-item"  >
-    <% if tx['fee'] %>
-      <b>Fee: </b> <%= "#{tx['fee']['quantity']} #{tx['fee']['unit']}" %>
+    <% if decoded_tx['fee'] %>
+      <b>Fee: </b> <%= "#{as_ada decoded_tx['fee']['quantity']}" %>
       <br/>
       <br/>
     <% end %>
@@ -41,9 +41,16 @@ function goBack() {
     <details>
       <summary>Transaction details</summary>
         <code>
+          <span title="Encoded transaction">🔒</span>
           <small id="tx">
               <%= response2table(tx) %>
           </small>
+          <% if decoded_tx %>
+          <span title="Decoded transaction">👀</span>
+            <small id="decoded_tx">
+                <%= response2table(decoded_tx) %>
+            </small>
+          <% end %>
         </code>
     </details>
 

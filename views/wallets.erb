@@ -41,9 +41,9 @@ wallets.each do |wal|
         <a href="/<%= (path_info.include? "byron") ? "byron-wallets" : "wallets" %>/<%= id %>"><%= name %></a>
       </h5>
     </div>
-    <b>Balance:</b> (Total: <%= wal['balance']['total']['quantity'] if wal['balance'] %>
-                           , Available: <%= wal['balance']['available']['quantity'] if wal['balance'] %>
-                           <%= ", Rewards: #{wal['balance']['reward']['quantity']}" if wal['balance']['reward'] %>)
+    <b>Balance:</b> (Total: <%= as_ada wal['balance']['total']['quantity'] if wal['balance'] %>
+                           , Available: <%= as_ada wal['balance']['available']['quantity'] if wal['balance'] %>
+                           <%= ", Rewards: #{as_ada wal['balance']['reward']['quantity']}" if wal['balance']['reward'] %>)
     <br/>
     <%= render_assets(wal) %>
     <small><b>ID:</b> <%= id %></small><br/>
