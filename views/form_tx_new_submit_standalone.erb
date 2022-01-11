@@ -1,13 +1,13 @@
 <%
  # wallets = wallets
 url_path = request.env['PATH_INFO'].to_s
-byron_ep = "/decode-tx-byron"
-shelley_ep = "/decode-tx-shelley"
+byron_ep = "/submit-tx-standalone-byron"
+shelley_ep = "/submit-tx-standalone-shelley"
 wid = params[:wid] if params[:wid]
 %>
 <div class="list-group">
   <div class="list-group-item">
-     Decode Serialized Transaction 👀
+     Submit Serialized Transaction 🚀
      | <small>
        <a href="<%= url_path.include?('shelley') ? "/wallets/#{wid}" : "/byron-wallets/#{wid}" %>">
          go back to wallet
@@ -26,20 +26,13 @@ wid = params[:wid] if params[:wid]
         </select>
       </div>
       <div class="form-group">
-        <textarea class="form-control" name="serialized_tx" id="serialized_tx" rows="3"><%= serialized_tx if serialized_tx %></textarea>
+        <textarea class="form-control" name="transaction" id="transaction" rows="3"><%= serialized_tx if serialized_tx %></textarea>
         <small id="help" class="form-text text-muted">Base64/Base16 encoded tx.</small>
       </div>
 
-      <button type="submit" class="btn btn-success">Decode</button>
-      (and <a href="<%= url_path.include?('shelley') ? "/submit-tx-standalone-shelley?wid=#{wid}" : "/submit-tx-standalone-byron?wid=#{wid}" %>">Submit</a> after)
+      <button type="submit" class="btn btn-success">Submit</button>
+      (or <a href="<%= url_path.include?('shelley') ? "/decode-tx-shelley?wid=#{wid}" : "/decode-tx-byron?wid=#{wid}" %>">Decode</a> first)
     </form>
   </div>
 
-  <% if tx %>
-  <div class="list-group-item"  >
-    <small id="response_details">
-        <%= response2table(tx) %>
-    </small>
-  </div>
-  <% end %>
 </div>

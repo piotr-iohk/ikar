@@ -1039,10 +1039,32 @@ post "/submit-tx-shelley" do
   serialized_tx = params['transaction']
   r = @cw.shelley.transactions.submit(wid, serialized_tx)
   handle_api_err r, session
-  
+
   tx = @cw.shelley.transactions.get(wid, r['id'])
   handle_api_err tx, session
-  
+
+  erb :tx_details, { :locals => { :tx => tx, :wid => wid}  }
+end
+
+get "/submit-tx-standalone-shelley" do
+  wid = params['wid']
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+
+  erb :form_tx_new_submit_standalone, { :locals => { :wallets => wallets,
+                                                     :wid => wid,
+                                                     :serialized_tx => nil}  }
+end
+
+post "/submit-tx-standalone-shelley" do
+  wid = params['wid']
+  serialized_tx = params['transaction'].strip
+  r = @cw.shelley.transactions.submit(wid, serialized_tx)
+  handle_api_err r, session
+
+  tx = @cw.shelley.transactions.get(wid, r['id'])
+  handle_api_err tx, session
+
   erb :tx_details, { :locals => { :tx => tx, :wid => wid}  }
 end
 
