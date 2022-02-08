@@ -1035,13 +1035,39 @@ post "/sign-tx-shelley" do
 end
 
 post "/submit-tx-shelley" do
-  serialized_tx = Base64.decode64(params['transaction'])
   wid = params['wid']
-  r = @cw.misc.proxy.submit_external_transaction(serialized_tx)
+  serialized_tx = params['transaction']
+  r = @cw.shelley.transactions.submit(wid, serialized_tx)
   handle_api_err r, session
 
-  erb :tx_submitted, { :locals => { :tx => r, :wid => wid }  }
+  tx = @cw.shelley.transactions.get(wid, r['id'])
+  handle_api_err tx, session
+
+  erb :tx_details, { :locals => { :tx => tx, :wid => wid}  }
 end
+
+get "/submit-tx-standalone-shelley" do
+  wid = params['wid']
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+
+  erb :form_tx_new_submit_standalone, { :locals => { :wallets => wallets,
+                                                     :wid => wid,
+                                                     :serialized_tx => nil}  }
+end
+
+post "/submit-tx-standalone-shelley" do
+  wid = params['wid']
+  serialized_tx = params['transaction'].strip
+  r = @cw.shelley.transactions.submit(wid, serialized_tx)
+  handle_api_err r, session
+
+  tx = @cw.shelley.transactions.get(wid, r['id'])
+  handle_api_err tx, session
+
+  erb :tx_details, { :locals => { :tx => tx, :wid => wid}  }
+end
+
 
 get "/wallets-transactions" do
   query = toListTransactionsQuery(params)
@@ -1561,12 +1587,15 @@ post "/sign-tx-byron" do
 end
 
 post "/submit-tx-byron" do
-  serialized_tx = Base64.decode64(params['transaction'])
   wid = params['wid']
-  r = @cw.misc.proxy.submit_external_transaction(serialized_tx)
+  serialized_tx = params['transaction']
+  r = @cw.byron.transactions.submit(wid, serialized_tx)
   handle_api_err r, session
 
-  erb :tx_submitted, { :locals => { :tx => r, :wid => wid }  }
+  tx = @cw.byron.transactions.get(wid, r['id'])
+  handle_api_err tx, session
+
+  erb :tx_details, { :locals => { :tx => tx, :wid => wid}  }
 end
 
 get "/byron-wallets-transactions" do
