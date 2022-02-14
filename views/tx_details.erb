@@ -44,7 +44,8 @@
       <!-- <small><b>Assets: </b> </small><br/> -->
       <!-- <small><b>Mint: </b> </small><br/> -->
       <small><b>Fee: </b><%= tx['fee']['quantity'] %> <%= tx['fee']['unit'] %></small><br/>
-      <small><b>Deposit: </b><%= tx['deposit']['quantity'] %> <%= tx['deposit']['unit'] %></small><br/>
+      <small><b>Deposit Taken: </b><%= tx['deposit_taken']['quantity'] %> <%= tx['deposit_taken']['unit'] %></small><br/>
+      <small><b>Deposit Returned: </b><%= tx['deposit_returned']['quantity'] %> <%= tx['deposit_returned']['unit'] %></small><br/>
       <small><b>Direction: </b><%= tx['direction'] %></small><br/>
 
       <small><b>Depth: </b><%= "#{tx['depth']['quantity']} blocks" if tx['depth'] %></small><br/>
