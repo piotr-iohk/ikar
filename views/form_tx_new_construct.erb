@@ -134,18 +134,32 @@
       });
 
       $(function(){
-          if($('#minting_check').prop("checked")) {
-              $('#minting_form').show();
+          if($('#mint_check').prop("checked")) {
+              $('#mint_form').show();
           } else {
-              $('#minting_form').hide();
+              $('#mint_form').hide();
           }
       });
-      $('#minting_check').change(function(){
-          if($('#minting_check').prop("checked")) {
-              $('#minting_form').show();
+      $('#mint_check').change(function(){
+          if($('#mint_check').prop("checked")) {
+              $('#mint_form').show();
           } else {
-              $('#minting_form').hide();
+              $('#mint_form').hide();
           }
+      });
+      $(function() {
+          if($('#mint_action').val() == 'burn') {
+              $('#mint_receiving_address_form').hide();
+          } else {
+              $('#mint_receiving_address_form').show();
+          }
+          $('#mint_action').change(function(){
+              if($('#mint_action').val() == 'burn') {
+                  $('#mint_receiving_address_form').hide();
+              } else {
+                  $('#mint_receiving_address_form').show();
+              }
+          });
       });
 
       $(function(){
@@ -262,8 +276,6 @@
         </div>
       </div>
 
-
-
       <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="metadata_check"
           name="metadata_check" <%= "checked" if params[:metadata_check] %>
@@ -315,10 +327,102 @@
       </div>
 
       <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="minting_check" disabled>
-        <label class="form-check-label" for="minting_check">
-          Minting
+        <input class="form-check-input" type="checkbox" value="" id="mint_check"
+              name="mint_check" <%= "checked" if params[:mint_check] %>
+                <%= " disabled" if url_path.include?('byron') %>>
+        <label class="form-check-label" for="mint_check">
+          Minting / Burning
         </label>
+      </div>
+      <div id="mint_form" style="display:none">
+        <div class="form-group">
+          <label for="mint_action">Operation</label>
+          <select class="form-control" name="mint_action" id="mint_action">
+            <option value="mint">Mint</option>
+            <option value="burn">Burn</option>
+          </select>
+        </div>
+        <!-- <div class="form-check">
+          <input class="form-check-input" type="radio" name="mint_action"
+            id="mint" value="mint" checked>
+          <label class="form-check-label" for="mint">
+            Mint
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="mint_action"
+            id="burn" value="burn">
+          <label class="form-check-label" for="burn">
+            Burn
+          </label>
+        </div> -->
+
+        <div class="form-group" id="mint_receiving_address_form">
+          <label for="mint_asset_name">Receiving Address</label>
+          <input type="text" class="form-control" name="mint_receiving_address"
+                 id="mint_receiving_address"
+            placeholder="Receiving Address" value="">
+          <small id="help" class="form-text text-muted">
+            Where minted assets will be sent.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="mint_asset_name">Asset Name</label>
+          <input type="text" class="form-control" name="mint_asset_name" id="mint_asset_name"
+            placeholder="Asset Name" value="">
+          <small id="help" class="form-text text-muted">
+            Hex encoded asset name.
+          </small>
+          <small id="help" class="form-text text-muted">
+            <details>
+              <summary><i>Available assets(<i>policyId:assetName:amount</i>) 👇</summary>
+              <code>
+                <%
+                  assets_available = wallets.select{|w| w['id'] == wid }.first['assets']['available']
+                  assets_balance = assets_available.collect do |a|
+                    "#{a['policy_id']}:#{a['asset_name']}:#{a['quantity']}<br/>"
+                  end.join("")
+                %>
+                <%= assets_balance %>
+              </code>
+            </details>
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="mint_amount">Amount</label>
+          <input type="text" class="form-control" name="mint_amount" id="mint_amount"
+            placeholder="Amount" value="">
+        </div>
+
+        <div class="form-group">
+          <label for="mint_ver_key_index">Verification Key Index</label>
+          <input type="text" class="form-control" name="mint_ver_key_index" id="mint_ver_key_index"
+            placeholder="Verification Key Index" value="">
+            <small id="help" class="form-text text-muted">Example: 0H.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="mint_policy_script">Policy Script Template</label>
+          <textarea class="form-control" name="mint_policy_script" id="mint_policy_script" rows="5"></textarea>
+          <small id="help_pay" class="form-text text-muted">
+            <details>
+              <summary>Examplary template</summary>
+                <pre>
+{ "cosigners":
+  { "cosigner#0": "1423856bc91c49e928f6f30f4e8d665d53eb4ab6028bd0ac971809d514c92db11423856bc91c49e928f6f30f4e8d665d53eb4ab6028bd0ac971809d514c92db2" },
+"template":
+    { "all":
+       [ "cosigner#0",
+         { "active_from": 120 }
+       ]
+    }
+}
+                </pre>
+            </details>
+          </small>
+        </div>
       </div>
 
       <div class="form-check">

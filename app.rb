@@ -980,6 +980,36 @@ post "/construct-tx-shelley" do
       ]
     end
   end
+  if params[:mint_check]
+    mint = {}
+    if params[:mint_action] == 'mint'
+      mint[:operation] = {
+          'mint' =>
+            {
+              'receiving_address' => params[:mint_receiving_address],
+              'amount' => { 'quantity' => params[:mint_amount].to_i,
+                            'unit' => 'assets'
+                           }
+            }
+      }
+    end
+    if params[:mint_action] == 'burn'
+      mint[:operation] = {
+          'burn' =>
+            {
+              'amount' => { 'quantity' => params[:mint_amount].to_i,
+                            'unit' => 'assets'
+                           }
+            }
+      }
+    end
+    mint[:policy_script_template] = params[:mint_policy_script]
+    mint[:verification_key_index] = params[:mint_ver_key_index]
+    # Encode mint_asset_name to hex
+    # mint[:asset_name] = params[:mint_asset_name].unpack("H*").first
+    mint[:asset_name] = params[:mint_asset_name]
+    mint_burn = [mint]
+  end
 
   if params[:validity_interval_check]
     validity_interval = {}
@@ -1009,7 +1039,7 @@ post "/construct-tx-shelley" do
                                          withdrawal,
                                          metadata,
                                          delegations,
-                                         mint = nil,
+                                         mint_burn,
                                          validity_interval)
   handle_api_err tx, session
   decoded_tx = @cw.shelley.transactions.decode(wid, tx['transaction'])
