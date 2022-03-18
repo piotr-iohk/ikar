@@ -997,14 +997,19 @@ post "/construct-tx-shelley" do
       mint[:operation] = {
           'burn' =>
             {
-              'amount' => { 'quantity' => params[:mint_amount].to_i,
-                            'unit' => 'assets'
-                           }
-            }
+              'quantity' => params[:mint_amount].to_i,
+              'unit' => 'assets' }
       }
     end
-    mint[:policy_script_template] = params[:mint_policy_script]
-    mint[:verification_key_index] = params[:mint_ver_key_index]
+
+    # policy script is either script or just string specifying cosigner
+    begin
+      script = JSON.parse(params[:mint_policy_script].strip)
+    rescue
+      script = params[:mint_policy_script]
+    end
+    mint[:policy_script_template] = script
+
     # Encode mint_asset_name to hex
     # mint[:asset_name] = params[:mint_asset_name].unpack("H*").first
     mint[:asset_name] = params[:mint_asset_name]
