@@ -22,7 +22,7 @@ helpers Helpers::Discovery
 
 
 before do
-  @timeout = 600
+  @timeout = 3600
   session[:opt] ||= {port: 8090, timeout: @timeout}
   @cw ||= CardanoWallet.new session[:opt]
   session[:opt] ||= @cw.opt
@@ -133,11 +133,13 @@ end
 post "/get-pub-key" do
   wallets = @cw.shelley.wallets.list
   handle_api_err wallets, session
+  hash = params[:hash] == 'true' ? { hash: true } : {}
 
   begin
     pub_key = @cw.shelley.keys.get_public_key(params[:wid],
                                             params[:role],
-                                            params[:index])
+                                            params[:index],
+                                            hash)
   rescue
     session[:error] = "Make sure parameters are valid. "
     redirect "/get-pub-key"
@@ -148,8 +150,65 @@ post "/get-pub-key" do
                                           :role => params[:role],
                                           :index => params[:index],
                                           :pub_key => pub_key,
-                                          :hash => nil
+                                          :hash => params[:hash]
                                         } }
+end
+
+get "/get-policy-key" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  params[:wid] ? wid = params[:wid] : wid = wallets.first['id']
+  erb :form_get_policy_key, { :locals => { :wallets => wallets,
+                                          :wid => wid,
+                                          :policy_key => nil,
+                                          :hash => nil } }
+end
+
+post "/get-policy-key" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  hash = params[:hash] == 'true' ? { hash: true } : {}
+  begin
+    policy_key = @cw.shelley.keys.get_policy_key(params[:wid], hash)
+  rescue
+    session[:error] = "Make sure parameters are valid. "
+    redirect "/get-policy-key"
+  end
+  handle_api_err policy_key, session
+  erb :form_get_policy_key, { :locals => { :wallets => wallets,
+                                          :wid => params[:wid],
+                                          :policy_key => policy_key,
+                                          :hash => params[:hash]
+                                        } }
+end
+
+get "/create-policy-key" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  params[:wid] ? wid = params[:wid] : wid = wallets.first['id']
+  erb :form_create_policy_key, { :locals => { :wallets => wallets,
+                                          :wid => wid,
+                                          :pass => 'Secure Passphrase',
+                                          :policy_key => nil,
+                                          :hash => nil } }
+end
+
+post "/create-policy-key" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  hash = params[:hash] == 'true' ? { hash: true } : {}
+  begin
+    policy_key = @cw.shelley.keys.create_policy_key(params[:wid], params[:pass], hash)
+  rescue
+    session[:error] = "Make sure parameters are valid. "
+    redirect "/create-policy-key"
+  end
+  handle_api_err policy_key, session
+  erb :form_create_policy_key, { :locals => { :wallets => wallets,
+                                          :wid => params[:wid],
+                                          :pass => params[:pass],
+                                          :policy_key => policy_key,
+                                          :hash => params[:hash] } }
 end
 
 get "/sign-metadata" do
@@ -348,12 +407,12 @@ end
 post "/shared-get-pub-key" do
   wallets = @cw.shared.wallets.list
   handle_api_err wallets, session
-
+  hash = params[:hash] == 'true' ? { hash: true } : {}
   begin
     pub_key = @cw.shared.keys.get_public_key(params[:wid],
                                             params[:role],
                                             params[:index],
-                                            {'hash' => params[:hash]})
+                                            hash)
   rescue
     session[:error] = "Make sure parameters are valid. "
     redirect "/shared-get-pub-key"
@@ -383,7 +442,6 @@ post "/shared-wallets/:wal_id/patch-payment" do
 
   redirect "/shared-wallets/#{params[:wal_id]}"
 end
-
 
 get "/shared-wallets/:wal_id/patch-delegation" do
   wal = @cw.shared.wallets.get params[:wal_id]
@@ -1102,7 +1160,6 @@ post "/submit-tx-standalone-shelley" do
 
   erb :tx_details, { :locals => { :tx => tx, :wid => wid}  }
 end
-
 
 get "/wallets-transactions" do
   query = toListTransactionsQuery(params)
