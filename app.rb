@@ -182,6 +182,32 @@ post "/get-policy-key" do
                                         } }
 end
 
+get "/create-policy-id" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  params[:wid] ? wid = params[:wid] : wid = wallets.first['id']
+  erb :form_create_policy_id, { :locals => { :wallets => wallets,
+                                          :wid => wid,
+                                          :policy_script_template => nil,
+                                          :policy_id => nil } }
+end
+
+post "/create-policy-id" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  begin
+    policy_script_template = JSON.parse(params[:mint_policy_script].strip)
+  rescue
+    policy_script_template = params[:mint_policy_script]
+  end
+  policy_id = @cw.shelley.keys.create_policy_id(params[:wid], policy_script_template)
+  handle_api_err policy_id, session
+  erb :form_create_policy_id, { :locals => { :wallets => wallets,
+                                          :wid => params[:wid],
+                                          :policy_script_template => params[:mint_policy_script],
+                                          :policy_id => policy_id } }
+end
+
 get "/create-policy-key" do
   wallets = @cw.shelley.wallets.list
   handle_api_err wallets, session

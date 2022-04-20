@@ -1,0 +1,52 @@
+<%
+  url_path = request.env['PATH_INFO'].to_s
+  shelley_ep = "/create-policy-id"
+  shared_ep = "/shared-create-policy-id" # NOT IMPLEMENTED YET
+%>
+<div class="list-group">
+  <div class="list-group-item">
+     Create policy ID
+     | <small><a href="<%= url_path.include?('shared')? "/shared-wallets/" : "/wallets/" %><%= wid %>">
+             go back to wallet
+           </a></small>
+  </div>
+  <div class="list-group-item">
+    <form action="<%= url_path.include?('shared')? shared_ep : shelley_ep %>"
+          method="POST">
+      <div class="form-group">
+        <label for="wid">Wallet</label>
+        <select class="form-control" name="wid" id="wid">
+          <% wallets.each do |w| %>
+          <option <%= wid == w['id'] ? "selected" : "" %> value="<%= w['id'] %>">
+            <%= "#{w['name']} [id: #{w['id']}" %>
+            <%# , balance available: #{w['balance']['available']['quantity']}] %>
+          </option>
+          <% end %>
+        </select>
+      </div>
+
+      <%= render_policy_script_template_form_part(policy_script_template) %>
+
+      <button type="submit" class="btn btn-success">Create policy id</button>
+    </form>
+  </div>
+
+  <% if session[:error] %>
+        <div class="alert alert-danger" role="alert">
+          <%= session[:error]%>
+        </div>
+  <%
+        session.delete :error
+     end
+  %>
+
+  <% if policy_id %>
+  <div class="list-group-item"  >
+    <small id="policy_id">
+      Response:<br/>
+        <%= policy_id %>
+        <br/><br/><%= generate_curl(policy_id) %>
+    </small>
+  </div>
+  <% end %>
+</div>

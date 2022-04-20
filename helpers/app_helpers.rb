@@ -677,6 +677,36 @@ module Helpers
        )
     end
 
+    def render_policy_script_template_form_part(policy_script = nil)
+      %(
+        <div class="form-group">
+          <label for="mint_policy_script">Policy Script Template</label>
+          <textarea class="form-control" name="mint_policy_script" id="mint_policy_script" rows="5">#{policy_script}</textarea>
+          <small id="help_pay" class="form-text text-muted">
+            <details>
+              <summary>Examplary template</summary>
+                <pre>
+cosigner#0
+
+{ "all": [ "cosigner#0" ] }
+
+{ "any": [ "cosigner#0" ] }
+
+{ "some": {"at_least": 1, "from": [ "cosigner#0" ]} }
+
+{ "all":
+     [ "cosigner#0",
+       { "active_from": 120 }
+     ]
+}
+
+                </pre>
+            </details>
+          </small>
+        </div>
+      )
+    end
+
     def render_danger(text)
       "<span class='badge badge-danger'>#{text}</span>"
     end
