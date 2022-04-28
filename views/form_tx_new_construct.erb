@@ -363,7 +363,7 @@
                  id="mint_receiving_address"
             placeholder="Receiving Address" value="">
           <small id="help" class="form-text text-muted">
-            Where minted assets will be sent.
+            Where minted assets will be sent. If empty it'll go to the wallet.
           </small>
         </div>
 
@@ -372,8 +372,14 @@
           <input type="text" class="form-control" name="mint_asset_name" id="mint_asset_name"
             placeholder="Asset Name" value="">
           <small id="help" class="form-text text-muted">
-            Hex encoded asset name.
+            Asset name. Can be empty.
           </small>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="true" name="mint_hex" id="mint_hex">
+            <label class="form-check-label" for="mint_hex">
+              If checked I assume it's already hex encoded, otherwise use plain text.
+            </label>
+          </div>
           <small id="help" class="form-text text-muted">
             <details>
               <summary><i>Available assets(<i>policyId:assetName:amount</i>) 👇</summary>

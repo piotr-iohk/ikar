@@ -1003,22 +1003,21 @@ post "/construct-tx-shelley" do
   if params[:mint_check]
     mint = {}
     if params[:mint_action] == 'mint'
-      mint[:operation] = {
-          'mint' =>
-            {
-              'receiving_address' => params[:mint_receiving_address],
-              'amount' => { 'quantity' => params[:mint_amount].to_i,
-                            'unit' => 'assets'
-                           }
-            }
-      }
+      addr = params[:mint_receiving_address].strip
+      if addr.empty?
+        mint[:operation] = {
+            'mint' => { 'quantity' => params[:mint_amount].to_i }
+        }
+      else
+        mint[:operation] = {
+            'mint' => { 'receiving_address' => addr,
+                        'quantity' => params[:mint_amount].to_i }
+        }
+      end
     end
     if params[:mint_action] == 'burn'
       mint[:operation] = {
-          'burn' =>
-            {
-              'quantity' => params[:mint_amount].to_i,
-              'unit' => 'assets' }
+          'burn' => { 'quantity' => params[:mint_amount].to_i }
       }
     end
 
@@ -1030,9 +1029,12 @@ post "/construct-tx-shelley" do
     end
     mint[:policy_script_template] = script
 
-    # Encode mint_asset_name to hex
-    # mint[:asset_name] = params[:mint_asset_name].unpack("H*").first
-    mint[:asset_name] = params[:mint_asset_name]
+    if params[:mint_hex] == 'true'
+      mint[:asset_name] = params[:mint_asset_name]
+    else
+      # Encode mint_asset_name to hex
+      mint[:asset_name] = params[:mint_asset_name].unpack("H*").first
+    end
     mint_burn = [mint]
   end
 
