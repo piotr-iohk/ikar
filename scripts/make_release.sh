@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-GIT_TAG="v2021-11-11"
-NODE_TAG="1.30.1"
+GIT_TAG="v2022-04-27"
+NODE_TAG="1.34.1"
 
 DOCKER_TAG=`echo "${GIT_TAG##v}" | sed -e s/-0/-/g -e s/-/./g`
 
