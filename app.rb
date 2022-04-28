@@ -22,7 +22,7 @@ helpers Helpers::Discovery
 
 
 before do
-  @timeout = 600
+  @timeout = 3600
   session[:opt] ||= {port: 8090, timeout: @timeout}
   @cw ||= CardanoWallet.new session[:opt]
   session[:opt] ||= @cw.opt
@@ -133,11 +133,13 @@ end
 post "/get-pub-key" do
   wallets = @cw.shelley.wallets.list
   handle_api_err wallets, session
+  hash = params[:hash] == 'true' ? { hash: true } : {}
 
   begin
     pub_key = @cw.shelley.keys.get_public_key(params[:wid],
                                             params[:role],
-                                            params[:index])
+                                            params[:index],
+                                            hash)
   rescue
     session[:error] = "Make sure parameters are valid. "
     redirect "/get-pub-key"
@@ -148,8 +150,91 @@ post "/get-pub-key" do
                                           :role => params[:role],
                                           :index => params[:index],
                                           :pub_key => pub_key,
-                                          :hash => nil
+                                          :hash => params[:hash]
                                         } }
+end
+
+get "/get-policy-key" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  params[:wid] ? wid = params[:wid] : wid = wallets.first['id']
+  erb :form_get_policy_key, { :locals => { :wallets => wallets,
+                                          :wid => wid,
+                                          :policy_key => nil,
+                                          :hash => nil } }
+end
+
+post "/get-policy-key" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  hash = params[:hash] == 'true' ? { hash: true } : {}
+  begin
+    policy_key = @cw.shelley.keys.get_policy_key(params[:wid], hash)
+  rescue
+    session[:error] = "Make sure parameters are valid. "
+    redirect "/get-policy-key"
+  end
+  handle_api_err policy_key, session
+  erb :form_get_policy_key, { :locals => { :wallets => wallets,
+                                          :wid => params[:wid],
+                                          :policy_key => policy_key,
+                                          :hash => params[:hash]
+                                        } }
+end
+
+get "/create-policy-id" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  params[:wid] ? wid = params[:wid] : wid = wallets.first['id']
+  erb :form_create_policy_id, { :locals => { :wallets => wallets,
+                                          :wid => wid,
+                                          :policy_script_template => nil,
+                                          :policy_id => nil } }
+end
+
+post "/create-policy-id" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  begin
+    policy_script_template = JSON.parse(params[:mint_policy_script].strip)
+  rescue
+    policy_script_template = params[:mint_policy_script]
+  end
+  policy_id = @cw.shelley.keys.create_policy_id(params[:wid], policy_script_template)
+  handle_api_err policy_id, session
+  erb :form_create_policy_id, { :locals => { :wallets => wallets,
+                                          :wid => params[:wid],
+                                          :policy_script_template => params[:mint_policy_script],
+                                          :policy_id => policy_id } }
+end
+
+get "/create-policy-key" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  params[:wid] ? wid = params[:wid] : wid = wallets.first['id']
+  erb :form_create_policy_key, { :locals => { :wallets => wallets,
+                                          :wid => wid,
+                                          :pass => 'Secure Passphrase',
+                                          :policy_key => nil,
+                                          :hash => nil } }
+end
+
+post "/create-policy-key" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  hash = params[:hash] == 'true' ? { hash: true } : {}
+  begin
+    policy_key = @cw.shelley.keys.create_policy_key(params[:wid], params[:pass], hash)
+  rescue
+    session[:error] = "Make sure parameters are valid. "
+    redirect "/create-policy-key"
+  end
+  handle_api_err policy_key, session
+  erb :form_create_policy_key, { :locals => { :wallets => wallets,
+                                          :wid => params[:wid],
+                                          :pass => params[:pass],
+                                          :policy_key => policy_key,
+                                          :hash => params[:hash] } }
 end
 
 get "/sign-metadata" do
@@ -348,12 +433,12 @@ end
 post "/shared-get-pub-key" do
   wallets = @cw.shared.wallets.list
   handle_api_err wallets, session
-
+  hash = params[:hash] == 'true' ? { hash: true } : {}
   begin
     pub_key = @cw.shared.keys.get_public_key(params[:wid],
                                             params[:role],
                                             params[:index],
-                                            {'hash' => params[:hash]})
+                                            hash)
   rescue
     session[:error] = "Make sure parameters are valid. "
     redirect "/shared-get-pub-key"
@@ -383,7 +468,6 @@ post "/shared-wallets/:wal_id/patch-payment" do
 
   redirect "/shared-wallets/#{params[:wal_id]}"
 end
-
 
 get "/shared-wallets/:wal_id/patch-delegation" do
   wal = @cw.shared.wallets.get params[:wal_id]
@@ -513,70 +597,6 @@ post "/shared-wallets-create" do
 end
 
 # SHELLEY WALLETS
-
-get "/mint-to-address" do
-  wallets = @cw.shelley.wallets.list
-  handle_api_err(wallets, session)
-
-  erb :form_mint_to_multi_address, { :locals => { :wallets => wallets,
-                                       :asset_name => nil,
-                                       :asset => nil } }
-end
-
-post "/mint-to-address" do
-  wallets = @cw.shelley.wallets.list
-  handle_api_err(wallets, session)
-
-  case params['operation']
-  when 'mint_to_self'
-    my_address = @cw.shelley.addresses.list(params['wid_src'], {state: "unused"}).first['id']
-    mint_burn = [
-      {
-        "monetary_policy_index" => params['monetary_policy_index'],
-        "asset_name" => params['asset_name'].unpack('H*').first,
-        "operation" => {
-                      "mint" => {
-                        "receiving_address" => my_address,
-                        "amount" => {
-                            "quantity" => params['amount'].to_i,
-                            "unit" => "assets"
-                                    }
-                        }
-                      }
-      }
-    ]
-
-
-  when 'mint'
-    mint_burn = parse_addr_amt_mint(params['addr_amt'],
-                                    params['monetary_policy_index'],
-                                    params['asset_name'].unpack('H*').first)
-  when 'burn'
-    mint_burn = [
-      {
-        "monetary_policy_index" => params['monetary_policy_index'],
-        "asset_name" => params['asset_name'].unpack('H*').first,
-        "operation" => {
-                      "burn" => { "quantity" => params['amount'].to_i,
-                                  "unit": "assets" }
-                      }
-      }
-    ]
-  end
-  # operation = JSON.parse(params['operation'])
-  m = parse_metadata(params[:metadata])
-  params[:ttl] == '' ? ttl = nil : ttl = params[:ttl].to_i
-  mint_or_burn = @cw.shelley.assets.mint(params['wid_src'],
-                                         mint_burn,
-                                         params['pass'],
-                                         m,
-                                         ttl
-                                         )
-  handle_api_err(mint_or_burn, session)
-
-  erb :tx_details, { :locals => { :tx => mint_or_burn, :wid => params['wid_src'] }  }
-end
-
 get "/wallets-get-assets" do
   wallets = @cw.shelley.wallets.list
   handle_api_err(wallets, session)
@@ -980,6 +1000,43 @@ post "/construct-tx-shelley" do
       ]
     end
   end
+  if params[:mint_check]
+    mint = {}
+    if params[:mint_action] == 'mint'
+      addr = params[:mint_receiving_address].strip
+      if addr.empty?
+        mint[:operation] = {
+            'mint' => { 'quantity' => params[:mint_amount].to_i }
+        }
+      else
+        mint[:operation] = {
+            'mint' => { 'receiving_address' => addr,
+                        'quantity' => params[:mint_amount].to_i }
+        }
+      end
+    end
+    if params[:mint_action] == 'burn'
+      mint[:operation] = {
+          'burn' => { 'quantity' => params[:mint_amount].to_i }
+      }
+    end
+
+    # policy script is either script or just string specifying cosigner
+    begin
+      script = JSON.parse(params[:mint_policy_script].strip)
+    rescue
+      script = params[:mint_policy_script]
+    end
+    mint[:policy_script_template] = script
+
+    if params[:mint_hex] == 'true'
+      mint[:asset_name] = params[:mint_asset_name]
+    else
+      # Encode mint_asset_name to hex
+      mint[:asset_name] = params[:mint_asset_name].unpack("H*").first
+    end
+    mint_burn = [mint]
+  end
 
   if params[:validity_interval_check]
     validity_interval = {}
@@ -1009,7 +1066,7 @@ post "/construct-tx-shelley" do
                                          withdrawal,
                                          metadata,
                                          delegations,
-                                         mint = nil,
+                                         mint_burn,
                                          validity_interval)
   handle_api_err tx, session
   decoded_tx = @cw.shelley.transactions.decode(wid, tx['transaction'])
@@ -1067,7 +1124,6 @@ post "/submit-tx-standalone-shelley" do
 
   erb :tx_details, { :locals => { :tx => tx, :wid => wid}  }
 end
-
 
 get "/wallets-transactions" do
   query = toListTransactionsQuery(params)

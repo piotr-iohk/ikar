@@ -58,7 +58,6 @@
              </a>
              <div class="dropdown-menu">
                <a class="dropdown-item" href="/wallets-get-assets?wid=<%= id %>">List</a>
-               <a class="dropdown-item" href="/mint-to-address?wid=<%= id %>">Mint / Burn</a>
              </div>
            </div>
            <div>
@@ -100,8 +99,13 @@
              <div class="dropdown-menu">
                <a class="dropdown-item" href="/create-acc-pub-key?wid=<%= wal['id'] %>">Create account public key</a>
                <a class="dropdown-item" href="/get-acc-pub-key?wid=<%= wal['id'] %>">Get account public key</a>
+               <div class="dropdown-divider"></div>
                <a class="dropdown-item" href="/get-pub-key?wid=<%= wal['id'] %>">Get public key</a>
                <a class="dropdown-item" href="/sign-metadata?wid=<%= wal['id'] %>">Sign Metadata</a>
+               <div class="dropdown-divider"></div>
+               <a class="dropdown-item" href="/get-policy-key?wid=<%= wal['id'] %>">Get policy key</a>
+               <a class="dropdown-item" href="/create-policy-key?wid=<%= wal['id'] %>">Create policy key</a>
+               <a class="dropdown-item" href="/create-policy-id?wid=<%= wal['id'] %>">Create policy id</a>
              </div>
            </div>
 

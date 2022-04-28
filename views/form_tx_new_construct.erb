@@ -134,18 +134,32 @@
       });
 
       $(function(){
-          if($('#minting_check').prop("checked")) {
-              $('#minting_form').show();
+          if($('#mint_check').prop("checked")) {
+              $('#mint_form').show();
           } else {
-              $('#minting_form').hide();
+              $('#mint_form').hide();
           }
       });
-      $('#minting_check').change(function(){
-          if($('#minting_check').prop("checked")) {
-              $('#minting_form').show();
+      $('#mint_check').change(function(){
+          if($('#mint_check').prop("checked")) {
+              $('#mint_form').show();
           } else {
-              $('#minting_form').hide();
+              $('#mint_form').hide();
           }
+      });
+      $(function() {
+          if($('#mint_action').val() == 'burn') {
+              $('#mint_receiving_address_form').hide();
+          } else {
+              $('#mint_receiving_address_form').show();
+          }
+          $('#mint_action').change(function(){
+              if($('#mint_action').val() == 'burn') {
+                  $('#mint_receiving_address_form').hide();
+              } else {
+                  $('#mint_receiving_address_form').show();
+              }
+          });
       });
 
       $(function(){
@@ -262,8 +276,6 @@
         </div>
       </div>
 
-
-
       <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="metadata_check"
           name="metadata_check" <%= "checked" if params[:metadata_check] %>
@@ -315,10 +327,82 @@
       </div>
 
       <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="minting_check" disabled>
-        <label class="form-check-label" for="minting_check">
-          Minting
+        <input class="form-check-input" type="checkbox" value="" id="mint_check"
+              name="mint_check" <%= "checked" if params[:mint_check] %>
+                <%= " disabled" if url_path.include?('byron') %>>
+        <label class="form-check-label" for="mint_check">
+          Minting / Burning
         </label>
+      </div>
+      <div id="mint_form" style="display:none">
+        <div class="form-group">
+          <label for="mint_action">Operation</label>
+          <select class="form-control" name="mint_action" id="mint_action">
+            <option value="mint">Mint</option>
+            <option value="burn">Burn</option>
+          </select>
+        </div>
+        <!-- <div class="form-check">
+          <input class="form-check-input" type="radio" name="mint_action"
+            id="mint" value="mint" checked>
+          <label class="form-check-label" for="mint">
+            Mint
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="mint_action"
+            id="burn" value="burn">
+          <label class="form-check-label" for="burn">
+            Burn
+          </label>
+        </div> -->
+
+        <div class="form-group" id="mint_receiving_address_form">
+          <label for="mint_asset_name">Receiving Address</label>
+          <input type="text" class="form-control" name="mint_receiving_address"
+                 id="mint_receiving_address"
+            placeholder="Receiving Address" value="">
+          <small id="help" class="form-text text-muted">
+            Where minted assets will be sent. If empty it'll go to the wallet.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="mint_asset_name">Asset Name</label>
+          <input type="text" class="form-control" name="mint_asset_name" id="mint_asset_name"
+            placeholder="Asset Name" value="">
+          <small id="help" class="form-text text-muted">
+            Asset name. Can be empty.
+          </small>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="true" name="mint_hex" id="mint_hex">
+            <label class="form-check-label" for="mint_hex">
+              If checked I assume it's already hex encoded, otherwise use plain text.
+            </label>
+          </div>
+          <small id="help" class="form-text text-muted">
+            <details>
+              <summary><i>Available assets(<i>policyId:assetName:amount</i>) 👇</summary>
+              <code>
+                <%
+                  assets_available = wallets.select{|w| w['id'] == wid }.first['assets']['available']
+                  assets_balance = assets_available.collect do |a|
+                    "#{a['policy_id']}:#{a['asset_name']}:#{a['quantity']}<br/>"
+                  end.join("")
+                %>
+                <%= assets_balance %>
+              </code>
+            </details>
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="mint_amount">Amount</label>
+          <input type="text" class="form-control" name="mint_amount" id="mint_amount"
+            placeholder="Amount" value="">
+        </div>
+
+        <%= render_policy_script_template_form_part %>
       </div>
 
       <div class="form-check">

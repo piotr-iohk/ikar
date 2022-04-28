@@ -1,11 +1,11 @@
 <%
   url_path = request.env['PATH_INFO'].to_s
-  shelley_ep = "/get-pub-key"
-  shared_ep = "/shared-get-pub-key"
+  shelley_ep = "/get-policy-key"
+  shared_ep = "/shared-get-policy-key" # NOT IMPLEMENTED YET
 %>
 <div class="list-group">
   <div class="list-group-item">
-     Get public key
+     Get policy key
      | <small><a href="<%= url_path.include?('shared')? "/shared-wallets/" : "/wallets/" %><%= wid %>">
              go back to wallet
            </a></small>
@@ -24,20 +24,6 @@
           <% end %>
         </select>
       </div>
-      <div class="form-group">
-        <label for="role">Role</label>
-        <select class="form-control" name="role" id="role">
-          <option <%= "selected" if role == "utxo_external" %> value="utxo_external">utxo_external</option>
-          <option <%= "selected" if role == "utxo_internal" %> value="utxo_internal">utxo_internal</option>
-          <option <%= "selected" if role == "mutable_account" %> value="mutable_account">mutable_account</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="index">Index</label>
-        <input type="text" class="form-control" name="index" id="index"
-            placeholder="" value="<%= index %>">
-        <small id="help" class="form-text text-muted">Example: 1852H. An individual segment within a derivation path.</small>
-      </div>
 
         <div class="form-group">
           <div class="form-check">
@@ -49,7 +35,7 @@
           </div>
         </div>
 
-      <button type="submit" class="btn btn-success">Get public key</button>
+      <button type="submit" class="btn btn-success">Get policy key</button>
     </form>
   </div>
 
@@ -62,12 +48,12 @@
      end
   %>
 
-  <% if pub_key %>
+  <% if policy_key %>
   <div class="list-group-item"  >
     <small id="signed_metadata">
       Response:<br/>
-        <%= pub_key %>
-        <br/><br/><%= generate_curl(pub_key) %>
+        <%= policy_key %>
+        <br/><br/><%= generate_curl(policy_key) %>
     </small>
   </div>
   <% end %>
