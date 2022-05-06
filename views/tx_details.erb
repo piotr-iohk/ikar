@@ -97,7 +97,7 @@
       <div class="list-group-item">
       <% if tx['metadata'] %>
           <small><b>Metadata: </b></small><br/>
-          <small><code><%= tx['metadata'] %></code></small>
+          <small><pre><%= JSON.pretty_generate tx['metadata'] %></pre></small>
       <% else%>
         <small><b>No Metadata! </b></small><br/>
       <% end %>

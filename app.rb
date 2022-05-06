@@ -1046,8 +1046,6 @@ post "/construct-tx-shelley" do
         "quantity" => params[:invalid_before].to_i,
         "unit" => params[:invalid_before_unit]
       }
-    else
-      validity_interval["invalid_before"] = "unspecified"
     end
 
     if params[:invalid_hereafter_specified]
@@ -1055,8 +1053,6 @@ post "/construct-tx-shelley" do
         "quantity" => params[:invalid_hereafter].to_i,
         "unit" => params[:invalid_hereafter_unit]
       }
-    else
-      validity_interval["invalid_hereafter"] = "unspecified"
     end
 
   end
@@ -1097,7 +1093,7 @@ post "/submit-tx-shelley" do
   r = @cw.shelley.transactions.submit(wid, serialized_tx)
   handle_api_err r, session
 
-  tx = @cw.shelley.transactions.get(wid, r['id'])
+  tx = @cw.shelley.transactions.get(wid, r['id'], {"simple-metadata" => true})
   handle_api_err tx, session
 
   erb :tx_details, { :locals => { :tx => tx, :wid => wid}  }
@@ -1119,7 +1115,7 @@ post "/submit-tx-standalone-shelley" do
   r = @cw.shelley.transactions.submit(wid, serialized_tx)
   handle_api_err r, session
 
-  tx = @cw.shelley.transactions.get(wid, r['id'])
+  tx = @cw.shelley.transactions.get(wid, r['id'], {"simple-metadata" => true})
   handle_api_err tx, session
 
   erb :tx_details, { :locals => { :tx => tx, :wid => wid}  }
@@ -1265,7 +1261,7 @@ end
 get "/wallets/:wal_id/txs/:tx_id" do
   wid = params[:wal_id]
   txid = params[:tx_id]
-  tx = @cw.shelley.transactions.get(wid, txid)
+  tx = @cw.shelley.transactions.get(wid, txid, {"simple-metadata" => true})
   handle_api_err tx, session
 
   erb :tx_details, { :locals => { :tx => tx, :wid => wid }  }
@@ -1608,8 +1604,6 @@ post "/construct-tx-byron" do
         "quantity" => params[:invalid_before].to_i,
         "unit" => params[:invalid_before_unit]
       }
-    else
-      validity_interval["invalid_before"] = "unspecified"
     end
 
     if params[:invalid_hereafter_specified]
@@ -1617,8 +1611,6 @@ post "/construct-tx-byron" do
         "quantity" => params[:invalid_hereafter].to_i,
         "unit" => params[:invalid_hereafter_unit]
       }
-    else
-      validity_interval["invalid_hereafter"] = "unspecified"
     end
 
   end
