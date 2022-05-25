@@ -1,4 +1,5 @@
 <%
+# Only supported for Shelley wallets
 url_path = request.env['PATH_INFO'].to_s
 byron_ep = "/byron-wallets/#{wal['id']}/update-pass" # -mnem
 shelley_ep = "/wallets/#{wal['id']}/update-pass" # -mnem

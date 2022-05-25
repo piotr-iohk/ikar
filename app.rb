@@ -1395,21 +1395,6 @@ post "/byron-wallets/:wal_id/update-pass" do
   redirect "/byron-wallets/#{params[:wal_id]}"
 end
 
-get "/byron-wallets/:wal_id/update-pass-mnem" do
-  wal = @cw.byron.wallets.get params[:wal_id]
-  handle_api_err wal, session
-  erb :form_wallet_update_pass_mnem, { :locals => { :wal => wal } }
-end
-
-post "/byron-wallets/:wal_id/update-pass-mnem" do
-  m = prepare_mnemonics params[:mnemonic_sentence]
-  r = @cw.byron.wallets.update_passphrase(params[:wal_id],
-                                          {mnemonic_sentence: m,
-                                           new_passphrase: params[:new_pass]})
-  handle_api_err r, session
-  redirect "/byron-wallets/#{params[:wal_id]}"
-end
-
 get "/byron-wallets-utxo" do
   utxo = @cw.byron.wallets.utxo params[:wid]
   utxo_snapshot = @cw.byron.wallets.utxo_snapshot params[:wid]

@@ -11,7 +11,13 @@ wid = wal['id']
   <div class="list-group-item">
     <form action="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>" method="POST">
       <div class="form-group">
-        <label for="old_pass">Old pass / <a href="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>-mnem">Wallet mnemonics</a></label>
+        <label for="old_pass">
+          <% if (url_path.include? "byron") %>
+          Old pass
+          <% else %>
+          Old pass / <a href="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>-mnem">Wallet mnemonics</a>
+          <% end %>
+        </label>
         <input type="text" class="form-control" name="old_pass" id="old_pass"
             placeholder="Old pass" value="Secure Passphrase">
         <label for="new_pass">New pass</label>
