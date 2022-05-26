@@ -727,6 +727,21 @@ post "/wallets/:wal_id/update-pass" do
   redirect "/wallets/#{params[:wal_id]}"
 end
 
+get "/wallets/:wal_id/update-pass-mnem" do
+  wal = @cw.shelley.wallets.get params[:wal_id]
+  handle_api_err wal, session
+  erb :form_wallet_update_pass_mnem, { :locals => { :wal => wal } }
+end
+
+post "/wallets/:wal_id/update-pass-mnem" do
+  m = prepare_mnemonics params[:mnemonic_sentence]
+  r = @cw.shelley.wallets.update_passphrase(params[:wal_id],
+                                          {mnemonic_sentence: m,
+                                           new_passphrase: params[:new_pass]})
+  handle_api_err r, session
+  redirect "/wallets/#{params[:wal_id]}"
+end
+
 get "/wallets-delete/:wal_id" do
   @cw.shelley.wallets.delete params[:wal_id]
   redirect "/wallets"

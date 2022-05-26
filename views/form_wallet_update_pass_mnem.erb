@@ -1,7 +1,8 @@
 <%
+# Only supported for Shelley wallets
 url_path = request.env['PATH_INFO'].to_s
-byron_ep = "/byron-wallets/#{wal['id']}/update-pass"
-shelley_ep = "/wallets/#{wal['id']}/update-pass"
+byron_ep = "/byron-wallets/#{wal['id']}/update-pass" # -mnem
+shelley_ep = "/wallets/#{wal['id']}/update-pass" # -mnem
 wid = wal['id']
 %>
 <div class="list-group">
@@ -9,17 +10,11 @@ wid = wal['id']
     <small><a href="<%= (url_path.include? "byron") ? "/byron-wallets/" : "/wallets/" %><%= wid %>">go back to wallet</a></small>
   </div>
   <div class="list-group-item">
-    <form action="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>" method="POST">
+    <form action="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>-mnem" method="POST">
       <div class="form-group">
-        <label for="old_pass">
-          <% if (url_path.include? "byron") %>
-          Old pass
-          <% else %>
-          Old pass / <a href="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>-mnem">Wallet mnemonics</a>
-          <% end %>
-        </label>
-        <input type="text" class="form-control" name="old_pass" id="old_pass"
-            placeholder="Old pass" value="Secure Passphrase">
+        <label for="mnemonic_sentence"><a href="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>">Old pass</a> / Wallet mnemonics</label>
+        <input type="text" class="form-control" name="mnemonic_sentence" id="mnemonic_sentence"
+            placeholder="Mnemonic sentence" value="">
         <label for="new_pass">New pass</label>
         <input type="text" class="form-control" name="new_pass" id="new_pass"
             placeholder="New pass" value="">
