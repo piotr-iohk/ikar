@@ -11,7 +11,7 @@ services:
     restart: on-failure
 
   cardano-wallet:
-    image: inputoutput/cardano-wallet:2022.4.27
+    image: inputoutput/cardano-wallet:2022.5.27
     volumes:
       - wallet-${NETWORK}-db:/wallet-db
       - node-ipc:/ipc
@@ -28,7 +28,7 @@ services:
     restart: on-failure
 
   icarus:
-    image: piotrstachyra/icarus:v2022-04-27
+    image: piotrstachyra/icarus:v2022-05-27
     network_mode: "host"
     restart: on-failure
 
