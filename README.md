@@ -1,4 +1,3 @@
-
 <a href="https://github.com/piotr-iohk/ikar/releases">
   <img src="https://img.shields.io/github/release/piotr-iohk/ikar.svg" />
 </a>
@@ -24,14 +23,15 @@ NETWORK=testnet docker-compose up
 ```
 
 This immediately spins up:
- - cardano-node connected to `testnet`
- - cardano-wallet on port `8090`
- - ikar web-app on port `4444`
+
+- cardano-node connected to `testnet`
+- cardano-wallet on port `8090`
+- ikar web-app on port `4444`
 
 Visit http://localhost:4444/, click _Connect_ and play around!
 
-
 ## Setup
+
 If you already have [cardano-wallet](https://github.com/input-output-hk/cardano-wallet) and [cardano-node](https://github.com/input-output-hk/cardano-node) set up on your machine, you can connect Ikar to the stack as follows:
 
 <details>
@@ -50,7 +50,8 @@ or
     <summary>From repository</summary>
 
 1. [Have ruby](https://www.ruby-lang.org/en/documentation/installation/).
-2.  :point_down:
+2. :point_down:
+
 ```
 git clone https://github.com/piotr-iohk/ikar.git
 cd ikar
@@ -61,9 +62,22 @@ ruby app.rb
 
 </details>
 
-Good! now visit http://localhost:4444/, click _Connect_ and play around!
+or
 
+<details>
+    <summary>From repository with `nix`</summary>
+
+Nix development shell provides required `ruby` and app depenencies.
+This command starts app:
+
+```
+nix develop -c ruby app.rb
+```
+
+</details>
+
+Good! now visit http://localhost:4444/, click _Connect_ and play around!
 
 ## Releases
 
-[Releases]([https://github.com/piotr-iohk/ikar/releases](https://github.com/piotr-iohk/ikar/releases)) have the same versions as [cardano-wallet](https://github.com/input-output-hk/cardano-wallet/releases) and should be compatible with them.
+[Releases](<[https://github.com/piotr-iohk/ikar/releases](https://github.com/piotr-iohk/ikar/releases)>) have the same versions as [cardano-wallet](https://github.com/input-output-hk/cardano-wallet/releases) and should be compatible with them.
