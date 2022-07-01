@@ -2,7 +2,7 @@ version: "3.5"
 
 services:
   cardano-node:
-    image: inputoutput/cardano-node:1.34.1
+    image: inputoutput/cardano-node:1.35.0
     environment:
       NETWORK:
     volumes:
@@ -11,7 +11,7 @@ services:
     restart: on-failure
 
   cardano-wallet:
-    image: inputoutput/cardano-wallet:2022.5.27
+    image: inputoutput/cardano-wallet:2022.7.1
     volumes:
       - wallet-${NETWORK}-db:/wallet-db
       - node-ipc:/ipc
@@ -28,7 +28,7 @@ services:
     restart: on-failure
 
   icarus:
-    image: piotrstachyra/icarus:v2022-05-27
+    image: piotrstachyra/icarus:v2022-07-01
     network_mode: "host"
     restart: on-failure
 
