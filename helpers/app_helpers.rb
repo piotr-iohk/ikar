@@ -3,7 +3,7 @@ require 'bip_mnemonic'
 module Helpers
   module App
     def version
-      'v2022-05-27' #version
+      'v2022-07-01' #version
     end
 
     def is_connected?(w)
