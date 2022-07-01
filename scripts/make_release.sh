@@ -12,6 +12,10 @@ sed -i "s|inputoutput/cardano-wallet:.*|inputoutput/cardano-wallet:$DOCKER_TAG|"
 sed -i "s|inputoutput/cardano-node:.*|inputoutput/cardano-node:$NODE_TAG|" docker-compose.yml
 echo ""
 
+echo "Updating build.yaml workflow with NODE:$NODE_TAG"
+sed -i "s|NODE: .*|NODE: $NODE_TAG|" ./.github/workflows/build.yml
+echo ""
+
 echo "Updating Ikar version to $GIT_TAG"
 sed -i "s|'.*' #version|'$GIT_TAG' #version|" ./helpers/app_helpers.rb
 sed -i "s|piotrstachyra/icarus:.*|piotrstachyra/icarus:$GIT_TAG|" docker-compose.yml
