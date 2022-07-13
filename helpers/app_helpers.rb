@@ -29,6 +29,28 @@ module Helpers
       query
     end
 
+    def pick_post_ep(url_path, byron, shelley, shared)
+      case url_path
+      when /byron/
+        byron
+      when /shared/
+        shared
+      else
+        shelley
+      end
+    end
+
+    def back_to_wallet(url_path, wid)
+      case url_path
+      when /byron/
+        "/byron-wallets/#{wid}"
+      when /shared/
+        "/shared-wallets/#{wid}"
+      else
+        "/wallets/#{wid}"
+      end
+    end
+
     ##
     # Prepares payload for tx/fee endpoints based on form params from:
     # - form_tx_to_address
@@ -550,6 +572,22 @@ module Helpers
             <details>
               <summary>Examplary metadata</summary>
                 <pre>
+Untyped metadata:
+{
+   "1":14,
+   "4":{
+      "14":42,
+      "key":"value"
+   },
+   "3":[
+      14,
+      42,
+      "1337"
+   ],
+   "0":"cardano",
+   "2":"0x2512a00e9653fe49a44a5886202e24d77eeb998f"
+}
+
 Typed metadata:
 {
    "0":{
@@ -594,22 +632,6 @@ Typed metadata:
          }
       ]
    }
-}
-
-Untyped metadata:
-{
-   "1":14,
-   "4":{
-      "14":42,
-      "key":"value"
-   },
-   "3":[
-      14,
-      42,
-      "1337"
-   ],
-   "0":"cardano",
-   "2":"0x2512a00e9653fe49a44a5886202e24d77eeb998f"
 }
                 </pre>
             </details>

@@ -945,6 +945,150 @@ post "/sign-balanced-tx-shelley" do
                                        :decoded_tx => decoded_tx } }
 end
 
+# Construct shared
+get "/construct-tx-shared" do
+  wallets = @cw.shared.wallets.list
+  handle_api_err wallets, session
+
+  erb :form_tx_new_construct, {:locals => { :wallets => wallets, :tx => nil } }
+end
+
+post "/construct-tx-shared" do
+  wid = params[:wid]
+
+  if params[:payments_check]
+    case params[:payments_mode]
+    when 'single_output', 'multi_output'
+      payload = prepare_payload_new_tx(params)
+    when 'between_wallets'
+      wid_dst = params[:wid_dst]
+      amount = params[:amount_wallet]
+      address_dst = @cw.shared.addresses.list(wid_dst,
+                                              {state: "unused"}).
+                                              first['id']
+      if params[:assets_wallet] == ''
+        payload = [ { "address": address_dst,
+                      "amount": { "quantity": amount.to_i, "unit": "lovelace" }
+                    }
+                  ]
+      else
+        assets = parse_assets(params[:assets_wallet])
+        payload = [ { "address": address_dst,
+                      "amount": { "quantity": amount.to_i, "unit": "lovelace" },
+                      "assets": assets
+                    }
+                  ]
+      end
+    end
+  end
+
+  if params[:withdrawals_check]
+    case params[:withdrawal]
+    when ''
+      withdrawal = nil
+    when 'self'
+      withdrawal = 'self'
+    else
+      withdrawal = params[:withdrawal].split
+    end
+  end
+
+  if params[:metadata_check]
+    metadata = parse_metadata(params[:metadata])
+  end
+
+  if params[:delegations_check]
+    case params[:delegation_action]
+    when 'join'
+      delegations = [
+          { 'join' =>
+            { 'pool' => params[:pool_id],
+              'stake_key_index' => params[:stake_key_id]
+            }
+          }
+      ]
+    when 'quit'
+      delegations = [
+          { 'quit' =>
+            { 'stake_key_index' => params[:stake_key_id]
+            }
+          }
+      ]
+    end
+  end
+  if params[:mint_check]
+    mint = {}
+    if params[:mint_action] == 'mint'
+      addr = params[:mint_receiving_address].strip
+      if addr.empty?
+        mint[:operation] = {
+            'mint' => { 'quantity' => params[:mint_amount].to_i }
+        }
+      else
+        mint[:operation] = {
+            'mint' => { 'receiving_address' => addr,
+                        'quantity' => params[:mint_amount].to_i }
+        }
+      end
+    end
+    if params[:mint_action] == 'burn'
+      mint[:operation] = {
+          'burn' => { 'quantity' => params[:mint_amount].to_i }
+      }
+    end
+
+    # policy script is either script or just string specifying cosigner
+    begin
+      script = JSON.parse(params[:mint_policy_script].strip)
+    rescue
+      script = params[:mint_policy_script]
+    end
+    mint[:policy_script_template] = script
+
+    if params[:mint_hex] == 'true'
+      mint[:asset_name] = params[:mint_asset_name]
+    else
+      # Encode mint_asset_name to hex
+      mint[:asset_name] = params[:mint_asset_name].unpack("H*").first
+    end
+    mint_burn = [mint]
+  end
+
+  if params[:validity_interval_check]
+    validity_interval = {}
+
+    if params[:invalid_before_specified]
+      validity_interval["invalid_before"] = {
+        "quantity" => params[:invalid_before].to_i,
+        "unit" => params[:invalid_before_unit]
+      }
+    end
+
+    if params[:invalid_hereafter_specified]
+      validity_interval["invalid_hereafter"] = {
+        "quantity" => params[:invalid_hereafter].to_i,
+        "unit" => params[:invalid_hereafter_unit]
+      }
+    end
+
+  end
+
+  tx = @cw.shared.transactions.construct(wid,
+                                         payload,
+                                         withdrawal,
+                                         metadata,
+                                         delegations,
+                                         mint_burn,
+                                         validity_interval)
+  handle_api_err tx, session
+  # decoded_tx = @cw.shared.transactions.decode(wid, tx['transaction'])
+  # handle_api_err decoded_tx, session
+  erb :form_tx_new_sign, {:locals => { :tx => tx,
+                                       :wid => wid,
+                                       :decoded_tx => nil } }
+end
+
+# Construct Shelley
 get "/construct-tx-shelley" do
   wallets = @cw.shelley.wallets.list
   handle_api_err wallets, session
@@ -964,7 +1108,7 @@ post "/construct-tx-shelley" do
       amount = params[:amount_wallet]
       address_dst = @cw.shelley.addresses.list(wid_dst,
                                               {state: "unused"}).
-                                              sample['id']
+                                              first['id']
       if params[:assets_wallet] == ''
         payload = [ { "address": address_dst,
                       "amount": { "quantity": amount.to_i, "unit": "lovelace" }
