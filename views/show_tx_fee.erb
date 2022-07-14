@@ -11,7 +11,7 @@ shelley_ep = "/wallets/#{wallet_id}"
   <div class="list-group-item">
      Transaction fees  |
        <small>
-         <a href="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>">
+         <a href="<%= back_to_wallet(url_path, wid) %>">
            go back to wallet
          </a>
        </small>

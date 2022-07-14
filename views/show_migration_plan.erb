@@ -1,19 +1,17 @@
 <%
  mp = migration_plan
  url_path = request.env['PATH_INFO'].to_s
- byron_ep = "/byron-wallets/#{wid}"
- shelley_ep = "/wallets/#{wid}"
- byron_migr_ep = "/byron-wallets-migration-plan?wid=#{wid}"
- shelley_migr_ep = "/wallets-migration-plan?wid=#{wid}"
+ byron_ep = "/byron-wallets-migration-plan?wid=#{wid}"
+ shelley_ep = "/wallets-migration-plan?wid=#{wid}"
 %>
 
 <div class="list-group">
   <div class="list-group-item">
      Migration fee
-     | <small><a href="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>">go back to wallet</a></small>
+     | <small><a href="<%= back_to_wallet(url_path, wid) %>">go back to wallet</a></small>
   </div>
   <div class="list-group-item">
-    <form action="<%= (url_path.include? "byron") ? byron_migr_ep : shelley_migr_ep %>" method="POST">
+    <form action="<%= pick_post_ep(url_path, byron_ep, shelley_ep, nil) %>" method="POST">
       <div class="form-row">
         <div class="col">
           <select class="form-control" name="wid" id="wid">

@@ -1,14 +1,12 @@
 <%
   url_path = request.env['PATH_INFO'].to_s
   wid = params[:wid] if params[:wid]
-  byron_ep = "/byron-wallets"
-  shelley_ep = "/wallets"
 %>
 
 <div class="list-group">
   <div class="list-group-item">
      Coin Selection - delegation action
-     | <small><a href="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>/<%= wid %>">
+     | <small><a href="<%= back_to_wallet(url_path, wid) %>">
              go back to wallet
            </a></small>
   </div>

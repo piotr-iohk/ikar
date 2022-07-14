@@ -14,7 +14,7 @@
 %>
 <div class="list-group">
   <div class="list-group-item">
-    <form action="<%= (url_path.include? "byron") ? byron_ep : ((url_path.include? "shared") ? shared_ep : shelley_ep) %>" method="POST">
+    <form action="<%= pick_post_ep(url_path, byron_ep, shelley_ep, shared_ep) %>" method="POST">
       <% if url_path.include? "byron" %>
         <div class="form-group">
           <label for="style">Style</label>
