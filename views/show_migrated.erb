@@ -1,7 +1,5 @@
 <%
 url_path = request.env['PATH_INFO'].to_s
-byron_ep = "/byron-wallets/#{wid_src}"
-shelley_ep = "/wallets/#{wid_src}"
 %>
 
 <div class="alert alert-success" role="alert">
@@ -10,8 +8,8 @@ shelley_ep = "/wallets/#{wid_src}"
 
 <div class="list-group">
   <div class="list-group-item">
-     <small><a href="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>">
-       go back to <%= (url_path.include? "byron") ? "Byron" : "Shelley" %> Wallet
+     <small><a href="<%= back_to_wallet(url_path, wid_src) %>">
+       go back to wallet
      </a></small>
   </div>
 </div>

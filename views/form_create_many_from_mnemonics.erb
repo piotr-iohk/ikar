@@ -5,7 +5,7 @@
 %>
 <div class="list-group">
   <div class="list-group-item">
-    <form action="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>" method="POST">
+    <form action="<%= pick_post_ep(url_path, byron_ep, shelley_ep, nil) %>" method="POST">
       <div class="form-group">
         <label for="mnemonics">Mnemonic words</label>
         <textarea class="form-control" name="mnemonics" id="mnemonics" rows="6"></textarea>

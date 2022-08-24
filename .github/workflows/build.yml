@@ -32,17 +32,16 @@ jobs:
     - name: Set up cardano-wallet & cardano-node on Shelley testnet
       run: |
         wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/docker-compose.yml -O docker-compose-test.yml
-        wget $CONFIG_URL/testnet-config.json
-        wget $CONFIG_URL/testnet-byron-genesis.json
-        wget $CONFIG_URL/testnet-shelley-genesis.json
-        wget $CONFIG_URL/testnet-alonzo-genesis.json
-        wget $CONFIG_URL/testnet-topology.json
+        wget $CONFIG_URL/config.json
+        wget $CONFIG_URL/byron-genesis.json
+        wget $CONFIG_URL/shelley-genesis.json
+        wget $CONFIG_URL/alonzo-genesis.json
+        wget $CONFIG_URL/topology.json
         NODE_CONFIG_PATH=`pwd` docker-compose -f docker-compose-test.yml up --detach
     - name: Run tests
       run: rspec tests
     env:
-      CONFIG_URL: https://hydra.iohk.io/job/Cardano/cardano-node/cardano-deployment/latest-finished/download/1
-      NETWORK: testnet
+      CONFIG_URL: https://book.world.dev.cardano.org/environments/preview/
       WALLET: dev-master
-      NODE: 1.35.0
+      NODE: 1.35.3
       TOKEN_METADATA: https://metadata.cardano-testnet.iohkdev.io/

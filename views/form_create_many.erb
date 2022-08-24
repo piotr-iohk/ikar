@@ -5,7 +5,7 @@
 %>
 <div class="list-group">
   <div class="list-group-item">
-    <form action="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>" method="POST">
+    <form action="<%= pick_post_ep(url_path, byron_ep, shelley_ep, nil) %>" method="POST">
       <div class="form-group">
         <label for="how_many">How many wallets?</label>
         <input type="text" class="form-control" name="how_many" id="how_many" placeholder="How many?" value="10">

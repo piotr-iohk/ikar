@@ -19,12 +19,12 @@ function goBack() {
       </a></small>
   </div>
   <div class="list-group-item"  >
-    <% if decoded_tx['fee'] %>
+    <% if decoded_tx && decoded_tx['fee'] %>
       <b>Fee: </b> <%= "#{as_ada decoded_tx['fee']['quantity']}" %>
       <br/>
       <br/>
     <% end %>
-    <form action="<%= url_path.include?('shelley') ? shelley_ep : byron_ep %>"
+    <form action="<%= pick_post_ep(url_path, byron_ep, shelley_ep, nil) %>"
         method="POST">
       <div class="form-group">
         <label for="pass">Passphrase</label>
