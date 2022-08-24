@@ -945,6 +945,28 @@ post "/sign-balanced-tx-shelley" do
                                        :decoded_tx => decoded_tx } }
 end
 
+# Decode shared
+get "/decode-tx-shared" do
+  wallets = @cw.shared.wallets.list
+  handle_api_err wallets, session
+
+  erb :form_tx_new_decode, {:locals => { :wallets => wallets,
+                                         :tx => nil,
+                                         :serialized_tx => nil } }
+end
+
+post "/decode-tx-shared" do
+  wallets = @cw.shared.wallets.list
+  handle_api_err wallets, session
+  serialized_tx = params[:serialized_tx].strip
+  tx = @cw.shared.transactions.decode(params[:wid], serialized_tx)
+  handle_api_err tx, session
+
+  erb :form_tx_new_decode, {:locals => { :wallets => wallets,
+                                         :tx => tx,
+                                         :serialized_tx => serialized_tx } }
+end
+
 # Construct shared
 get "/construct-tx-shared" do
   wallets = @cw.shared.wallets.list
@@ -1081,11 +1103,11 @@ post "/construct-tx-shared" do
                                          mint_burn,
                                          validity_interval)
   handle_api_err tx, session
-  # decoded_tx = @cw.shared.transactions.decode(wid, tx['transaction'])
-  # handle_api_err decoded_tx, session
+  decoded_tx = @cw.shared.transactions.decode(wid, tx['transaction'])
+  handle_api_err decoded_tx, session
   erb :form_tx_new_sign, {:locals => { :tx => tx,
                                        :wid => wid,
-                                       :decoded_tx => nil } }
+                                       :decoded_tx => decoded_tx } }
 end
 
 # Construct Shelley
