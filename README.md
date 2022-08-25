@@ -19,16 +19,19 @@ A helper web-app and cli to test [cardano-wallet](https://github.com/input-outpu
 
 ```
 wget https://raw.githubusercontent.com/piotr-iohk/ikar/master/docker-compose.yml
-NETWORK=testnet docker-compose up
+NETWORK=mainnet docker-compose up
 ```
 
 This immediately spins up:
 
-- cardano-node connected to `testnet`
+- cardano-node connected to `mainnet`
 - cardano-wallet on port `8090`
 - ikar web-app on port `4444`
 
 Visit http://localhost:4444/, click _Connect_ and play around!
+
+ > :information_source: With Ikar you can also connect to `preview` and `preprod` testnets.
+ > See [Cardano Book](https://book.world.dev.cardano.org/environments.html) for more information on environments.
 
 ## Setup
 
