@@ -318,6 +318,12 @@ get "/network-clock" do
   erb :network_clock, :locals => { :network_clock => r }
 end
 
+get "/block-header" do
+  r = @cw.misc.node.block_header
+  handle_api_err r, session
+  erb :block_header, :locals => { :block_header => r }
+end
+
 get "/inspect-address" do
   erb :form_inspect_address, { :locals => { :address_details => nil, :id => nil } }
 end

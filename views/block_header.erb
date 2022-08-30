@@ -1,0 +1,14 @@
+<%
+ b = block_header
+%>
+<div class="list-group">
+  <div class="list-group-item">
+     Block Latest Header
+     <small><a href="/block-header">refresh</a></small>
+  </div>
+  <div class="list-group-item">
+    <small>
+    <%= response2table(b) %>
+    </small>
+  </div>
+</div>
