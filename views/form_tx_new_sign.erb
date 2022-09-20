@@ -2,7 +2,7 @@
   # wallets = wallets
   url_path = request.env['PATH_INFO'].to_s
   shelley_ep = "/sign-tx-shelley"
-  byron_ep = "/sign-tx-byron"
+  shared_ep = "/sign-tx-shared"
   wid = params[:wid] if params[:wid]
 %>
 
@@ -24,7 +24,7 @@ function goBack() {
       <br/>
       <br/>
     <% end %>
-    <form action="<%= pick_post_ep(url_path, byron_ep, shelley_ep, nil) %>"
+    <form action="<%= pick_post_ep(url_path, nil, shelley_ep, shared_ep) %>"
         method="POST">
       <div class="form-group">
         <label for="pass">Passphrase</label>
