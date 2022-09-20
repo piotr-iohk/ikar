@@ -40,9 +40,14 @@ If you already have [cardano-wallet](https://github.com/input-output-hk/cardano-
 <details>
     <summary>Via docker</summary>
 
+Get latest release:
 ```
-docker pull piotrstachyra/icarus:latest
 docker run --network=host --rm piotrstachyra/icarus:latest
+```
+
+Or play with current `master` branch:
+```
+docker run --network=host --rm piotrstachyra/icarus:master
 ```
 
 </details>
