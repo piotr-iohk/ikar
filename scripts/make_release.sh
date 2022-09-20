@@ -7,6 +7,10 @@ NODE_TAG="1.35.3"
 
 DOCKER_TAG=`echo "${GIT_TAG##v}" | sed -e s/-0/-/g -e s/-/./g`
 
+echo "Updating Gemfile.lock and gemset.nix"
+bundle lock
+nix run nixpkgs#bundix
+
 echo "Updating docker-compose.yml with WALLET:$DOCKER_TAG, NODE:$NODE_TAG"
 sed -i "s|inputoutput/cardano-wallet:.*|inputoutput/cardano-wallet:$DOCKER_TAG|" docker-compose.yml
 sed -i "s|inputoutput/cardano-node:.*|inputoutput/cardano-node:$NODE_TAG|" docker-compose.yml

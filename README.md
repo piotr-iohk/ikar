@@ -84,3 +84,11 @@ Good! now visit http://localhost:4444/, click _Connect_ and play around!
 ## Releases
 
 [Releases](<[https://github.com/piotr-iohk/ikar/releases](https://github.com/piotr-iohk/ikar/releases)>) have the same versions as [cardano-wallet](https://github.com/input-output-hk/cardano-wallet/releases) and should be compatible with them.
+
+## Developer Notes
+
+Updating `Gemfile` requires regenerating `Gemfile.lock` and `gemset.nix`:
+```ruby
+bundle lock
+nix run nixpkgs#bundix
+```
