@@ -34,6 +34,10 @@ get "/" do
   erb :index
 end
 
+get "/connect" do
+  redirect "/"
+end
+
 post "/connect" do
   begin
     @cw = CardanoWallet.new({ port: params[:wallet_port].to_i,
