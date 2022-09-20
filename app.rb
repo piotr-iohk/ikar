@@ -1116,6 +1116,34 @@ post "/construct-tx-shared" do
                                        :decoded_tx => decoded_tx } }
 end
 
+post "/sign-tx-shared" do
+  wid = params[:wid]
+  tx = @cw.shared.transactions.sign(wid,
+                                     params[:pass],
+                                     params[:transaction])
+  handle_api_err tx, session
+
+  decoded_tx = @cw.shared.transactions.decode(wid, tx['transaction'])
+  handle_api_err decoded_tx, session
+
+  erb :form_tx_new_submit, {:locals => { :tx => tx,
+                                         :wid => wid,
+                                         :decoded_tx => decoded_tx } }
+end
+
+post "/submit-tx-shared" do
+  wid = params['wid']
+  serialized_tx = params['transaction']
+  r = @cw.shared.transactions.submit(wid, serialized_tx)
+  handle_api_err r, session
+
+  # Temp, as shared wallets don't have get transaction endpoint
+  # tx = @cw.shared.transactions.get(wid, r['id'], {"simple-metadata" => true})
+  # handle_api_err tx, session
+
+  erb :tx_submitted_temp, { :locals => { :tx => r, :wid => wid}  }
+end
+
 # Construct Shelley
 get "/construct-tx-shelley" do
   wallets = @cw.shelley.wallets.list
