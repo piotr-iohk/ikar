@@ -1116,6 +1116,34 @@ post "/construct-tx-shared" do
                                        :decoded_tx => decoded_tx } }
 end
 
+post "/sign-tx-shared" do
+  wid = params[:wid]
+  tx = @cw.shared.transactions.sign(wid,
+                                     params[:pass],
+                                     params[:transaction])
+  handle_api_err tx, session
+
+  decoded_tx = @cw.shared.transactions.decode(wid, tx['transaction'])
+  handle_api_err decoded_tx, session
+
+  erb :form_tx_new_submit, {:locals => { :tx => tx,
+                                         :wid => wid,
+                                         :decoded_tx => decoded_tx } }
+end
+
+post "/submit-tx-shared" do
+  wid = params['wid']
+  serialized_tx = params['transaction']
+  r = @cw.shared.transactions.submit(wid, serialized_tx)
+  handle_api_err r, session
+
+  # Temp, as shared wallets don't have get transaction endpoint
+  # tx = @cw.shared.transactions.get(wid, r['id'], {"simple-metadata" => true})
+  # handle_api_err tx, session
+
+  erb :tx_submitted_temp, { :locals => { :tx => r, :wid => wid}  }
+end
+
 # Construct Shelley
 get "/construct-tx-shelley" do
   wallets = @cw.shelley.wallets.list
@@ -1763,75 +1791,6 @@ post "/byron-wallets-migration-plan" do
 end
 
 # TRANSACTIONS BYRON
-get "/construct-tx-byron" do
-  wallets = @cw.byron.wallets.list
-  handle_api_err wallets, session
-
-  erb :form_tx_new_construct, {:locals => { :wallets => wallets, :tx => nil } }
-end
-
-post "/construct-tx-byron" do
-  wid = params[:wid]
-  if params[:payments_check]
-    case params[:payments_mode]
-    when 'single_output', 'multi_output'
-      payload = prepare_payload_new_tx(params)
-    end
-  end
-
-  if params[:metadata_check]
-    metadata = parse_metadata(params[:metadata])
-  end
-
-  if params[:validity_interval_check]
-    validity_interval = {}
-
-    if params[:invalid_before_specified]
-      validity_interval["invalid_before"] = {
-        "quantity" => params[:invalid_before].to_i,
-        "unit" => params[:invalid_before_unit]
-      }
-    end
-
-    if params[:invalid_hereafter_specified]
-      validity_interval["invalid_hereafter"] = {
-        "quantity" => params[:invalid_hereafter].to_i,
-        "unit" => params[:invalid_hereafter_unit]
-      }
-    end
-
-  end
-
-  r = @cw.byron.transactions.construct(wid,
-                                       payload,
-                                       metadata,
-                                       mint = nil,
-                                       validity_interval)
-  handle_api_err r, session
-
-  erb :form_tx_new_sign, {:locals => { :tx => r, :wid => wid } }
-end
-
-post "/sign-tx-byron" do
-  wid = params[:wid]
-  r = @cw.byron.transactions.sign(wid,
-                                    params[:pass],
-                                    params[:transaction])
-  handle_api_err r, session
-  erb :form_tx_new_submit, {:locals => { :tx => r, :wid => wid } }
-end
-
-post "/submit-tx-byron" do
-  wid = params['wid']
-  serialized_tx = params['transaction']
-  r = @cw.byron.transactions.submit(wid, serialized_tx)
-  handle_api_err r, session
-
-  tx = @cw.byron.transactions.get(wid, r['id'])
-  handle_api_err tx, session
-
-  erb :tx_details, { :locals => { :tx => tx, :wid => wid}  }
-end
 
 get "/byron-wallets-transactions" do
   query = toListTransactionsQuery(params)

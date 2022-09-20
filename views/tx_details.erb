@@ -1,14 +1,16 @@
 <%
   url_path = request.env['PATH_INFO'].to_s
-
+  shelley_ep = "/wallets"
+  shared_ep = "/shared-wallets"
+  byron_ep = "/byron-wallets"
 %>
 
 <div class="list-group">
 
     <div class="list-group-item">
-      <small><a href="<%= (url_path.include? "byron") ? "/byron-wallets" : "/wallets" %><%= "/#{wid}/txs/#{tx['id']}" %>">refresh</a></small>
-      | <small><a href="<%= (url_path.include? "byron") ? "/byron-wallets" : "/wallets" %><%= "/#{wid}/forget-tx/#{tx['id']}" %>">forget</a></small>
-      | <small><a href="<%= (url_path.include? "byron") ? "/byron-wallets" : "/wallets" %><%= "/#{wid}" %>">go to wallet</a></small><br/>
+      <small><a href="<%= pick_post_ep(url_path, byron_ep, shelley_ep, shared_ep) %><%= "/#{wid}/txs/#{tx['id']}" %>">refresh</a></small>
+      | <small><a href="<%= pick_post_ep(url_path, byron_ep, shelley_ep, shared_ep) %><%= "/#{wid}/forget-tx/#{tx['id']}" %>">forget</a></small>
+      | <small><a href="<%= pick_post_ep(url_path, byron_ep, shelley_ep, shared_ep) %><%= "/#{wid}" %>">go to wallet</a></small><br/>
     </div>
     <div class="list-group-item">
       <%= show_tx_badges(tx) %>

@@ -6,14 +6,14 @@ services:
     environment:
       NETWORK:
     volumes:
-      - ikar-node-${NETWORK}-db:/data
+      - ikar-node-db:/data
       - node-ipc:/ipc
     restart: on-failure
 
   cardano-wallet:
     image: inputoutput/cardano-wallet:2022.8.16
     volumes:
-      - ikar-wallet-${NETWORK}-db:/wallet-db
+      - ikar-wallet-db:/wallet-db
       - node-ipc:/ipc
     ports:
       - 8090:8090
@@ -33,11 +33,9 @@ services:
     restart: on-failure
 
 volumes:
-  ikar-node-mainnet-db:
-  ikar-wallet-mainnet-db:
-  ikar-node-preprod-db:
-  ikar-wallet-preprod-db:
-  ikar-node-preview-db:
-  ikar-wallet-preview-db:
+  ikar-node-db:
+    name: ikar-node-${NETWORK}-db
+  ikar-wallet-db:
+    name: ikar-wallet-${NETWORK}-db
   node-ipc:
   node-config:
