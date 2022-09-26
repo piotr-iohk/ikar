@@ -789,10 +789,5 @@ cosigner#0
         mn.split
       end
     end
-
-    def mnemonic_sentence wc
-      @cw.utils.mnemonic_sentence(wc.to_i).join(' ')
-    end
-
   end
 end

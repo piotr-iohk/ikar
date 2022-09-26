@@ -20,16 +20,6 @@ describe Helpers::App do
     expect(parse_assets(assets)).to eq res
   end
 
-  it "mnemonic_sentence" do
-    h = {'9' => 96, '12' => 128, '15' => 164, '18' =>196, '21' => 224, '24' => 256}
-    h.each do |k,_|
-      expect(mnemonic_sentence k).to satisfy {|m| m.split.size == k.to_i}
-    end
-
-    expect{ mnemonic_sentence 6 }.to raise_error "Non-supported no of words 6! Supported are [\"9\", \"12\", \"15\", \"18\", \"21\", \"24\"]"
-    expect{ mnemonic_sentence "haha" }.to raise_error "Non-supported no of words haha! Supported are [\"9\", \"12\", \"15\", \"18\", \"21\", \"24\"]"
-  end
-
   it "render_deleg_status" do
     expect(render_deleg_status("delegating")).to include "delegating"
     expect(render_deleg_status("delegating")).to include "bg-primary"
