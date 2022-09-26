@@ -1,5 +1,3 @@
-require 'bip_mnemonic'
-
 module Helpers
   module App
     def version
@@ -793,10 +791,7 @@ cosigner#0
     end
 
     def mnemonic_sentence wc
-      mtrx = {'9' => 96, '12' => 128, '15' => 164, '18' => 196, '21' => 224, '24' => 256}
-      wc = wc.to_s
-      raise "Non-supported no of words #{wc}! Supported are #{mtrx.keys}" unless mtrx.keys.include?(wc)
-      BipMnemonic.to_mnemonic(bits: mtrx[wc], language: 'english')
+      @cw.utils.mnemonic_sentence(wc.to_i).join(' ')
     end
 
   end
