@@ -567,7 +567,7 @@ end
 
 get "/shared-wallets-create" do
   # 24-word mnemonics
-  mnemonics = mnemonic_sentence(24)
+  mnemonics = @cw.utils.mnemonic_sentence(24).join(' ')
   erb :form_create_wallet, { :locals => { :mnemonics => mnemonics} }
 end
 
@@ -759,7 +759,7 @@ end
 
 get "/wallets-create" do
   # 24-word mnemonics
-  mnemonics = mnemonic_sentence(24)
+  mnemonics = @cw.utils.mnemonic_sentence(24).join(' ')
   erb :form_create_wallet, { :locals => { :mnemonics => mnemonics} }
 end
 
@@ -828,7 +828,7 @@ post "/wallets-create-many" do
   how_many = params[:how_many].to_i
 
   1.upto how_many do |i|
-    mnemonics = mnemonic_sentence(params[:words_count]).split
+    mnemonics = @cw.utils.mnemonic_sentence(params[:words_count].to_i)
     wal = @cw.shelley.wallets.create({mnemonic_sentence: mnemonics,
                                       passphrase: pass,
                                       name: "#{name} #{i}",
@@ -1645,7 +1645,7 @@ end
 
 get "/byron-wallets-create" do
   # 12-word mnemonics
-  mnemonics = mnemonic_sentence(12)
+  mnemonics = @cw.utils.mnemonic_sentence(24).join(' ')
   erb :form_create_wallet, { :locals => { :mnemonics => mnemonics} }
 end
 
@@ -1729,7 +1729,7 @@ post "/byron-wallets-create-many" do
   style = params[:style]
 
   1.upto how_many do |i|
-    mnemonics = mnemonic_sentence(params[:words_count]).split
+    mnemonics = @cw.utils.mnemonic_sentence(params[:words_count].to_i)
     wal = @cw.byron.wallets.create({name: "#{name} (#{style}) #{i}",
                                     style: style,
                                     passphrase: pass,
@@ -1874,7 +1874,7 @@ get "/gen-mnemonics" do
 end
 
 post "/gen-mnemonics" do
-  mnemonics = mnemonic_sentence(params[:words_count])
+  mnemonics = @cw.utils.mnemonic_sentence(params[:words_count].to_i).join(' ')
   erb :form_gen_mnemonics, { :locals => {:mnemonics => mnemonics,
                                          :words_count => params[:words_count] } }
 end

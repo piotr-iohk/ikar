@@ -32,15 +32,15 @@
     version = "3.33.0";
   };
   cardano_wallet = {
-    dependencies = ["httparty"];
+    dependencies = ["bip_mnemonic" "httparty"];
     groups = ["default"];
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1il06kgvglkji6gr8jfnfbzk9rdq98z7pfqplg51a2zdvbff6qf9";
+      sha256 = "1ay11nh7wcri87zzvn4i3n9lx0wnv2d5wfknk5nx8zyvlk8305r7";
       type = "gem";
     };
-    version = "0.3.26";
+    version = "0.3.27";
   };
   chartkick = {
     groups = ["default"];
