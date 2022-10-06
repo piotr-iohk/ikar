@@ -43,5 +43,5 @@ jobs:
     env:
       CONFIG_URL: https://book.world.dev.cardano.org/environments/preview/
       WALLET: dev-master
-      NODE: 1.35.3
+      NODE: 1.35.3-configs
       TOKEN_METADATA: https://metadata.cardano-testnet.iohkdev.io/
