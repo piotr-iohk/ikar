@@ -309,8 +309,8 @@ module Helpers
       "<span class='badge badge-primary'>has withdrawal</span><br/>"
     end
 
-    def has_assets_badge
-      "<span class='badge badge-dark'>has assets</span><br/>"
+    def has_deposit_badge(which)
+      "<span class='badge badge-dark'>has deposit_#{which}</span><br/>"
     end
 
     def has_mint_badge
@@ -334,6 +334,12 @@ module Helpers
       end
       if (tx['withdrawals'].size > 0)
         r += %Q{<div>&nbsp;#{has_withdrawal_badge}</div>}
+      end
+      if (tx['deposit_returned']['quantity'] > 0)
+        r += %Q{<div>&nbsp;#{has_deposit_badge('returned')}</div>}
+      end
+      if (tx['deposit_taken']['quantity'] > 0)
+        r += %Q{<div>&nbsp;#{has_deposit_badge('taken')}</div>}
       end
       # if (tx['outputs'].any? {|o| o.has_key? "assets"})
       #   r += %Q{<div>&nbsp;#{has_assets_badge}</div>}
