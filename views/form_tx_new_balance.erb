@@ -1,8 +1,8 @@
 <%
   # wallets = wallets
   url_path = request.env['PATH_INFO'].to_s
-  shelley_ep = "/sign-balanced-tx-shelley"
-  byron_ep = "/sign-balanced-tx-byron"
+  shelley_ep = "/balance-tx-shelley"
+  shared_ep = "/balance-tx-shared"
   wid = params[:wid] if params[:wid]
 %>
 
@@ -16,7 +16,7 @@
   </div>
   <div class="list-group-item">
 
-    <form action="<%= pick_post_ep(url_path, byron_ep, shelley_ep, nil)%>"
+    <form action="<%= pick_post_ep(url_path, nil, shelley_ep, shared_ep)%>"
         method="POST">
       <div class="form-group">
         <label for="wid">Source Wallet</label>
