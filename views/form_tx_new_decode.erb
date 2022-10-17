@@ -1,8 +1,8 @@
 <%
  # wallets = wallets
 url_path = request.env['PATH_INFO'].to_s
-byron_ep = "/decode-tx-byron"
 shelley_ep = "/decode-tx-shelley"
+shared_ep = "/decode-tx-shared"
 wid = params[:wid] if params[:wid]
 %>
 <div class="list-group">
@@ -14,13 +14,14 @@ wid = params[:wid] if params[:wid]
        </a></small>
   </div>
   <div class="list-group-item">
-    <form action="<%= pick_post_ep(url_path, byron_ep, shelley_ep, nil) %>" method="POST">
+    <form action="<%= pick_post_ep(url_path, nil, shelley_ep, shared_ep) %>" method="POST">
       <div class="form-group">
         <label for="wid">Source Wallet</label>
         <select class="form-control" name="wid" id="wid">
           <% wallets.each do |w| %>
           <option <%= wid == w['id'] ? "selected" : "" %> value="<%= w['id'] %>">
-            <%= "#{w['name']} [id: #{w['id']}, balance available: #{w['balance']['available']['quantity']}]" %>
+            <%= "#{w['name']} [id: #{w['id']},
+            balance available: #{w['state']['status'] != "incomplete" ? w['balance']['available']['quantity'] : 'N/A'}]" %>
           </option>
           <% end %>
         </select>
@@ -31,7 +32,7 @@ wid = params[:wid] if params[:wid]
       </div>
 
       <button type="submit" class="btn btn-success">Decode</button>
-      (and <a href="<%= url_path.include?('shelley') ? "/submit-tx-standalone-shelley?wid=#{wid}" : "/submit-tx-standalone-byron?wid=#{wid}" %>">Submit</a> after)
+      <a class="btn btn-secondary" href="<%= back_to_wallet(url_path, wid) %>" role="button">Back</a>
     </form>
   </div>
 

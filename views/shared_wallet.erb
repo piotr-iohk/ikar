@@ -45,9 +45,14 @@
                   <a class="dropdown-item" href="/decode-tx-shared?wid=<%= id %>">
                     Decode 👀
                   </a>
-               <!-- <a class="dropdown-item" href="/balance-tx-shared?wid=<%= id %>">Balance ⚖️</a>
+                  <a class="dropdown-item <%= "disabled" if status == "incomplete" %>" href="/sign-tx-shared?wid=<%= id %>">
+                    Sign ✍️
+                  </a>
+                  <a class="dropdown-item <%= "disabled" if status == "incomplete" %>" href="/submit-tx-shared?wid=<%= id %>">
+                    Submit 🚀
+                  </a>
 
-               <a class="dropdown-item" href="/submit-tx-standalone-shared?wid=<%= id %>">Submit 🚀</a> -->
+               <!-- <a class="dropdown-item" href="/balance-tx-shared?wid=<%= id %>">Balance ⚖️</a> -->
              </div>
            </div>
            <div>

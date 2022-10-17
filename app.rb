@@ -905,55 +905,7 @@ post "/wallets-migration-plan" do
                                           :wallets => wallets } }
 end
 
-# TRANSACTIONS SHELLEY
-
-get "/decode-tx-shelley" do
-  wallets = @cw.shelley.wallets.list
-  handle_api_err wallets, session
-
-  erb :form_tx_new_decode, {:locals => { :wallets => wallets,
-                                         :tx => nil,
-                                         :serialized_tx => nil } }
-end
-
-post "/decode-tx-shelley" do
-  wallets = @cw.shelley.wallets.list
-  handle_api_err wallets, session
-  serialized_tx = params[:serialized_tx].strip
-  tx = @cw.shelley.transactions.decode(params[:wid], serialized_tx)
-  handle_api_err tx, session
-
-  erb :form_tx_new_decode, {:locals => { :wallets => wallets,
-                                         :tx => tx,
-                                         :serialized_tx => serialized_tx } }
-end
-
-get "/balance-tx-shelley" do
-  wallets = @cw.shelley.wallets.list
-  handle_api_err wallets, session
-
-  erb :form_tx_new_balance, {:locals => { :wallets => wallets } }
-end
-
-post "/sign-balanced-tx-shelley" do
-  wid = params[:wid]
-  begin
-    payload = JSON.parse(params[:payload].strip)
-  rescue
-    session[:error] = "Make sure the 'payload' has correct JSON format."
-    redirect '/balance-tx-shelley'
-  end
-  tx = @cw.shelley.transactions.balance(wid,
-                                       payload)
-  handle_api_err tx, session
-
-  decoded_tx = @cw.shelley.transactions.decode(wid, tx['transaction'])
-  handle_api_err decoded_tx, session
-
-  erb :form_tx_new_sign, {:locals => { :tx => tx,
-                                       :wid => wid,
-                                       :decoded_tx => decoded_tx } }
-end
+# Transactions SHARED
 
 # Decode shared
 get "/decode-tx-shared" do
@@ -1115,9 +1067,23 @@ post "/construct-tx-shared" do
   handle_api_err tx, session
   decoded_tx = @cw.shared.transactions.decode(wid, tx['transaction'])
   handle_api_err decoded_tx, session
-  erb :form_tx_new_sign, {:locals => { :tx => tx,
+  wallets = @cw.shared.wallets.list
+  handle_api_err wallets, session
+  erb :form_tx_new_sign, {:locals => { :wallets => wallets,
+                                       :tx => tx,
                                        :wid => wid,
                                        :decoded_tx => decoded_tx } }
+end
+
+get "/sign-tx-shared" do
+  wid = params['wid']
+  wallets = @cw.shared.wallets.list
+  handle_api_err wallets, session
+
+  erb :form_tx_new_sign, {:locals => { :wallets => wallets,
+                                       :tx => nil,
+                                       :wid => wid,
+                                       :decoded_tx => nil } }
 end
 
 post "/sign-tx-shared" do
@@ -1129,8 +1095,11 @@ post "/sign-tx-shared" do
 
   decoded_tx = @cw.shared.transactions.decode(wid, tx['transaction'])
   handle_api_err decoded_tx, session
+  wallets = @cw.shared.wallets.list
+  handle_api_err wallets, session
 
-  erb :form_tx_new_submit, {:locals => { :tx => tx,
+  erb :form_tx_new_submit, {:locals => { :wallets => wallets,
+                                         :tx => tx,
                                          :wid => wid,
                                          :decoded_tx => decoded_tx } }
 end
@@ -1146,6 +1115,49 @@ post "/submit-tx-shared" do
   # handle_api_err tx, session
 
   erb :tx_submitted_temp, { :locals => { :tx => r, :wid => wid}  }
+end
+
+get "/submit-tx-shared" do
+  wid = params['wid']
+  wallets = @cw.shared.wallets.list
+  handle_api_err wallets, session
+
+  erb :form_tx_new_submit, {:locals => { :wallets => wallets,
+                                       :tx => nil,
+                                       :wid => wid,
+                                       :decoded_tx => nil } }
+end
+
+# TRANSACTIONS SHELLEY
+
+get "/balance-tx-shelley" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+
+  erb :form_tx_new_balance, {:locals => { :wallets => wallets } }
+end
+
+post "/balance-tx-shelley" do
+  wid = params[:wid]
+  begin
+    payload = JSON.parse(params[:payload].strip)
+  rescue
+    session[:error] = "Make sure the 'payload' has correct JSON format."
+    redirect '/balance-tx-shelley'
+  end
+  tx = @cw.shelley.transactions.balance(wid,
+                                       payload)
+  handle_api_err tx, session
+
+  decoded_tx = @cw.shelley.transactions.decode(wid, tx['transaction'])
+  handle_api_err decoded_tx, session
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+
+  erb :form_tx_new_sign, {:locals => { :wallets => wallets,
+                                       :tx => tx,
+                                       :wid => wid,
+                                       :decoded_tx => decoded_tx } }
 end
 
 # Construct Shelley
@@ -1286,9 +1298,46 @@ post "/construct-tx-shelley" do
   handle_api_err tx, session
   decoded_tx = @cw.shelley.transactions.decode(wid, tx['transaction'])
   handle_api_err decoded_tx, session
-  erb :form_tx_new_sign, {:locals => { :tx => tx,
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+
+  erb :form_tx_new_sign, {:locals => { :wallets => wallets,
+                                       :tx => tx,
                                        :wid => wid,
                                        :decoded_tx => decoded_tx } }
+end
+
+get "/decode-tx-shelley" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+
+  erb :form_tx_new_decode, {:locals => { :wallets => wallets,
+                                         :tx => nil,
+                                         :serialized_tx => nil } }
+end
+
+post "/decode-tx-shelley" do
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  serialized_tx = params[:serialized_tx].strip
+  tx = @cw.shelley.transactions.decode(params[:wid], serialized_tx)
+  handle_api_err tx, session
+
+  erb :form_tx_new_decode, {:locals => { :wallets => wallets,
+                                         :tx => tx,
+                                         :serialized_tx => serialized_tx } }
+end
+
+get "/sign-tx-shelley" do
+  wid = params[:wid]
+
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+
+  erb :form_tx_new_sign, {:locals => { :wallets => wallets,
+                                       :tx => nil,
+                                       :wid => wid,
+                                       :decoded_tx => nil } }
 end
 
 post "/sign-tx-shelley" do
@@ -1300,8 +1349,10 @@ post "/sign-tx-shelley" do
 
   decoded_tx = @cw.shelley.transactions.decode(wid, tx['transaction'])
   handle_api_err decoded_tx, session
-
-  erb :form_tx_new_submit, {:locals => { :tx => tx,
+  wallets = @cw.shelley.wallets.list
+  handle_api_err wallets, session
+  erb :form_tx_new_submit, {:locals => { :wallets => wallets,
+                                         :tx => tx,
                                          :wid => wid,
                                          :decoded_tx => decoded_tx } }
 end
@@ -1318,26 +1369,15 @@ post "/submit-tx-shelley" do
   erb :tx_details, { :locals => { :tx => tx, :wid => wid}  }
 end
 
-get "/submit-tx-standalone-shelley" do
+get "/submit-tx-shelley" do
   wid = params['wid']
   wallets = @cw.shelley.wallets.list
   handle_api_err wallets, session
 
-  erb :form_tx_new_submit_standalone, { :locals => { :wallets => wallets,
-                                                     :wid => wid,
-                                                     :serialized_tx => nil}  }
-end
-
-post "/submit-tx-standalone-shelley" do
-  wid = params['wid']
-  serialized_tx = params['transaction'].strip
-  r = @cw.shelley.transactions.submit(wid, serialized_tx)
-  handle_api_err r, session
-
-  tx = @cw.shelley.transactions.get(wid, r['id'], {"simple-metadata" => true})
-  handle_api_err tx, session
-
-  erb :tx_details, { :locals => { :tx => tx, :wid => wid}  }
+  erb :form_tx_new_submit, {:locals => { :wallets => wallets,
+                                       :tx => nil,
+                                       :wid => wid,
+                                       :decoded_tx => nil } }
 end
 
 get "/wallets-transactions" do

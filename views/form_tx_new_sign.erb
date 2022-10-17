@@ -27,11 +27,24 @@ function goBack() {
     <form action="<%= pick_post_ep(url_path, nil, shelley_ep, shared_ep) %>"
         method="POST">
       <div class="form-group">
+        <label for="wid">Source Wallet</label>
+        <select class="form-control" name="wid" id="wid">
+          <% wallets.each do |w| %>
+          <option <%= wid == w['id'] ? "selected" : "" %> value="<%= w['id'] %>">
+            <%= "#{w['name']} [id: #{w['id']},
+            balance available: #{w['state']['status'] != "incomplete" ? w['balance']['available']['quantity'] : 'N/A'}]" %>
+          </option>
+          <% end %>
+        </select>
+      </div>
+      <div class="form-group">
+        <textarea class="form-control" name="transaction" id="transaction" rows="3"><%= tx['transaction'] if tx %></textarea>
+        <small id="help" class="form-text text-muted">Base64/Base16 encoded tx.</small>
+      </div>
+      <div class="form-group">
         <label for="pass">Passphrase</label>
         <input type="text" class="form-control" name="pass" id="pass" placeholder="Passphrase" value="Secure Passphrase">
       </div>
-      <input type="hidden" name="transaction" value="<%= tx['transaction'] %>"/>
-      <input type="hidden" name="wid" value="<%= wid %>"/>
       <button type="submit" class="btn btn-success">Sign</button>
       <a class="btn btn-secondary" href="#" role="button" onclick="goBack()">Back</a>
     </form>
@@ -41,16 +54,16 @@ function goBack() {
     <details>
       <summary>Transaction details</summary>
         <code>
-          <span title="Encoded transaction">🔒</span>
-          <small id="tx">
-              <%= response2table(tx) %>
-          </small>
           <% if decoded_tx %>
-          <span title="Decoded transaction">👀</span>
+          <span title="Decoded transaction">Decoded tx 👀</span>
             <small id="decoded_tx">
                 <%= response2table(decoded_tx) %>
             </small>
           <% end %>
+          <span title="Encoded transaction">Raw response 🔒</span>
+          <small id="tx">
+              <%= response2table(tx) %>
+          </small>
         </code>
     </details>
 
