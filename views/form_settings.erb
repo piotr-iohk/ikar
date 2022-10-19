@@ -20,11 +20,17 @@
       <button type="submit" class="btn btn-success">Update</button>
     </form>
   </div>
-
+  <% if update_settings %>
+  <div class="list-group-item"  >
+    <small id="settings">
+        <%= generate_curl(update_settings, 'curl (update settings)') %>
+    </small>
+  </div>
+  <% end %>
   <% if settings %>
   <div class="list-group-item"  >
     <small id="settings">
-        <%= response2table(settings) %>
+        <%= response2table(settings, 'curl (get settings)') %>
     </small>
   </div>
   <% end %>

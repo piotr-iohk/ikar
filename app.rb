@@ -285,6 +285,7 @@ end
 get "/settings" do
   settings = @cw.misc.settings.get
   erb :form_settings, { :locals => { :settings => settings,
+                                     :update_settings => nil,
                                      :pool_strategy => nil } }
 end
 
@@ -294,6 +295,7 @@ post "/settings" do
   handle_api_err r, session
   settings = @cw.misc.settings.get
   erb :form_settings, { :locals => { :settings => settings,
+                                     :update_settings => r,
                                      :pool_strategy => params['pool_strategy'] } }
 end
 

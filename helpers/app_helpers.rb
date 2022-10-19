@@ -176,7 +176,7 @@ module Helpers
        }
     end
 
-    def response2table(response)
+    def response2table(response, curl_label = 'curl')
       unless response
         session[:error] = %Q{ Got nothing from the wallet, either I cannot
                                connect or the request was somewhat wrong...
@@ -190,7 +190,7 @@ module Helpers
       case code
       when 500, 501 then
         r += render_danger(response.to_s)
-        r += generate_curl(response)
+        r += generate_curl(response, curl_label)
       else
         table_options = {
             table_style: "border: 1px solid black; max-width: 600px;",
@@ -198,7 +198,7 @@ module Helpers
             table_attributes: "border=1"
             }
 
-        r += generate_curl(response)
+        r += generate_curl(response, curl_label)
         r += generate_raw_response(response.to_s.force_encoding('UTF-8').to_json)
         r += Json2table::get_html_table(response.to_s.force_encoding('UTF-8'), table_options)
       end
