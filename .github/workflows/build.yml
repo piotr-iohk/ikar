@@ -18,8 +18,10 @@ jobs:
     name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
+        ruby-version: ['2.7', '3.0', '3.1']
 
     steps:
     - name: 📥 Checkout repository
