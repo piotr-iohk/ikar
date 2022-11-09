@@ -52,17 +52,6 @@
     };
     version = "3.4.0";
   };
-  codecov = {
-    dependencies = ["json" "simplecov"];
-    groups = ["development" "test"];
-    platforms = [];
-    source = {
-      remotes = ["https://rubygems.org"];
-      sha256 = "1wp7y5r6ss030zljp5sqqnixpx2dc2pavxmaxf67ahk7xf1sfniq";
-      type = "gem";
-    };
-    version = "0.2.9";
-  };
   diff-lcs = {
     groups = ["default" "development" "test"];
     platforms = [];
@@ -72,16 +61,6 @@
       type = "gem";
     };
     version = "1.4.4";
-  };
-  docile = {
-    groups = ["default" "development" "test"];
-    platforms = [];
-    source = {
-      remotes = ["https://rubygems.org"];
-      sha256 = "0qrwiyagxzl8zlx3dafb0ay8l14ib7imb2rsmx70i5cp420v8gif";
-      type = "gem";
-    };
-    version = "1.3.2";
   };
   docopt = {
     groups = ["default"];
@@ -113,16 +92,6 @@
       type = "gem";
     };
     version = "0.18.1";
-  };
-  json = {
-    groups = ["default" "development" "test"];
-    platforms = [];
-    source = {
-      remotes = ["https://rubygems.org"];
-      sha256 = "158fawfwmv2sq4whqqaksfykkiad2xxrrj0nmpnc6vnlzi1bp7iz";
-      type = "gem";
-    };
-    version = "2.3.1";
   };
   json2table = {
     groups = ["default"];
@@ -196,6 +165,16 @@
     };
     version = "1.1.1";
   };
+  nio4r = {
+    groups = ["default"];
+    platforms = [];
+    source = {
+      remotes = ["https://rubygems.org"];
+      sha256 = "0xk64wghkscs6bv2n22853k2nh39d131c6rfpnlw12mbjnnv9v1v";
+      type = "gem";
+    };
+    version = "2.5.8";
+  };
   nokogiri = {
     dependencies = ["mini_portile2" "racc"];
     groups = ["default" "development" "test"];
@@ -216,6 +195,17 @@
       type = "gem";
     };
     version = "4.0.6";
+  };
+  puma = {
+    dependencies = ["nio4r"];
+    groups = ["default"];
+    platforms = [];
+    source = {
+      remotes = ["https://rubygems.org"];
+      sha256 = "1yabmxmqprb2x58awiasidsiwpplscmyar9dzwh5l8jgaw4i3wra";
+      type = "gem";
+    };
+    version = "6.0.0";
   };
   racc = {
     groups = ["default" "development" "test"];
@@ -332,27 +322,6 @@
       type = "gem";
     };
     version = "0.0.5";
-  };
-  simplecov = {
-    dependencies = ["docile" "simplecov-html"];
-    groups = ["development" "test"];
-    platforms = [];
-    source = {
-      remotes = ["https://rubygems.org"];
-      sha256 = "1b082xrklq6k755cc3rzpnfdjv5338rlky9him36jasw8s9q68mr";
-      type = "gem";
-    };
-    version = "0.19.0";
-  };
-  simplecov-html = {
-    groups = ["default" "development" "test"];
-    platforms = [];
-    source = {
-      remotes = ["https://rubygems.org"];
-      sha256 = "1v7b4mf7njw8kv4ghl4q7mwz3q0flbld7v8blp4m4m3n3aq11bn9";
-      type = "gem";
-    };
-    version = "0.12.2";
   };
   sinatra = {
     dependencies = ["mustermann" "rack" "rack-protection" "tilt"];

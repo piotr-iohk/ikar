@@ -18,18 +18,22 @@ jobs:
     name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
+        ruby-version: ['2.7', '3.0', '3.1']
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 2.7.1
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v2
+
+    - name: 💎 Set up Ruby
+      uses: ruby/setup-ruby@v1.120.0
+
     - name: Install dependencies
       run: bundle install
-    - name: Set up cardano-wallet & cardano-node on Shelley testnet
+
+    - name: 🖥 Set up cardano-wallet & cardano-node on preview
       run: |
         wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/docker-compose.yml -O docker-compose-test.yml
         wget $CONFIG_URL/config.json
@@ -38,7 +42,8 @@ jobs:
         wget $CONFIG_URL/alonzo-genesis.json
         wget $CONFIG_URL/topology.json
         NODE_CONFIG_PATH=`pwd` docker-compose -f docker-compose-test.yml up --detach
-    - name: Run tests
+
+    - name: 🧪 Run tests
       run: rspec tests
     env:
       CONFIG_URL: https://book.world.dev.cardano.org/environments/preview/
