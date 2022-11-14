@@ -19,8 +19,11 @@ module Helpers
 
     def toListTransactionsQuery(params)
       query = {}
-      [:minWithdrawal, :start, :end, :order].each do |label|
-        if params[label] != '' && params[label] != nil
+      [:minWithdrawal, :start, :end, :order, :simple_metadata].each do |label|
+        next if params[label] == '' || params[label] == nil
+        if label == :simple_metadata
+          query['simple-metadata'] = params[label]
+        else
           query[label] = params[label]
         end
       end

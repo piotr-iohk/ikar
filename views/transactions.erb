@@ -71,6 +71,18 @@
                </small>
              </div>
            </div>
+          <div class="col-2">
+            <div class="form-group">
+              <select class="form-control" name="simple_metadata" id="simple_metadata">
+                <option <%= "selected" if query['simple-metadata'] == "true" %> value="true">true</option>
+                <option <%= "selected" if query['simple-metadata'] == "false" %> value="false">false</option>
+              </select>
+
+              <small id="help" class="form-text text-muted">
+                Simple metadata
+              </small>
+            </div>
+          </div>
          <% end %>
        </div>
      </form>
