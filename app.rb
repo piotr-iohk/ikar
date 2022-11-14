@@ -506,12 +506,12 @@ end
 get "/shared-wallets/:wal_id" do
   wal = @cw.shared.wallets.get params[:wal_id]
   handle_api_err wal, session
-  # txs = @cw.shelley.transactions.list params[:wal_id]
-  # handle_api_err txs, session
+  txs = @cw.shared.transactions.list params[:wal_id]
+  handle_api_err txs, session
   addrs = @cw.shared.addresses.list params[:wal_id]
   handle_api_err addrs, session
 
-  erb :shared_wallet, { :locals => { :wal => wal, :txs => nil, :addrs => addrs} }
+  erb :shared_wallet, { :locals => { :wal => wal, :txs => txs, :addrs => addrs} }
 end
 
 get "/shared-wallets-delete/:wal_id" do
@@ -909,6 +909,29 @@ end
 
 # Transactions SHARED
 
+get "/shared-wallets-transactions" do
+  query = toListTransactionsQuery(params)
+  r = @cw.shared.transactions.list(params[:wid], query)
+  handle_api_err r, session
+
+  wallets = @cw.shared.wallets.list
+  handle_api_err wallets, session
+
+  erb :transactions, { :locals => { :wallets => wallets,
+                                    :transactions => r,
+                                    :query => query } }
+end
+
+# show tx details
+get "/shared-wallets/:wal_id/txs/:tx_id" do
+  wid = params[:wal_id]
+  txid = params[:tx_id]
+  tx = @cw.shared.transactions.get(wid, txid, {"simple-metadata" => true})
+  handle_api_err tx, session
+
+  erb :tx_details, { :locals => { :tx => tx, :wid => wid }  }
+end
+
 # Decode shared
 get "/decode-tx-shared" do
   wallets = @cw.shared.wallets.list
@@ -1112,11 +1135,10 @@ post "/submit-tx-shared" do
   r = @cw.shared.transactions.submit(wid, serialized_tx)
   handle_api_err r, session
 
-  # Temp, as shared wallets don't have get transaction endpoint
-  # tx = @cw.shared.transactions.get(wid, r['id'], {"simple-metadata" => true})
-  # handle_api_err tx, session
+  tx = @cw.shared.transactions.get(wid, r['id'], {"simple-metadata" => true})
+  handle_api_err tx, session
 
-  erb :tx_submitted_temp, { :locals => { :tx => r, :wid => wid}  }
+  erb :tx_details, { :locals => { :tx => tx, :wid => wid}  }
 end
 
 get "/submit-tx-shared" do

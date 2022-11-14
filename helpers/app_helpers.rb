@@ -522,9 +522,12 @@ module Helpers
     end
 
     def render_tx_on_wallet_page(url_path, tx, id)
+      byron_ep = "/byron-wallets"
+      shelley_ep = "/wallets"
+      shared_ep = "/shared-wallets"
       r = %Q{
 
-        <small><b>ID: </b><a href='#{(url_path.include? "byron") ? "/byron-wallets" : "/wallets"}/#{id}/txs/#{tx['id']}'>#{tx['id']}</a></small><br/>
+        <small><b>ID: </b><a href='#{pick_post_ep(url_path, byron_ep, shelley_ep, shared_ep)}/#{id}/txs/#{tx['id']}'>#{tx['id']}</a></small><br/>
         #{show_tx_badges(tx)}
       }
       if tx['inserted_at']
