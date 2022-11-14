@@ -37,10 +37,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0blm5wdrzmabv3cj7g2npmr80j86yn62jn8wli4yfmjy1lfs2awg";
+      sha256 = "1az3d89mlkvy53mfdaxd73y91m1v9z96zsilvkdgagfcf21ywisj";
       type = "gem";
     };
-    version = "0.3.28";
+    version = "0.4.0";
   };
   chartkick = {
     groups = ["default"];
