@@ -51,7 +51,7 @@
                   <a class="dropdown-item <%= "disabled" if status == "incomplete" %>" href="/submit-tx-shared?wid=<%= id %>">
                     Submit 🚀
                   </a>
-
+                    <a class="dropdown-item" href="/shared-wallets-transactions?wid=<%= id %>">List</a>
                <!-- <a class="dropdown-item" href="/balance-tx-shared?wid=<%= id %>">Balance ⚖️</a> -->
              </div>
            </div>
@@ -83,9 +83,9 @@
            </h5>
          </div>
          <% if wal['balance'] %>
-           <b>Balance:</b> (Total: <%= wal['balance']['total']['quantity'] %>
-                                  , Available: <%= wal['balance']['available']['quantity'] %>
-                                  <%= ", Rewards: #{wal['balance']['reward']['quantity']}" if wal['balance']['reward'] %>)
+           <b>Balance:</b> (Total: <%= as_ada wal['balance']['total']['quantity'] %>
+                                  , Available: <%= as_ada wal['balance']['available']['quantity'] %>
+                                  <%= ", Rewards: #{as_ada wal['balance']['reward']['quantity']}" if wal['balance']['reward'] %>)
            <br/>
             <%= render_assets(wal) %>
          <% end %>

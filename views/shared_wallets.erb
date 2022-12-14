@@ -36,9 +36,9 @@ wallets.each do |wal|
       </h5>
     </div>
     <% if wal['balance'] %>
-      <b>Balance:</b> (Total: <%= wal['balance']['total']['quantity'] %>
-                             , Available: <%= wal['balance']['available']['quantity'] %>
-                             <%= ", Rewards: #{wal['balance']['reward']['quantity']}" if wal['balance']['reward'] %>)
+      <b>Balance:</b> (Total: <%= as_ada wal['balance']['total']['quantity'] %>
+                             , Available: <%= as_ada wal['balance']['available']['quantity'] %>
+                             <%= ", Rewards: #{as_ada wal['balance']['reward']['quantity']}" if wal['balance']['reward'] %>)
       <br/>
        <%= render_assets(wal) %>
     <% end %>
