@@ -1508,9 +1508,8 @@ post "/tx-between-wallets" do
   m = parse_metadata(params[:metadata])
   params[:ttl] == '' ? ttl = nil : ttl = params[:ttl].to_i
 
-  address_dst = @cw.shelley.addresses.list(wid_dst,
-                                          {state: "unused"}).
-                                          sample['id']
+  address_dst = @cw.shelley.addresses.list(wid_dst).
+                                          first['id']
   if params[:assets] == ''
     payload = [{address_dst => amount}]
   else

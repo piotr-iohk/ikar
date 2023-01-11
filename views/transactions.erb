@@ -20,7 +20,7 @@
            <select class="form-control" name="wid" id="wid">
              <% wallets.each do |w| %>
              <option <%= params[:wid] == w['id'] ? "selected" : "" %> value="<%= w['id'] %>">
-               <%= "#{w['name']} [id: #{w['id']}, balance available: #{w['balance']['available']['quantity']}" %>
+               <%= "#{w['name']} [id: #{w['id']}, balance available: #{w['state']['status'] != 'incomplete' ? w['balance']['available']['quantity']: 0}]" %>
              </option>
              <% end %>
            </select>
