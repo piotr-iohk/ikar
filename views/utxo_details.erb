@@ -4,6 +4,7 @@
 
   byron_ep = "/byron-wallets"
   shelley_ep = "/wallets"
+  shared_ep = "/shared-wallets"
 %>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartkick/2.3.0/chartkick.min.js" type="text/javascript"></script>
@@ -14,7 +15,7 @@
     | <small><a href="<%= back_to_wallet(url_path, wid) %>">go back to wallet</a></small>
     </div>
     <div class="list-group-item">
-        <form action="<%= (url_path.include? "byron") ? byron_ep : shelley_ep %>-utxo" method="GET">
+        <form action="<%= pick_post_ep(url_path, byron_ep, shelley_ep, shared_ep) %>-utxo" method="GET">
           <div class="form-row">
             <div class="col">
               <select class="form-control" name="wid" id="wid">
