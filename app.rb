@@ -368,6 +368,19 @@ post "/submit-external-tx" do
 end
 
 # SHARED WALLETS
+
+get "/shared-wallets-utxo" do
+  utxo = @cw.shared.wallets.utxo params[:wid]
+  utxo_snapshot = @cw.shared.wallets.utxo_snapshot params[:wid]
+  wal = @cw.shared.wallets.get params[:wid]
+  wallets = @cw.shared.wallets.list
+
+  erb :utxo_details, { :locals => { :wal => wal,
+                                    :utxo => utxo,
+                                    :utxo_snapshot => utxo_snapshot,
+                                    :wallets => wallets } }
+end
+
 get "/shared-get-acc-pub-key" do
   wallets = @cw.shared.wallets.list
   handle_api_err wallets, session
