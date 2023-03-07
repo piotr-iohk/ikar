@@ -84,6 +84,15 @@
             </div>
           </div>
          <% end %>
+          <div class="col-2">
+           <div class="form-group">
+             <input type="text" class="form-control" name="max_count" id="max_count" placeholder="Max tx count"
+                value="<%= query[:max_count] %>">
+             <small id="help" class="form-text text-muted">
+               Max transaction number to be returned.
+             </small>
+           </div>
+         </div>
        </div>
      </form>
   </div>
