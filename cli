@@ -9,6 +9,7 @@ Usage:
   #{__FILE__} shelley2shelley --port=<port> --max-addresses=<addr> --max-amt=<amt> <wid1> <wid2>
   #{__FILE__} shelley2byron --port=<port> --max-addresses=<addr> --max-amt=<amt> <shelley_wid> <byron_wid>
   #{__FILE__} shelley2byron2icarus --port=<port> --max-addresses=<addr> --max-amt=<amt> <shelley1_wid> <shelley2_wid> <byron_wid> <icarus_wid>
+  #{__FILE__} gen-byron-addresses --port=<port> --max-addresses=<addr> <byron_wid>
 
 Args:
   byron2byron            Run txs back and forth between 2 Byron wallets <wid1> <wid2>
@@ -26,10 +27,11 @@ DOCOPT
 
 ##
 # Generate n Byron addresses for wallet wid
-def gen_byron_addrs(wid, passphrase, n)
+def gen_byron_addrs(wid, passphrase, n, details: true)
   addresses = []
   puts "Generating #{n} Byron addresses..."
-  1.upto n do
+  1.upto n do |i|
+    puts "Generating #{i} address..." if details
     addresses << @byron.addresses.create(wid, {passphrase: passphrase})['id']
   end
   addresses
@@ -114,9 +116,20 @@ begin
   args = Docopt::docopt(doc)
   # pp args
 
-  @cw = CardanoWallet.new({ port: args['--port'].to_i })
+  @cw = CardanoWallet.new({ port: args['--port'].to_i, timeout: 3600 })
   @byron = @cw.byron
   @shelley = @cw.shelley
+
+
+  ##
+  # Generate addresses on byron wallet
+  if args['gen-byron-addresses']
+    byron_wid = args['<byron_wid>']
+    addresses_amt = args['--max-addresses'].to_i
+    passphrase = "Secure Passphrase"
+
+    addresses_byron = gen_byron_addrs(byron_wid, passphrase, addresses_amt, details: true)
+  end
 
   ##
   # Send transactions between 2 shelley, 1 byron and 1 icarus
