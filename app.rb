@@ -22,6 +22,7 @@ helpers Helpers::Discovery
 
 
 before do
+  @tx_max_count = 300 # max number of transactions to display by default on wallet page
   @timeout = 3600
   session[:opt] ||= {port: 8090, timeout: @timeout}
   @cw ||= CardanoWallet.new session[:opt]
@@ -519,7 +520,7 @@ end
 get "/shared-wallets/:wal_id" do
   wal = @cw.shared.wallets.get params[:wal_id]
   handle_api_err wal, session
-  txs = @cw.shared.transactions.list params[:wal_id]
+  txs = @cw.shared.transactions.list(params[:wal_id], {max_count: @tx_max_count})
   handle_api_err txs, session
   addrs = @cw.shared.addresses.list params[:wal_id]
   handle_api_err addrs, session
@@ -718,7 +719,7 @@ end
 get "/wallets/:wal_id" do
   wal = @cw.shelley.wallets.get params[:wal_id]
   handle_api_err wal, session
-  txs = @cw.shelley.transactions.list params[:wal_id]
+  txs = @cw.shelley.transactions.list(params[:wal_id], {max_count: @tx_max_count})
   handle_api_err txs, session
   addrs = @cw.shelley.addresses.list params[:wal_id]
   handle_api_err addrs, session
@@ -1697,7 +1698,7 @@ end
 
 get "/byron-wallets/:wal_id" do
   wallet = @cw.byron.wallets.get params[:wal_id]
-  txs = @cw.byron.transactions.list params[:wal_id]
+  txs = @cw.byron.transactions.list(params[:wal_id], {max_count: @tx_max_count})
   handle_api_err wallet, session
   handle_api_err txs, session
   addrs = @cw.byron.addresses.list params[:wal_id]
