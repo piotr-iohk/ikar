@@ -33,7 +33,7 @@ jobs:
     - name: Install dependencies
       run: bundle install
 
-    - name: 🖥 Set up cardano-wallet & cardano-node on preview
+    - name: 🖥 Set up cardano-wallet & cardano-node
       run: |
         wget https://raw.githubusercontent.com/piotr-iohk/cardano-wallet-rb/master/docker-compose.yml -O docker-compose-test.yml
         wget $CONFIG_URL/config.json
@@ -41,12 +41,16 @@ jobs:
         wget $CONFIG_URL/shelley-genesis.json
         wget $CONFIG_URL/alonzo-genesis.json
         wget $CONFIG_URL/topology.json
+        
+        sed -i 's|"EnableP2P": true|"EnableP2P": false|' ./config.json
+        echo '{ "Producers": [ { "addr": "preprod-node.world.dev.cardano.org", "port": 30000, "valency": 2 } ] }' > ./topology.json
+
         NODE_CONFIG_PATH=`pwd` docker-compose -f docker-compose-test.yml up --detach
 
     - name: 🧪 Run tests
       run: rspec tests
     env:
-      CONFIG_URL: https://book.world.dev.cardano.org/environments/preview/
+      CONFIG_URL: https://book.world.dev.cardano.org/environments/preprod/
       WALLET: dev-master
       NODE: 1.35.4
       TOKEN_METADATA: https://metadata.cardano-testnet.iohkdev.io/
